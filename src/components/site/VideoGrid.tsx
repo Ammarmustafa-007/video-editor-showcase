@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, X } from "lucide-react";
 import { useState } from "react";
 import { TiltCard } from "@/components/site/TiltCard";
-import { Reveal } from "@/components/site/Reveal";
 
 export type VideoItem = {
   thumb: string;
@@ -17,6 +16,22 @@ type VideoGridProps = {
   aspect?: "video" | "portrait" | "square";
 };
 
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.9, rotateX: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    rotateX: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
 export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridProps) {
   const [active, setActive] = useState<number | null>(null);
   const colClass =
@@ -26,36 +41,49 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
 
   return (
     <>
-      <div className={`grid gap-5 ${colClass}`}>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-30px" }}
+        className={`grid gap-3 ${colClass}`}
+        style={{ perspective: 800 }}
+      >
         {items.map((it, i) => (
-          <Reveal key={i} delay={(i % 6) * 0.05}>
-            <TiltCard intensity={10} className="cursor-pointer">
-              <button
+          <motion.div key={i} variants={itemVariants} style={{ transformStyle: "preserve-3d" }}>
+            <TiltCard intensity={8} className="cursor-pointer">
+              <motion.button
                 onClick={() => setActive(i)}
-                className={`group relative w-full ${aspectClass} rounded-2xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
+                whileHover={{ scale: 1.03, y: -4 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
               >
                 <img
                   src={it.thumb}
                   alt={it.title ?? `Project ${i + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="w-16 h-16 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow">
-                    <Play className="text-primary-foreground ml-1" size={24} fill="currentColor"/>
-                  </span>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <motion.span
+                    initial={{ scale: 0.5 }}
+                    whileHover={{ scale: 1.1 }}
+                    className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow"
+                  >
+                    <Play className="text-primary-foreground ml-0.5" size={20} fill="currentColor"/>
+                  </motion.span>
                 </div>
                 {it.title && (
-                  <p className="absolute bottom-3 left-3 right-3 text-left text-sm font-semibold text-foreground line-clamp-2">
+                  <p className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold text-foreground line-clamp-2">
                     {it.title}
                   </p>
                 )}
-              </button>
+              </motion.button>
             </TiltCard>
-          </Reveal>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* 3D popup lightbox */}
       <AnimatePresence>
@@ -69,20 +97,20 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
             style={{ perspective: 1200 }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.7, rotateX: -25, y: 60 }}
+              initial={{ opacity: 0, scale: 0.6, rotateX: -30, y: 80 }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
-              exit={{ opacity: 0, scale: 0.85, rotateX: 15, y: 30 }}
+              exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-3xl rounded-2xl overflow-hidden bg-card border border-border shadow-card"
+              className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card"
               style={{ transformStyle: "preserve-3d" }}
             >
               <button
                 onClick={() => setActive(null)}
-                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-brand-navy-deep/80 text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground transition-colors"
+                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-brand-navy-deep/80 text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground transition-colors"
                 aria-label="Close"
               >
-                <X size={18}/>
+                <X size={16}/>
               </button>
               {items[active].src ? (
                 items[active].src!.includes("drive.google.com") ? (
@@ -102,18 +130,18 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                   />
                 )
               ) : (
-                <div className="aspect-video flex flex-col items-center justify-center bg-brand-navy-deep p-8 text-center">
+                <div className="aspect-video flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
                   <img src={items[active].thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20"/>
                   <div className="relative">
-                    <Play className="text-brand-yellow mx-auto" size={48}/>
-                    <p className="mt-4 font-display text-xl font-bold text-foreground">Video coming soon</p>
-                    <p className="mt-2 text-sm text-muted-foreground">Add a Google Drive preview URL or MP4 link to play here.</p>
+                    <Play className="text-brand-yellow mx-auto" size={40}/>
+                    <p className="mt-3 font-display text-lg font-bold text-foreground">Video coming soon</p>
+                    <p className="mt-1.5 text-xs text-muted-foreground">Add a Google Drive preview URL or MP4 link to play here.</p>
                   </div>
                 </div>
               )}
               {items[active].title && (
-                <div className="p-5 border-t border-border">
-                  <p className="font-display font-bold text-foreground">{items[active].title}</p>
+                <div className="p-4 border-t border-border">
+                  <p className="font-display font-bold text-sm text-foreground">{items[active].title}</p>
                 </div>
               )}
             </motion.div>

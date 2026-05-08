@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import t1 from "@/assets/talking-1.jpg";
 import t2 from "@/assets/talking-2.jpg";
 import t3 from "@/assets/talking-3.jpg";
@@ -14,22 +13,14 @@ import t12 from "@/assets/talking-12.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
-export const Route = createFileRoute("/work/talking-head")({
-  head: () => ({
-    meta: [
-      { title: "Talking Head Reels — Showreel" },
-      { name: "description", content: "Short-form talking-head edits with subtitles and pacing for social platforms." },
-    ],
-  }),
-  component: TalkingHeadPage,
-});
+
 
 const items: VideoItem[] = [
   { thumb: t1 }, { thumb: t2 }, { thumb: t3 }, { thumb: t4 }, { thumb: t5 }, { thumb: t6 },
   { thumb: t7 }, { thumb: t8 }, { thumb: t9 }, { thumb: t10 }, { thumb: t11 }, { thumb: t12 },
 ];
 
-function TalkingHeadPage() {
+export function TalkingHeadPage() {
   return (
     <>
       <PageHero eyebrow="Talking Head Reels" title="Short-form that converts." subtitle="Punchy edits, subtitles and motion designed to hold attention." />

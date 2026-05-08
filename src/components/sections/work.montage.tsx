@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import m1 from "@/assets/montage-1.jpg";
 import m2 from "@/assets/montage-2.jpg";
 import m3 from "@/assets/montage-3.jpg";
@@ -19,19 +18,11 @@ import m17 from "@/assets/montage-17.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
-export const Route = createFileRoute("/work/montage")({
-  head: () => ({
-    meta: [
-      { title: "Montage Reels — Showreel" },
-      { name: "description", content: "Restaurant, sports and brand montage edits with sharp pacing." },
-    ],
-  }),
-  component: MontagePage,
-});
+
 
 const items: VideoItem[] = [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17].map((thumb) => ({ thumb }));
 
-function MontagePage() {
+export function MontagePage() {
   return (
     <>
       <PageHero eyebrow="Montage Reels" title="Brand & lifestyle montages." subtitle="Restaurant features, sports and brand edits with sharp pacing." />

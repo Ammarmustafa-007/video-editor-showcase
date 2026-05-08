@@ -1,18 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import w1 from "@/assets/wedding-1.jpg";
 import w2 from "@/assets/wedding-2.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
-export const Route = createFileRoute("/work/weddings")({
-  head: () => ({
-    meta: [
-      { title: "Weddings — Showreel" },
-      { name: "description", content: "Selected wedding films and cinematic edits." },
-    ],
-  }),
-  component: WeddingsPage,
-});
+
 
 // Replace `src` with Google Drive preview URLs (https://drive.google.com/file/d/<ID>/preview) or direct MP4s.
 const items: VideoItem[] = [
@@ -20,7 +11,7 @@ const items: VideoItem[] = [
   { thumb: w2, title: "Cinematic Wedding Reel" },
 ];
 
-function WeddingsPage() {
+export function WeddingsPage() {
   return (
     <>
       <PageHero eyebrow="Weddings" title="Selected wedding films." subtitle="Cinematic, emotional and timeless edits." />

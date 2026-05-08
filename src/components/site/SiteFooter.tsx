@@ -1,7 +1,10 @@
-import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, Phone } from "lucide-react";
 
 export function SiteFooter() {
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <footer className="border-t border-border bg-brand-navy-deep mt-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8 py-12 grid gap-8 md:grid-cols-3">
@@ -22,10 +25,10 @@ export function SiteFooter() {
         <div className="space-y-2 text-sm">
           <p className="text-foreground font-semibold mb-3">Explore</p>
           <div className="flex flex-col gap-1.5 text-muted-foreground">
-            <Link to="/about" className="hover:text-brand-yellow">About</Link>
-            <Link to="/work/weddings" className="hover:text-brand-yellow">Showreels</Link>
-            <Link to="/testimonials" className="hover:text-brand-yellow">Testimonials</Link>
-            <Link to="/contact" className="hover:text-brand-yellow">Contact</Link>
+            <button onClick={() => scrollTo("about")} className="text-left hover:text-brand-yellow transition-colors">About</button>
+            <button onClick={() => scrollTo("weddings")} className="text-left hover:text-brand-yellow transition-colors">Showreels</button>
+            <button onClick={() => scrollTo("testimonials")} className="text-left hover:text-brand-yellow transition-colors">Testimonials</button>
+            <button onClick={() => scrollTo("contact")} className="text-left hover:text-brand-yellow transition-colors">Contact</button>
           </div>
         </div>
       </div>

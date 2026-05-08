@@ -1,55 +1,54 @@
-import { Link } from "@tanstack/react-router";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
-  { to: "/education", label: "Education" },
-  { to: "/skills", label: "Skills" },
-  { to: "/experience", label: "Experience" },
-  { to: "/testimonials", label: "Testimonials" },
-  { to: "/why-me", label: "Why Me" },
-  { to: "/work/weddings", label: "Weddings" },
-  { to: "/work/talking-head", label: "Talking Head" },
-  { to: "/work/montage", label: "Montage" },
-  { to: "/work/long-form", label: "Long Form" },
-  { to: "/contact", label: "Contact" },
+  { to: "#home", label: "My Portfolio" },
+  { to: "#about", label: "About Me" },
+  { to: "#education", label: "Education" },
+  { to: "#skills", label: "Skills" },
+  { to: "#experience", label: "Experiences" },
+  { to: "#testimonials", label: "Testimonials" },
+  { to: "#why-me", label: "Why Me" },
+  { to: "#weddings", label: "Weddings" },
+  { to: "#talking-head", label: "Talking Head Reels" },
+  { to: "#montage", label: "Montage Reels" },
+  { to: "#long-form", label: "Long Form" },
+  { to: "#contact", label: "Contact Me" },
 ] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+
+  const handleScroll = (id: string) => {
+    setOpen(false);
+    const element = document.getElementById(id.substring(1));
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="sticky top-0 z-50 backdrop-blur-md bg-brand-navy-deep/80 border-b border-border"
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-brand-navy-deep/80 border-b border-border"
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-4 lg:px-8 h-16">
-        <Link to="/" className="font-display font-extrabold tracking-wide text-foreground text-sm md:text-base">
+        <button
+          onClick={() => handleScroll("#home")}
+          className="font-display font-extrabold tracking-wide text-foreground text-sm md:text-base cursor-pointer"
+        >
           ART BY <span className="text-brand-yellow">QURESHI</span>
-        </Link>
-        <nav className="hidden lg:flex items-center gap-1">
-          {links.slice(1).map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="px-3 py-2 text-xs font-medium text-muted-foreground hover:text-brand-yellow transition-colors uppercase tracking-wider"
-              activeProps={{ className: "px-3 py-2 text-xs font-semibold text-brand-yellow uppercase tracking-wider" }}
-              activeOptions={{ exact: true }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+        </button>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden p-2 text-foreground"
+          className="p-2 text-foreground focus:outline-none"
           aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
       <AnimatePresence>
@@ -58,19 +57,17 @@ export function SiteHeader() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden overflow-hidden bg-brand-navy-deep border-t border-border"
+            className="overflow-hidden bg-brand-navy-deep border-t border-border absolute w-full shadow-2xl"
           >
-            <div className="flex flex-col px-4 py-3">
-              {links.slice(1).map((l) => (
-                <Link
+            <div className="flex flex-col px-4 py-3 max-h-[80vh] overflow-y-auto">
+              {links.map((l) => (
+                <button
                   key={l.to}
-                  to={l.to}
-                  onClick={() => setOpen(false)}
-                  className="py-2 text-sm text-muted-foreground hover:text-brand-yellow uppercase tracking-wider"
-                  activeProps={{ className: "py-2 text-sm text-brand-yellow font-semibold uppercase tracking-wider" }}
+                  onClick={() => handleScroll(l.to)}
+                  className="py-3 text-left text-sm md:text-base text-muted-foreground hover:text-brand-yellow font-medium uppercase tracking-wider transition-colors border-b border-border/30 last:border-0"
                 >
                   {l.label}
-                </Link>
+                </button>
               ))}
             </div>
           </motion.nav>
