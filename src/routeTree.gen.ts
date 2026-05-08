@@ -14,8 +14,13 @@ import { Route as TestimonialsRouteImport } from './routes/testimonials'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as ExperienceRouteImport } from './routes/experience'
 import { Route as EducationRouteImport } from './routes/education'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorkWeddingsRouteImport } from './routes/work.weddings'
+import { Route as WorkTalkingHeadRouteImport } from './routes/work.talking-head'
+import { Route as WorkMontageRouteImport } from './routes/work.montage'
+import { Route as WorkLongFormRouteImport } from './routes/work.long-form'
 
 const WhyMeRoute = WhyMeRouteImport.update({
   id: '/why-me',
@@ -42,6 +47,11 @@ const EducationRoute = EducationRouteImport.update({
   path: '/education',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -52,73 +62,128 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkWeddingsRoute = WorkWeddingsRouteImport.update({
+  id: '/work/weddings',
+  path: '/work/weddings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkTalkingHeadRoute = WorkTalkingHeadRouteImport.update({
+  id: '/work/talking-head',
+  path: '/work/talking-head',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkMontageRoute = WorkMontageRouteImport.update({
+  id: '/work/montage',
+  path: '/work/montage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkLongFormRoute = WorkLongFormRouteImport.update({
+  id: '/work/long-form',
+  path: '/work/long-form',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/education': typeof EducationRoute
   '/experience': typeof ExperienceRoute
   '/skills': typeof SkillsRoute
   '/testimonials': typeof TestimonialsRoute
   '/why-me': typeof WhyMeRoute
+  '/work/long-form': typeof WorkLongFormRoute
+  '/work/montage': typeof WorkMontageRoute
+  '/work/talking-head': typeof WorkTalkingHeadRoute
+  '/work/weddings': typeof WorkWeddingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/education': typeof EducationRoute
   '/experience': typeof ExperienceRoute
   '/skills': typeof SkillsRoute
   '/testimonials': typeof TestimonialsRoute
   '/why-me': typeof WhyMeRoute
+  '/work/long-form': typeof WorkLongFormRoute
+  '/work/montage': typeof WorkMontageRoute
+  '/work/talking-head': typeof WorkTalkingHeadRoute
+  '/work/weddings': typeof WorkWeddingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/education': typeof EducationRoute
   '/experience': typeof ExperienceRoute
   '/skills': typeof SkillsRoute
   '/testimonials': typeof TestimonialsRoute
   '/why-me': typeof WhyMeRoute
+  '/work/long-form': typeof WorkLongFormRoute
+  '/work/montage': typeof WorkMontageRoute
+  '/work/talking-head': typeof WorkTalkingHeadRoute
+  '/work/weddings': typeof WorkWeddingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/contact'
     | '/education'
     | '/experience'
     | '/skills'
     | '/testimonials'
     | '/why-me'
+    | '/work/long-form'
+    | '/work/montage'
+    | '/work/talking-head'
+    | '/work/weddings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/contact'
     | '/education'
     | '/experience'
     | '/skills'
     | '/testimonials'
     | '/why-me'
+    | '/work/long-form'
+    | '/work/montage'
+    | '/work/talking-head'
+    | '/work/weddings'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/contact'
     | '/education'
     | '/experience'
     | '/skills'
     | '/testimonials'
     | '/why-me'
+    | '/work/long-form'
+    | '/work/montage'
+    | '/work/talking-head'
+    | '/work/weddings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
   EducationRoute: typeof EducationRoute
   ExperienceRoute: typeof ExperienceRoute
   SkillsRoute: typeof SkillsRoute
   TestimonialsRoute: typeof TestimonialsRoute
   WhyMeRoute: typeof WhyMeRoute
+  WorkLongFormRoute: typeof WorkLongFormRoute
+  WorkMontageRoute: typeof WorkMontageRoute
+  WorkTalkingHeadRoute: typeof WorkTalkingHeadRoute
+  WorkWeddingsRoute: typeof WorkWeddingsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EducationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -172,18 +244,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/work/weddings': {
+      id: '/work/weddings'
+      path: '/work/weddings'
+      fullPath: '/work/weddings'
+      preLoaderRoute: typeof WorkWeddingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/work/talking-head': {
+      id: '/work/talking-head'
+      path: '/work/talking-head'
+      fullPath: '/work/talking-head'
+      preLoaderRoute: typeof WorkTalkingHeadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/work/montage': {
+      id: '/work/montage'
+      path: '/work/montage'
+      fullPath: '/work/montage'
+      preLoaderRoute: typeof WorkMontageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/work/long-form': {
+      id: '/work/long-form'
+      path: '/work/long-form'
+      fullPath: '/work/long-form'
+      preLoaderRoute: typeof WorkLongFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
   EducationRoute: EducationRoute,
   ExperienceRoute: ExperienceRoute,
   SkillsRoute: SkillsRoute,
   TestimonialsRoute: TestimonialsRoute,
   WhyMeRoute: WhyMeRoute,
+  WorkLongFormRoute: WorkLongFormRoute,
+  WorkMontageRoute: WorkMontageRoute,
+  WorkTalkingHeadRoute: WorkTalkingHeadRoute,
+  WorkWeddingsRoute: WorkWeddingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
