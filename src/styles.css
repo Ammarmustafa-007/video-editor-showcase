@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Brand fonts */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap");
+
 /*
  * Design system definition.
  *
@@ -63,25 +66,36 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Dark navy background — matches Canva prototype */
+  --background: oklch(0.21 0.02 260);
+  --foreground: oklch(0.98 0.005 250);
+  --card: oklch(0.25 0.025 260);
+  --card-foreground: oklch(0.98 0.005 250);
+  --popover: oklch(0.25 0.025 260);
+  --popover-foreground: oklch(0.98 0.005 250);
+  /* Primary = warm yellow accent */
+  --primary: oklch(0.85 0.17 92);
+  --primary-foreground: oklch(0.18 0.02 260);
+  /* Secondary = muted green panel */
+  --secondary: oklch(0.5 0.06 165);
+  --secondary-foreground: oklch(0.98 0.005 250);
+  --muted: oklch(0.3 0.02 260);
+  --muted-foreground: oklch(0.72 0.02 260);
+  --accent: oklch(0.5 0.06 165);
+  --accent-foreground: oklch(0.98 0.005 250);
+  --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.85 0.17 92);
+  /* Brand custom tokens */
+  --brand-navy: oklch(0.21 0.02 260);
+  --brand-navy-deep: oklch(0.16 0.02 260);
+  --brand-yellow: oklch(0.85 0.17 92);
+  --brand-green: oklch(0.5 0.06 165);
+  --gradient-hero: radial-gradient(ellipse at top, oklch(0.28 0.04 260) 0%, oklch(0.16 0.02 260) 70%);
+  --shadow-glow: 0 20px 60px -15px oklch(0.85 0.17 92 / 0.35);
+  --shadow-card: 0 25px 50px -12px oklch(0 0 0 / 0.5);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +154,22 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: "Montserrat", "Inter", sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .text-brand-yellow { color: var(--brand-yellow); }
+  .bg-brand-navy { background-color: var(--brand-navy); }
+  .bg-brand-navy-deep { background-color: var(--brand-navy-deep); }
+  .bg-brand-green { background-color: var(--brand-green); }
+  .bg-hero-gradient { background: var(--gradient-hero); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-card { box-shadow: var(--shadow-card); }
 }
