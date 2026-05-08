@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 function NotFoundComponent() {
   return (
@@ -72,11 +74,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Art by Qureshi — Video Editor Portfolio" },
+      { name: "description", content: "Abdullah Qureshi — creative video editor specializing in cinematic storytelling, color grading and post production." },
+      { name: "author", content: "Abdullah Qureshi" },
+      { property: "og:title", content: "Art by Qureshi — Video Editor Portfolio" },
+      { property: "og:description", content: "Cinematic video editing, color grading and post production by Abdullah Qureshi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -113,7 +115,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
+        <SiteHeader />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <SiteFooter />
+      </div>
     </QueryClientProvider>
   );
 }
