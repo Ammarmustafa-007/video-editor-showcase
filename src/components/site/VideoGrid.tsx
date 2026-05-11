@@ -184,6 +184,7 @@ function VideoCard({
 
 export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridProps) {
   const [active, setActive] = useState<number | null>(null);
+  const isMobile = useIsMobile();
   const colClass =
     cols === 2 ? "sm:grid-cols-2" : cols === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2 lg:grid-cols-3";
   const aspectClass =
@@ -206,6 +207,7 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
             index={i}
             aspectClass={aspectClass}
             onOpen={() => setActive(i)}
+            isMobile={isMobile}
           />
         ))}
       </motion.div>
