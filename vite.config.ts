@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -8,11 +8,15 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
-    tanstackStart({
-      server: {
-        preset: "vercel",
-      },
+    TanStackRouterVite({
+      routeFileIgnorePattern: ".test.",
+      generatedRouteTree: "./src/routeTree.gen.ts",
     }),
     viteReact(),
   ],
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
 });
