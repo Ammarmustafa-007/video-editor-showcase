@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, X } from "lucide-react";
-import { useState } from "react";
+import { Play, X, Volume2, VolumeX } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { TiltCard } from "@/components/site/TiltCard";
 import { DriveVideoPlayer } from "@/components/ui/drive-video-player";
+import { getDriveDirectLink } from "@/lib/videoConfig";
 
 export type VideoItem = {
   thumb: string;
@@ -34,6 +35,129 @@ const itemVariants = {
   },
 };
 
+/* ─── Inline preview card with autoplay-on-scroll ─── */
+function VideoCard({
+  item,
+  index,
+  aspectClass,
+  onOpen,
+}: {
+  item: VideoItem;
+  index: number;
+  aspectClass: string;
+  onOpen: () => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+
+  // Get a playable video URL (direct MP4 or Google Drive direct link)
+  const videoUrl = item.src ?? (item.driveId ? getDriveDirectLink(item.driveId) : "");
+
+  // IntersectionObserver: start/stop video based on visibility
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Play/pause based on visibility
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    if (isVisible) {
+      vid.play().catch(() => {
+        /* autoplay blocked — thumbnail stays visible */
+      });
+    } else {
+      vid.pause();
+    }
+  }, [isVisible, videoReady]);
+
+  return (
+    <motion.div ref={cardRef} variants={itemVariants} style={{ transformStyle: "preserve-3d" }}>
+      <TiltCard intensity={8} className="cursor-pointer">
+        <motion.button
+          onClick={onOpen}
+          whileHover={{ scale: 1.03, y: -4 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
+        >
+          {/* Thumbnail (always present as base layer) */}
+          <img
+            src={item.thumb}
+            alt={item.title ?? `Project ${index + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              videoReady && isVisible ? "opacity-0" : "opacity-100"
+            }`}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src =
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%2318181b'/%3E%3Cpath d='M40 35 L65 50 L40 65 Z' fill='%233f3f46'/%3E%3C/svg%3E";
+            }}
+          />
+
+          {/* Inline video (loads in background, plays when scrolled into view) */}
+          {videoUrl && !videoError && (
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onCanPlayThrough={() => setVideoReady(true)}
+              onError={() => setVideoError(true)}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                videoReady && isVisible ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          )}
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent" />
+
+          {/* Play button hint on hover */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <motion.span
+              initial={{ scale: 0.5 }}
+              whileHover={{ scale: 1.1 }}
+              className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow"
+            >
+              <Play className="text-primary-foreground ml-0.5" size={20} fill="currentColor" />
+            </motion.span>
+          </div>
+
+          {/* Live indicator when video is playing */}
+          {videoReady && isVisible && !videoError && (
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-[9px] uppercase tracking-wider text-white/80 font-semibold">Preview</span>
+            </div>
+          )}
+
+          {item.title && (
+            <p className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold text-foreground line-clamp-2">
+              {item.title}
+            </p>
+          )}
+        </motion.button>
+      </TiltCard>
+    </motion.div>
+  );
+}
+
 export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridProps) {
   const [active, setActive] = useState<number | null>(null);
   const colClass =
@@ -52,41 +176,13 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
         style={{ perspective: 800 }}
       >
         {items.map((it, i) => (
-          <motion.div key={i} variants={itemVariants} style={{ transformStyle: "preserve-3d" }}>
-            <TiltCard intensity={8} className="cursor-pointer">
-              <motion.button
-                onClick={() => setActive(i)}
-                whileHover={{ scale: 1.03, y: -4 }}
-                transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
-              >
-                <img
-                  src={it.thumb}
-                  alt={it.title ?? `Project ${i + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%2318181b'/%3E%3Cpath d='M40 35 L65 50 L40 65 Z' fill='%233f3f46'/%3E%3C/svg%3E";
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <motion.span
-                    initial={{ scale: 0.5 }}
-                    whileHover={{ scale: 1.1 }}
-                    className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow"
-                  >
-                    <Play className="text-primary-foreground ml-0.5" size={20} fill="currentColor"/>
-                  </motion.span>
-                </div>
-                {it.title && (
-                  <p className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold text-foreground line-clamp-2">
-                    {it.title}
-                  </p>
-                )}
-              </motion.button>
-            </TiltCard>
-          </motion.div>
+          <VideoCard
+            key={i}
+            item={it}
+            index={i}
+            aspectClass={aspectClass}
+            onOpen={() => setActive(i)}
+          />
         ))}
       </motion.div>
 

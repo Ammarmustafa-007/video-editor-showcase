@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { getDriveDirectLink } from '@/lib/videoConfig';
 import { Loader2 } from 'lucide-react';
 
@@ -16,8 +16,16 @@ export function DriveVideoPlayer({
 }: DriveVideoPlayerProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   const videoUrl = getDriveDirectLink(fileId);
+
+  // Attempt eager load when component mounts
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid || hasError) return;
+    vid.load();
+  }, [fileId, hasError]);
 
   if (!fileId) {
     return (
@@ -48,11 +56,13 @@ export function DriveVideoPlayer({
         />
       ) : (
         <video 
+          ref={videoRef}
           className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
           autoPlay 
           loop 
           muted 
           playsInline
+          preload="auto"
           onCanPlay={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
           {...props}
