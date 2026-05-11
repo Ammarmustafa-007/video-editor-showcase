@@ -4,6 +4,7 @@ import { ArrowRight, Play } from "lucide-react";
 import { useRef, lazy, Suspense } from "react";
 import portrait from "@/assets/portrait-hero.jpg";
 import { TiltCard } from "@/components/site/TiltCard";
+import { useIsMobile } from "@/hooks/useIsMobile";
 const ThreeBackground = lazy(() => import("@/components/ThreeBackground").then(m => ({ default: m.ThreeBackground })));
 import { TimelineNavigation } from "@/components/site/TimelineNavigation";
 
@@ -38,44 +39,49 @@ type SectionConfig = {
 
 function SectionWrapper({ id, children, entry = "bottom" }: SectionConfig) {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
 
-  // Base smooth opacity
+  // Base smooth opacity — simpler on mobile
   const rawOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-  const opacity = useSpring(rawOpacity, { stiffness: 100, damping: 25 });
+  const opacity = isMobile ? rawOpacity : useSpring(rawOpacity, { stiffness: 100, damping: 25 });
 
-  // 3D perspective-driven entry based on direction
+  // 3D perspective-driven entry based on direction — disabled on mobile
   const rawY = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    entry === "zoom" ? [0, 0, 0, 0] : [80, 0, 0, -40]
+    isMobile ? [30, 0, 0, 0] : entry === "zoom" ? [0, 0, 0, 0] : [80, 0, 0, -40]
   );
   const rawX = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    entry === "left" ? [-60, 0, 0, 0] : entry === "right" ? [60, 0, 0, 0] : [0, 0, 0, 0]
+    isMobile ? [0, 0, 0, 0] : entry === "left" ? [-60, 0, 0, 0] : entry === "right" ? [60, 0, 0, 0] : [0, 0, 0, 0]
   );
   const rawScale = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    entry === "zoom" ? [0.85, 1, 1, 0.92] : [0.95, 1, 1, 0.97]
+    isMobile ? [1, 1, 1, 1] : entry === "zoom" ? [0.85, 1, 1, 0.92] : [0.95, 1, 1, 0.97]
   );
   const rawRotateY = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    entry === "left" ? [-8, 0, 0, 0] : entry === "right" ? [8, 0, 0, 0] : [0, 0, 0, 0]
+    [0, 0, 0, 0]
   );
 
-  const y = useSpring(rawY, { stiffness: 80, damping: 20 });
-  const x = useSpring(rawX, { stiffness: 80, damping: 20 });
-  const scale = useSpring(rawScale, { stiffness: 100, damping: 22 });
-  const rotateY = useSpring(rawRotateY, { stiffness: 80, damping: 20 });
+  // Skip springs on mobile — they cause jank on low-end GPUs
+  const y = isMobile ? rawY : useSpring(rawY, { stiffness: 80, damping: 20 });
+  const x = isMobile ? rawX : useSpring(rawX, { stiffness: 80, damping: 20 });
+  const scale = isMobile ? rawScale : useSpring(rawScale, { stiffness: 100, damping: 22 });
+  const rotateY = isMobile ? rawRotateY : useSpring(rawRotateY, { stiffness: 80, damping: 20 });
 
   return (
     <motion.section
       id={id}
       ref={ref}
-      style={{ scale, opacity, y, x, rotateY, transformPerspective: 1200 }}
+      style={isMobile
+        ? { opacity, y }
+        : { scale, opacity, y, x, rotateY, transformPerspective: 1200 }
+      }
       className="relative z-10 flex flex-col justify-center py-6 md:py-10"
     >
       <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem]">
@@ -116,11 +122,17 @@ function HomePage() {
     }
   };
 
+  const isMobile = useIsMobile();
+
   return (
     <>
-      <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
-        <ThreeBackground />
-      </Suspense>
+      {/* Skip heavy WebGL on mobile to prevent jank */}
+      {!isMobile && (
+        <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
+          <ThreeBackground />
+        </Suspense>
+      )}
+      {isMobile && <div className="fixed inset-0 bg-brand-navy-deep -z-10" />}
       <TimelineNavigation />
 
       <section id="home" ref={ref} className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-16">

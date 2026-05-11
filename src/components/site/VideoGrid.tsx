@@ -3,6 +3,7 @@ import { Play, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { TiltCard } from "@/components/site/TiltCard";
 import { DriveVideoPlayer } from "@/components/ui/drive-video-player";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export type VideoItem = {
   thumb: string;
@@ -40,11 +41,13 @@ function VideoCard({
   index,
   aspectClass,
   onOpen,
+  isMobile,
 }: {
   item: VideoItem;
   index: number;
   aspectClass: string;
   onOpen: () => void;
+  isMobile: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -116,8 +119,8 @@ function VideoCard({
             }}
           />
 
-          {/* Google Drive iframe preview (muted autoplay via embed) */}
-          {hasDriveId && isVisible && (
+          {/* Google Drive iframe preview (muted autoplay via embed) — skip on mobile */}
+          {hasDriveId && isVisible && !isMobile && (
             <iframe
               src={drivePreviewUrl}
               allow="autoplay; encrypted-media"
@@ -129,8 +132,8 @@ function VideoCard({
             />
           )}
 
-          {/* Direct MP4 video (non-Drive sources) */}
-          {hasDirectSrc && !videoError && (
+          {/* Direct MP4 video (non-Drive sources) — skip on mobile */}
+          {hasDirectSrc && !videoError && !isMobile && (
             <video
               ref={videoRef}
               src={item.src}
