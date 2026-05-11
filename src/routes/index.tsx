@@ -19,6 +19,7 @@ import { TalkingHeadPage } from "@/components/sections/work.talking-head";
 import { MontagePage } from "@/components/sections/work.montage";
 import { LongFormPage } from "@/components/sections/work.long-form";
 import { ContactPage } from "@/components/sections/contact";
+import { BrandsSection } from "@/components/sections/brands";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -118,7 +119,8 @@ function HomePage() {
   const handleScroll = (id: string) => {
     const element = document.getElementById(id.substring(1));
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const top = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
     }
   };
 
@@ -196,7 +198,7 @@ function HomePage() {
                 onClick={() => handleScroll("#contact")}
                 whileHover={{ scale: 1.08, boxShadow: "0 0 35px rgba(255,215,0,0.5)" }}
                 whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 bg-brand-yellow text-black bg-amber-300 font-semibold px-5 py-2.5 rounded-full shadow-glow transition-all text-sm"
+                className="group inline-flex items-center gap-2 bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/50 text-brand-yellow font-semibold px-5 py-2.5 rounded-full shadow-glow transition-all text-sm"
               >
                 Hire Me <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
               </motion.button>
@@ -204,7 +206,7 @@ function HomePage() {
                 onClick={() => handleScroll("#weddings")}
                 whileHover={{ scale: 1.08, borderColor: "rgba(255,215,0,0.6)" }}
                 whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 border border-border text-foreground font-semibold px-5 py-2.5 rounded-full transition-all text-sm"
+                className="group inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 text-foreground font-semibold px-5 py-2.5 rounded-full transition-all text-sm hover:bg-white/10"
               >
                 <Play size={14} className="group-hover:text-brand-yellow" /> View Showreels
               </motion.button>
@@ -245,6 +247,8 @@ function HomePage() {
           <span className="text-[9px] uppercase tracking-[0.3em] text-white/30">Scroll</span>
         </motion.div>
       </section>
+
+      <BrandsSection />
 
       <div className="flex flex-col w-full">
         <SectionWrapper id="about" entry="left">

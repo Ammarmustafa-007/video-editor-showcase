@@ -46,11 +46,13 @@ export function SkillsPage() {
         {skills.map((s) => (
           <motion.div key={s.title} variants={cardVariants} style={{ transformStyle: "preserve-3d" }}>
             <TiltCard intensity={10} className="h-full p-8 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors group">
-              <motion.div whileHover={{ rotate: 15, scale: 1.2 }} transition={{ type: "spring", stiffness: 300 }}>
-                <s.icon className="text-brand-yellow" size={26}/>
-              </motion.div>
-              <h3 className="mt-3 font-display text-lg font-bold text-foreground">{s.title}</h3>
-              <p className="mt-1.5 text-xs text-muted-foreground">{s.desc}</p>
+              <div className="flex flex-col justify-center items-center text-center w-full h-full">
+                <motion.div whileHover={{ rotate: 15, scale: 1.2 }} transition={{ type: "spring", stiffness: 300 }}>
+                  <s.icon className="text-brand-yellow" size={26}/>
+                </motion.div>
+                <h3 className="mt-3 font-display text-lg font-bold text-foreground">{s.title}</h3>
+                <p className="mt-1.5 text-xs text-muted-foreground">{s.desc}</p>
+              </div>
             </TiltCard>
           </motion.div>
         ))}

@@ -47,13 +47,15 @@ export function DriveVideoPlayer({
       
       {/* Fallback to Google Drive iframe if the direct video tag fails */}
       {hasError ? (
-        <iframe
-          src={`https://drive.google.com/file/d/${fileId}/preview`}
-          allow="autoplay"
-          allowFullScreen
-          className={`w-full h-full border-none bg-black ${className}`}
-          onLoad={() => setIsLoaded(true)}
-        />
+        <div className="absolute inset-0 overflow-hidden bg-black z-10">
+          <iframe
+            src={`https://drive.google.com/file/d/${fileId}/preview`}
+            allow="autoplay"
+            allowFullScreen
+            className="absolute w-full h-[calc(100%+60px)] top-[-60px] left-0 border-none"
+            onLoad={() => setIsLoaded(true)}
+          />
+        </div>
       ) : (
         <video 
           ref={videoRef}
@@ -63,6 +65,8 @@ export function DriveVideoPlayer({
           muted 
           playsInline
           preload="auto"
+          disablePictureInPicture
+          controlsList="nodownload noplaybackrate"
           onCanPlay={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
           {...props}

@@ -23,10 +23,13 @@ export function SiteHeader() {
 
   const handleScroll = (id: string) => {
     setOpen(false);
-    const element = document.getElementById(id.substring(1));
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    setTimeout(() => {
+      const element = document.getElementById(id.substring(1));
+      if (element) {
+        const top = element.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 10);
   };
 
   return (

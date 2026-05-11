@@ -36,7 +36,7 @@ export function TiltCard({ children, className = "", intensity = 14 }: TiltCardP
       style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
       className={className}
     >
-      <div style={{ transform: "translateZ(40px)" }}>{children}</div>
+      <div className="w-full h-full" style={{ transform: "translateZ(10px)" }}>{children}</div>
     </motion.div>
   );
 }

@@ -4,14 +4,14 @@ import l2 from "@/assets/long-2.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
+import { VIDEOS, getDriveThumbnail } from "@/lib/videoConfig";
 
-
-import { VIDEOS } from "@/lib/videoConfig";
-
-const items: VideoItem[] = [
-  { thumb: l2, title: VIDEOS.longForm[0]?.title, driveId: VIDEOS.longForm[0]?.id },
-  { thumb: l1, title: VIDEOS.longForm[1]?.title, driveId: VIDEOS.longForm[1]?.id },
-];
+const items: VideoItem[] = VIDEOS.longForm.map((v, i) => ({
+  thumb: getDriveThumbnail(v.id),
+  fallbackThumb: i % 2 === 0 ? l1 : l2,
+  title: v.title,
+  driveId: v.id,
+}));
 
 export function LongFormPage() {
   return (

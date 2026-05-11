@@ -4,14 +4,14 @@ import t2 from "@/assets/talking-2.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
+import { VIDEOS, getDriveThumbnail } from "@/lib/videoConfig";
 
-
-import { VIDEOS } from "@/lib/videoConfig";
-
-const items: VideoItem[] = [
-  { thumb: t1, title: VIDEOS.talkingHead[0]?.title, driveId: VIDEOS.talkingHead[0]?.id }, 
-  { thumb: t2, title: VIDEOS.talkingHead[1]?.title, driveId: VIDEOS.talkingHead[1]?.id }, 
-];
+const items: VideoItem[] = VIDEOS.talkingHead.map((v, i) => ({
+  thumb: getDriveThumbnail(v.id),
+  fallbackThumb: i % 2 === 0 ? t1 : t2,
+  title: v.title,
+  driveId: v.id,
+}));
 
 export function TalkingHeadPage() {
   return (

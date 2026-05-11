@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 
 export type VideoItem = {
   thumb: string;
+  fallbackThumb?: string;
   title?: string;
   /** Direct MP4 URL or Google Drive preview URL (e.g. https://drive.google.com/file/d/<ID>/preview) */
   src?: string;
@@ -59,9 +60,6 @@ function VideoCard({
   // Determine what kind of video source we have
   const hasDriveId = !!item.driveId;
   const hasDirectSrc = !!item.src && !item.src.includes("drive.google.com");
-  const drivePreviewUrl = hasDriveId
-    ? `https://drive.google.com/file/d/${item.driveId}/preview`
-    : "";
 
   // IntersectionObserver: track visibility
   useEffect(() => {
@@ -92,7 +90,7 @@ function VideoCard({
 
   // Is the preview showing?
   const previewActive = isVisible && (
-    (hasDriveId && iframeLoaded) ||
+    (hasDriveId && videoReady) ||
     (hasDirectSrc && videoReady)
   );
 
@@ -114,23 +112,15 @@ function VideoCard({
             }`}
             loading="lazy"
             onError={(e) => {
-              e.currentTarget.src =
-                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%2318181b'/%3E%3Cpath d='M40 35 L65 50 L40 65 Z' fill='%233f3f46'/%3E%3C/svg%3E";
+              if (item.fallbackThumb && !e.currentTarget.src.includes(item.fallbackThumb)) {
+                // If Google Drive fails to provide a thumbnail, gracefully degrade to our stylized local placeholders
+                e.currentTarget.src = item.fallbackThumb;
+              } else {
+                e.currentTarget.src =
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%2318181b'/%3E%3Cpath d='M40 35 L65 50 L40 65 Z' fill='%233f3f46'/%3E%3C/svg%3E";
+              }
             }}
           />
-
-          {/* Google Drive iframe preview (muted autoplay via embed) — skip on mobile */}
-          {hasDriveId && isVisible && !isMobile && (
-            <iframe
-              src={drivePreviewUrl}
-              allow="autoplay; encrypted-media"
-              className={`absolute inset-0 w-full h-full border-none transition-opacity duration-700 pointer-events-none ${
-                iframeLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              onLoad={() => setIframeLoaded(true)}
-              tabIndex={-1}
-            />
-          )}
 
           {/* Direct MP4 video (non-Drive sources) — skip on mobile */}
           {hasDirectSrc && !videoError && !isMobile && (
@@ -140,6 +130,8 @@ function VideoCard({
               muted
               loop
               playsInline
+              disablePictureInPicture
+              controlsList="nodownload noplaybackrate"
               preload="metadata"
               onCanPlayThrough={() => setVideoReady(true)}
               onError={() => setVideoError(true)}
@@ -197,7 +189,7 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-30px" }}
-        className={`grid gap-3 ${colClass}`}
+        className={`grid gap-6 md:gap-8 ${colClass}`}
         style={{ perspective: 800 }}
       >
         {items.map((it, i) => (
@@ -237,28 +229,30 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
               exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card"
+              className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card group"
               style={{ transformStyle: "preserve-3d" }}
             >
+              {/* Inner Close Button - visible on hover over the player */}
+              <button
+                onClick={() => setActive(null)}
+                className="absolute top-2 right-2 md:top-4 md:right-4 z-[50] w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-red-500 hover:text-white hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+                aria-label="Close video"
+              >
+                <X size={20} />
+              </button>
+              
               {items[active].driveId ? (
                 <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full aspect-video bg-black" />
               ) : items[active].src ? (
-                items[active].src!.includes("drive.google.com") ? (
-                  <iframe
-                    src={items[active].src}
-                    allow="autoplay"
-                    allowFullScreen
-                    className="w-full aspect-video bg-black"
-                  />
-                ) : (
-                  <video
-                    src={items[active].src}
-                    controls
-                    autoPlay
-                    playsInline
-                    className="w-full aspect-video bg-black"
-                  />
-                )
+                <video
+                  src={items[active].src}
+                  controls
+                  autoPlay
+                  playsInline
+                  disablePictureInPicture
+                  controlsList="nodownload noplaybackrate"
+                  className="w-full aspect-video bg-black"
+                />
               ) : (
                 <div className="aspect-video flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
                   <img src={items[active].thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20"/>

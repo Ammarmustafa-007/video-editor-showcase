@@ -5,14 +5,14 @@ import { Reveal } from "@/components/site/Reveal";
 
 const jobs = [
   {
-    period: "2025 – 2026",
-    location: "Remote · Qatar",
-    role: "Freelance Video Editor",
-    company: "EVOLVEMARKETING QATAR",
+    period: "2023 – 2024",
+    location: "On-site · Lahore",
+    role: "Video Editing Intern",
+    company: "STYLE STUDIO",
     points: [
-      "Edited restaurant niche content and montage videos for major brands, including McLaren.",
-      "Managed end-to-end remote workflows: raw footage, organization, delivery — independently.",
-      "Developed advanced expertise in color grading, video enhancement, and full-scale post-production.",
+      "Learned video editing fundamentals through hands-on project work — construction and montage videos.",
+      "Assisted in editing using Adobe Premiere Pro, with basic motion graphics and visual enhancements.",
+      "Gained practical experience in project creation, workflow management, and creative requirements.",
     ],
   },
   {
@@ -26,14 +26,14 @@ const jobs = [
     ],
   },
   {
-    period: "2023 – 2024",
-    location: "On-site · Lahore",
-    role: "Video Editing Intern",
-    company: "STYLE STUDIO",
+    period: "2025 – 2026",
+    location: "Remote · Qatar",
+    role: "Freelance Video Editor",
+    company: "EVOLVEMARKETING QATAR",
     points: [
-      "Learned video editing fundamentals through hands-on project work — construction and montage videos.",
-      "Assisted in editing using Adobe Premiere Pro, with basic motion graphics and visual enhancements.",
-      "Gained practical experience in project creation, workflow management, and creative requirements.",
+      "Edited restaurant niche content and montage videos for major brands, including McLaren.",
+      "Managed end-to-end remote workflows: raw footage, organization, delivery — independently.",
+      "Developed advanced expertise in color grading, video enhancement, and full-scale post-production.",
     ],
   },
 ];
