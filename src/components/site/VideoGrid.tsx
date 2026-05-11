@@ -1,9 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, X, Volume2, VolumeX } from "lucide-react";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { Play, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { TiltCard } from "@/components/site/TiltCard";
 import { DriveVideoPlayer } from "@/components/ui/drive-video-player";
-import { getDriveDirectLink } from "@/lib/videoConfig";
 
 export type VideoItem = {
   thumb: string;
@@ -50,13 +49,18 @@ function VideoCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
-  // Get a playable video URL (direct MP4 or Google Drive direct link)
-  const videoUrl = item.src ?? (item.driveId ? getDriveDirectLink(item.driveId) : "");
+  // Determine what kind of video source we have
+  const hasDriveId = !!item.driveId;
+  const hasDirectSrc = !!item.src && !item.src.includes("drive.google.com");
+  const drivePreviewUrl = hasDriveId
+    ? `https://drive.google.com/file/d/${item.driveId}/preview`
+    : "";
 
-  // IntersectionObserver: start/stop video based on visibility
+  // IntersectionObserver: track visibility
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
@@ -71,19 +75,23 @@ function VideoCard({
     return () => observer.disconnect();
   }, []);
 
-  // Play/pause based on visibility
+  // Play/pause direct video based on visibility
   useEffect(() => {
     const vid = videoRef.current;
-    if (!vid) return;
+    if (!vid || !hasDirectSrc) return;
 
     if (isVisible) {
-      vid.play().catch(() => {
-        /* autoplay blocked — thumbnail stays visible */
-      });
+      vid.play().catch(() => {});
     } else {
       vid.pause();
     }
-  }, [isVisible, videoReady]);
+  }, [isVisible, videoReady, hasDirectSrc]);
+
+  // Is the preview showing?
+  const previewActive = isVisible && (
+    (hasDriveId && iframeLoaded) ||
+    (hasDirectSrc && videoReady)
+  );
 
   return (
     <motion.div ref={cardRef} variants={itemVariants} style={{ transformStyle: "preserve-3d" }}>
@@ -99,7 +107,7 @@ function VideoCard({
             src={item.thumb}
             alt={item.title ?? `Project ${index + 1}`}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-              videoReady && isVisible ? "opacity-0" : "opacity-100"
+              previewActive ? "opacity-0" : "opacity-100"
             }`}
             loading="lazy"
             onError={(e) => {
@@ -108,11 +116,24 @@ function VideoCard({
             }}
           />
 
-          {/* Inline video (loads in background, plays when scrolled into view) */}
-          {videoUrl && !videoError && (
+          {/* Google Drive iframe preview (muted autoplay via embed) */}
+          {hasDriveId && isVisible && (
+            <iframe
+              src={drivePreviewUrl}
+              allow="autoplay; encrypted-media"
+              className={`absolute inset-0 w-full h-full border-none transition-opacity duration-700 pointer-events-none ${
+                iframeLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setIframeLoaded(true)}
+              tabIndex={-1}
+            />
+          )}
+
+          {/* Direct MP4 video (non-Drive sources) */}
+          {hasDirectSrc && !videoError && (
             <video
               ref={videoRef}
-              src={videoUrl}
+              src={item.src}
               muted
               loop
               playsInline
@@ -126,10 +147,10 @@ function VideoCard({
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent pointer-events-none" />
 
           {/* Play button hint on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             <motion.span
               initial={{ scale: 0.5 }}
               whileHover={{ scale: 1.1 }}
@@ -139,16 +160,16 @@ function VideoCard({
             </motion.span>
           </div>
 
-          {/* Live indicator when video is playing */}
-          {videoReady && isVisible && !videoError && (
-            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5">
+          {/* Live indicator when preview is active */}
+          {previewActive && (
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 z-10">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
               <span className="text-[9px] uppercase tracking-wider text-white/80 font-semibold">Preview</span>
             </div>
           )}
 
           {item.title && (
-            <p className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold text-foreground line-clamp-2">
+            <p className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold text-foreground line-clamp-2 z-10">
               {item.title}
             </p>
           )}
@@ -214,7 +235,6 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
               className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card"
               style={{ transformStyle: "preserve-3d" }}
             >
-
               {items[active].driveId ? (
                 <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full aspect-video bg-black" />
               ) : items[active].src ? (
