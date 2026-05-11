@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import { useRef } from "react";
+import { useRef, lazy, Suspense } from "react";
 import portrait from "@/assets/portrait-hero.jpg";
 import { TiltCard } from "@/components/site/TiltCard";
-import { ThreeBackground } from "@/components/ThreeBackground";
+const ThreeBackground = lazy(() => import("@/components/ThreeBackground").then(m => ({ default: m.ThreeBackground })));
 import { TimelineNavigation } from "@/components/site/TimelineNavigation";
 
 import { AboutPage } from "@/components/sections/about";
@@ -118,7 +118,9 @@ function HomePage() {
 
   return (
     <>
-      <ThreeBackground />
+      <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
+        <ThreeBackground />
+      </Suspense>
       <TimelineNavigation />
 
       <section id="home" ref={ref} className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-16">

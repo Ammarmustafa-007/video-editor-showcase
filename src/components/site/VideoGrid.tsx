@@ -2,12 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, X } from "lucide-react";
 import { useState } from "react";
 import { TiltCard } from "@/components/site/TiltCard";
+import { DriveVideoPlayer } from "@/components/ui/drive-video-player";
 
 export type VideoItem = {
   thumb: string;
   title?: string;
   /** Direct MP4 URL or Google Drive preview URL (e.g. https://drive.google.com/file/d/<ID>/preview) */
   src?: string;
+  driveId?: string;
 };
 
 type VideoGridProps = {
@@ -63,6 +65,9 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                   alt={it.title ?? `Project ${i + 1}`}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%2318181b'/%3E%3Cpath d='M40 35 L65 50 L40 65 Z' fill='%233f3f46'/%3E%3C/svg%3E";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -96,6 +101,14 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
             onClick={() => setActive(null)}
             style={{ perspective: 1200 }}
           >
+            {/* Screen-level Close Button */}
+            <button
+              onClick={() => setActive(null)}
+              className="absolute top-6 right-6 md:top-8 md:right-8 z-[110] w-12 h-12 rounded-full bg-card/50 backdrop-blur-md border border-border text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground hover:scale-110 transition-all"
+              aria-label="Close"
+            >
+              <X size={24}/>
+            </button>
             <motion.div
               initial={{ opacity: 0, scale: 0.6, rotateX: -30, y: 80 }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
@@ -105,14 +118,10 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
               className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card"
               style={{ transformStyle: "preserve-3d" }}
             >
-              <button
-                onClick={() => setActive(null)}
-                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-brand-navy-deep/80 text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground transition-colors"
-                aria-label="Close"
-              >
-                <X size={16}/>
-              </button>
-              {items[active].src ? (
+
+              {items[active].driveId ? (
+                <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full aspect-video bg-black" />
+              ) : items[active].src ? (
                 items[active].src!.includes("drive.google.com") ? (
                   <iframe
                     src={items[active].src}

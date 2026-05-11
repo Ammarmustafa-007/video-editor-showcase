@@ -1,13 +1,16 @@
 import l1 from "@/assets/long-1.jpg";
 import l2 from "@/assets/long-2.jpg";
+
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
 
 
 
+import { VIDEOS } from "@/lib/videoConfig";
+
 const items: VideoItem[] = [
-  { thumb: l2, title: "Everyone talks about moving fast and..." },
-  { thumb: l1, title: "Najam Knowledge — We pay for school" },
+  { thumb: l2, title: VIDEOS.longForm[0]?.title, driveId: VIDEOS.longForm[0]?.id },
+  { thumb: l1, title: VIDEOS.longForm[1]?.title, driveId: VIDEOS.longForm[1]?.id },
 ];
 
 export function LongFormPage() {
