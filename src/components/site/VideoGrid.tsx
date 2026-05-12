@@ -21,6 +21,28 @@ type VideoGridProps = {
   aspect?: "video" | "portrait" | "square";
 };
 
+/* Map grid aspect to lightbox sizing classes */
+function getLightboxClasses(aspect: "video" | "portrait" | "square") {
+  switch (aspect) {
+    case "portrait":
+      return {
+        maxW: "max-w-sm",
+        aspectCls: "aspect-[9/16]",
+      };
+    case "square":
+      return {
+        maxW: "max-w-xl",
+        aspectCls: "aspect-square",
+      };
+    case "video":
+    default:
+      return {
+        maxW: "max-w-4xl",
+        aspectCls: "aspect-video",
+      };
+  }
+}
+
 const containerVariants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06 } },
@@ -237,13 +259,16 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
             >
               <X size={24}/>
             </button>
+            {(() => {
+              const lb = getLightboxClasses(aspect);
+              return (
             <motion.div
               initial={{ opacity: 0, scale: 0.6, rotateX: -30, y: 80 }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-card group"
+              className={`relative w-full ${lb.maxW} rounded-xl bg-card border border-border shadow-card group`}
               style={{ transformStyle: "preserve-3d" }}
             >
               {/* Inner Close Button - visible on hover over the player */}
@@ -255,34 +280,39 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                 <X size={20} />
               </button>
               
-              {items[active].driveId ? (
-                <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full aspect-video bg-black" />
-              ) : items[active].src ? (
-                <video
-                  src={items[active].src}
-                  controls
-                  autoPlay
-                  playsInline
-                  disablePictureInPicture
-                  controlsList="nodownload noplaybackrate"
-                  className="w-full aspect-video bg-black"
-                />
-              ) : (
-                <div className="aspect-video flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
-                  <img src={items[active].thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20"/>
-                  <div className="relative">
-                    <Play className="text-brand-yellow mx-auto" size={40}/>
-                    <p className="mt-3 font-display text-lg font-bold text-foreground">Video coming soon</p>
-                    <p className="mt-1.5 text-xs text-muted-foreground">Add a Google Drive preview URL or MP4 link to play here.</p>
+              {/* Video area with aspect ratio */}
+              <div className={`relative w-full ${lb.aspectCls} rounded-t-xl overflow-hidden bg-black`}>
+                {items[active].driveId ? (
+                  <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="absolute inset-0 bg-black" className="object-contain" />
+                ) : items[active].src ? (
+                  <video
+                    src={items[active].src}
+                    controls
+                    autoPlay
+                    playsInline
+                    disablePictureInPicture
+                    controlsList="nodownload noplaybackrate"
+                    className="absolute inset-0 w-full h-full bg-black object-contain"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
+                    <img src={items[active].thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20"/>
+                    <div className="relative">
+                      <Play className="text-brand-yellow mx-auto" size={40}/>
+                      <p className="mt-3 font-display text-lg font-bold text-foreground">Video coming soon</p>
+                      <p className="mt-1.5 text-xs text-muted-foreground">Add a Google Drive preview URL or MP4 link to play here.</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               {items[active].title && (
-                <div className="p-4 border-t border-border">
+                <div className="p-4 border-t border-border rounded-b-xl">
                   <p className="font-display font-bold text-sm text-foreground">{items[active].title}</p>
                 </div>
               )}
             </motion.div>
+              );
+            })()}
             </motion.div>
           )}
         </AnimatePresence>,

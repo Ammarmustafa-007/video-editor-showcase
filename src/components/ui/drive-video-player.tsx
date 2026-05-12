@@ -36,7 +36,7 @@ export function DriveVideoPlayer({
   }
 
   return (
-    <div className={`relative w-full h-full bg-zinc-900 overflow-hidden ${containerClassName}`}>
+    <div className={`relative w-full h-full bg-black overflow-hidden ${containerClassName}`}>
       {/* Loading State */}
       {!isLoaded && !hasError && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/80 z-10 backdrop-blur-sm">
@@ -45,21 +45,33 @@ export function DriveVideoPlayer({
         </div>
       )}
       
-      {/* Fallback to Google Drive iframe if the direct video tag fails */}
+      {/* Fallback to Google Drive iframe if the direct video tag fails.
+         The iframe is oversized and offset to crop out Drive's top bar
+         ("open in new window" link) and bottom info bar. */}
       {hasError ? (
         <div className="absolute inset-0 overflow-hidden bg-black z-10">
           <iframe
             src={`https://drive.google.com/file/d/${fileId}/preview`}
             allow="autoplay"
             allowFullScreen
-            className="absolute w-full h-[calc(100%+60px)] top-[-60px] left-0 border-none"
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: 'calc(100% + 120px)',
+              top: '-60px',
+              left: 0,
+              border: 'none',
+              pointerEvents: 'auto',
+            }}
             onLoad={() => setIsLoaded(true)}
           />
+          {/* Block clicks on Drive's top bar to prevent "open in new window" */}
+          <div className="absolute top-0 left-0 w-full h-[60px] bg-black z-20" />
         </div>
       ) : (
         <video 
           ref={videoRef}
-          className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+          className={`w-full h-full object-contain transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
           autoPlay 
           loop 
           muted 
