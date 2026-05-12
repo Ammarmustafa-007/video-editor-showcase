@@ -172,5 +172,9 @@
   .bg-brand-green { background-color: var(--brand-green); }
   .bg-hero-gradient { background: var(--gradient-hero); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
-  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-card { 
+    box-shadow: var(--shadow-card); 
+    transition: box-shadow 0.5s ease-out, border-color 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .shadow-card:hover { box-shadow: 0 0 50px rgba(255, 215, 0, 0.08); }
 }

@@ -1,16 +1,35 @@
-import { Instagram, Mail, Phone, User } from "lucide-react";
+import { Mail, Phone, User } from "lucide-react";
 import { motion } from "framer-motion";
-import portrait from "@/assets/portrait-about.jpg";
+import portrait from "@/assets/portrait-exp.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/site/TiltCard";
 
 const cards = [
-  { icon: Phone, label: "Phone", value: "+92 300 3322338", href: "tel:+923003322338" },
+  { icon: Phone, label: "Phone", value: "+92 300 3322338", href: "https://wa.me/+923003322338?text=Hello" },
   { icon: Mail, label: "Email", value: "connect.qureshiiii@gmail.com", href: "mailto:connect.qureshiiii@gmail.com" },
   { icon: User, label: "Name", value: <>Abdullah <span className="text-brand-yellow">Qureshi</span></> },
-  { icon: Instagram, label: "Instagram", value: "@art_by_qureshii", href: "https://instagram.com/art_by_qureshii" },
-  { icon: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>, label: "LinkedIn", value: "Abdullah Qureshi", href: "https://www.linkedin.com/in/abdullahqureshiii/" },
+  { icon: ({ size = 20 }: { size?: number; className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <defs>
+        <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#FFDC80" />
+          <stop offset="25%" stopColor="#F77737" />
+          <stop offset="50%" stopColor="#E1306C" />
+          <stop offset="75%" stopColor="#C13584" />
+          <stop offset="100%" stopColor="#833AB4" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig-gradient)" strokeWidth="2" />
+      <circle cx="12" cy="12" r="5" stroke="url(#ig-gradient)" strokeWidth="2" />
+      <circle cx="17.5" cy="6.5" r="1.5" fill="url(#ig-gradient)" />
+    </svg>
+  ), label: "Instagram", value: "@art_by_qureshii", href: "https://instagram.com/art_by_qureshii" },
+  { icon: ({ size = 20 }: { size?: number; className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="#0A66C2">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+    </svg>
+  ), label: "LinkedIn", value: "Abdullah Qureshi", href: "https://www.linkedin.com/in/abdullahqureshiii/" },
 ];
 
 const containerVariants = {
@@ -37,7 +56,7 @@ export function ContactPage() {
         <Reveal scale={0.85} rotate={-3}>
           <TiltCard className="rounded-2xl overflow-hidden shadow-card max-w-sm group p-4 bg-card">
             <div className="relative overflow-hidden rounded-2xl w-full flex justify-center items-center">
-              <img src={portrait} alt="Abdullah Qureshi" className="w-full max-w-[280px] h-auto object-contain block rounded-2xl group-hover:scale-105 transition-transform duration-700"/>
+              <img src={portrait} alt="Abdullah Qureshi" className="w-full max-w-[280px] h-auto object-cover object-top block rounded-2xl group-hover:scale-105 transition-transform duration-700"/>
               <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
           </TiltCard>
@@ -60,7 +79,7 @@ export function ContactPage() {
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div whileHover={{ rotate: -15, scale: 1.2 }} transition={{ type: "spring" }}>
-                  <c.icon className="text-brand-yellow" size={20}/>
+                  <c.icon className="text-brand-yellow" size={20} />
                 </motion.div>
                 <p className="mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">{c.label}</p>
                 <p className="mt-1 font-display font-bold text-sm text-foreground break-words">{c.value}</p>

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { TiltCard } from "@/components/site/TiltCard";
 import { DriveVideoPlayer } from "@/components/ui/drive-video-player";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -177,6 +178,18 @@ function VideoCard({
 export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridProps) {
   const [active, setActive] = useState<number | null>(null);
   const isMobile = useIsMobile();
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (active !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [active]);
   const colClass =
     cols === 2 ? "sm:grid-cols-2" : cols === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2 lg:grid-cols-3";
   const aspectClass =
@@ -204,17 +217,18 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
         ))}
       </motion.div>
 
-      {/* 3D popup lightbox */}
-      <AnimatePresence>
-        {active !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-brand-navy-deep/90 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={() => setActive(null)}
-            style={{ perspective: 1200 }}
-          >
+      {/* 3D popup lightbox — rendered via portal to avoid transform ancestor breaking fixed positioning */}
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {active !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] bg-brand-navy-deep/90 backdrop-blur-md flex items-center justify-center p-4"
+              onClick={() => setActive(null)}
+              style={{ perspective: 1200 }}
+            >
             {/* Screen-level Close Button */}
             <button
               onClick={() => setActive(null)}
@@ -269,9 +283,11 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                 </div>
               )}
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }

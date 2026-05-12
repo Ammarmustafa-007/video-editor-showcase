@@ -1,14 +1,21 @@
 import { motion } from "framer-motion";
 
+import adidasLogo from "@/logos/adidas-sport-clothing-brand-logo-editorial-image-v.svg";
+import mercedesLogo from "@/logos/mercedes-benz-9.svg";
+import lenovoLogo from "@/logos/lenovo-2.svg";
+import appleLogo from "@/logos/apple-13.svg";
+import matwLogo from "@/logos/680ae7a0f646ac1f49be95dc_600600p532ednmain1240matw.svg";
+import baseusLogo from "@/logos/PHOTO_2025_10_23_17_49_53_1761214373.svg";
+
+
+
 const brands = [
-  { id: "adidas", type: "icon" },
-  { id: "apple", type: "icon" },
-  { id: "mclaren", type: "icon" },
-  { id: "baseus", type: "text", text: "BASEUS" },
-  { id: "matw", type: "text", text: "MATW" },
-  { id: "najam", type: "text", text: "NAJAM" },
-  { id: "mercedes", type: "text", text: "MERCEDES" },
-  { id: "lenovo", type: "icon" }
+  { id: "adidas", src: adidasLogo },
+  { id: "apple", src: appleLogo },
+  { id: "baseus", src: baseusLogo },
+  { id: "matw", src: matwLogo },
+  { id: "mercedes", src: mercedesLogo },
+  { id: "lenovo", src: lenovoLogo },
 ];
 
 export function BrandsSection() {
@@ -21,7 +28,7 @@ export function BrandsSection() {
         {/* Gradients for fade effect on left and right edges */}
         <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-brand-navy-deep to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-brand-navy-deep to-transparent z-10 pointer-events-none" />
-        
+
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
           transition={{ ease: "linear", duration: 35, repeat: Infinity }}
@@ -30,18 +37,14 @@ export function BrandsSection() {
         >
           {/* Quadruple the list for a seamless, perfectly smooth infinite scroll */}
           {[...brands, ...brands, ...brands, ...brands].map((brand, i) => (
-            <div key={`${brand.id}-${i}`} className="flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity duration-300">
-              {brand.type === "icon" ? (
-                <img 
-                  src={`https://cdn.simpleicons.org/${brand.id}/white`} 
-                  alt={brand.id} 
-                  className="h-8 md:h-10 w-auto object-contain"
+            <div key={`${brand.id}-${i}`} className="flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300">
+              <div className="bg-white rounded-lg px-4 py-2 flex items-center justify-center">
+                <img
+                  src={brand.src}
+                  alt={brand.id}
+                  className="h-10 md:h-12 w-auto max-w-[100px] md:max-w-[130px] object-contain"
                 />
-              ) : (
-                <span className="text-2xl md:text-3xl font-display font-extrabold text-white tracking-widest">
-                  {brand.text}
-                </span>
-              )}
+              </div>
             </div>
           ))}
         </motion.div>

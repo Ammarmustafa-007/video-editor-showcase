@@ -144,9 +144,9 @@ function HomePage() {
               initial={{ opacity: 0, x: -50, filter: "blur(10px)" }}
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.8, type: "spring", bounce: 0.5 }}
-              className="text-[10px] uppercase tracking-[0.4em] text-brand-yellow font-semibold mb-4"
+              className="text-[15px] uppercase tracking-[0.4em] text-brand-yellow font-semibold mb-4 ml-3"
             >
-              My Portfolio
+              Meet 
             </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 60, rotateX: 50 }}
@@ -183,9 +183,9 @@ function HomePage() {
 
             {/* Stats row */}
             <div className="mt-6 flex gap-3">
-              <StatBadge label="Projects" value="50+" delay={0.6} />
-              <StatBadge label="Clients" value="20+" delay={0.75} />
-              <StatBadge label="Years" value="3+" delay={0.9} />
+              <StatBadge label="Projects" value="100+" delay={0.6} />
+              <StatBadge label="Clients" value="250" delay={0.75} />
+              <StatBadge label="Years" value="5+" delay={0.9} />
             </div>
 
             <motion.div
