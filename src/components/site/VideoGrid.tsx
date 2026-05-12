@@ -76,34 +76,26 @@ function VideoCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
-  // Determine what kind of video source we have
   const hasDriveId = !!item.driveId;
   const hasDirectSrc = !!item.src && !item.src.includes("drive.google.com");
 
-  // IntersectionObserver: track visibility
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
+      ([entry]) => setIsVisible(entry.isIntersecting),
       { threshold: 0.3 }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  // Play/pause direct video based on visibility
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid || !hasDirectSrc) return;
-
     if (isVisible) {
       vid.play().catch(() => {});
     } else {
@@ -111,14 +103,16 @@ function VideoCard({
     }
   }, [isVisible, videoReady, hasDirectSrc]);
 
-  // Is the preview showing?
-  const previewActive = isVisible && (
-    (hasDriveId && videoReady) ||
-    (hasDirectSrc && videoReady)
-  );
+  const previewActive =
+    isVisible &&
+    ((hasDriveId && videoReady) || (hasDirectSrc && videoReady));
 
   return (
-    <motion.div ref={cardRef} variants={itemVariants} style={{ transformStyle: "preserve-3d" }}>
+    <motion.div
+      ref={cardRef}
+      variants={itemVariants}
+      style={{ transformStyle: "preserve-3d" }}
+    >
       <TiltCard intensity={8} className="cursor-pointer">
         <motion.button
           onClick={onOpen}
@@ -126,7 +120,7 @@ function VideoCard({
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
         >
-          {/* Thumbnail (always present as base layer) */}
+          {/* Thumbnail */}
           <img
             src={item.thumb}
             alt={item.title ?? `Project ${index + 1}`}
@@ -135,8 +129,10 @@ function VideoCard({
             }`}
             loading="lazy"
             onError={(e) => {
-              if (item.fallbackThumb && !e.currentTarget.src.includes(item.fallbackThumb)) {
-                // If Google Drive fails to provide a thumbnail, gracefully degrade to our stylized local placeholders
+              if (
+                item.fallbackThumb &&
+                !e.currentTarget.src.includes(item.fallbackThumb)
+              ) {
                 e.currentTarget.src = item.fallbackThumb;
               } else {
                 e.currentTarget.src =
@@ -145,7 +141,7 @@ function VideoCard({
             }}
           />
 
-          {/* Direct MP4 video (non-Drive sources) — skip on mobile */}
+          {/* Direct MP4 inline preview — desktop only */}
           {hasDirectSrc && !videoError && !isMobile && (
             <video
               ref={videoRef}
@@ -167,22 +163,28 @@ function VideoCard({
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent pointer-events-none" />
 
-          {/* Play button hint on hover */}
+          {/* Play button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             <motion.span
               initial={{ scale: 0.5 }}
               whileHover={{ scale: 1.1 }}
               className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow"
             >
-              <Play className="text-primary-foreground ml-0.5" size={20} fill="currentColor" />
+              <Play
+                className="text-primary-foreground ml-0.5"
+                size={20}
+                fill="currentColor"
+              />
             </motion.span>
           </div>
 
-          {/* Live indicator when preview is active */}
+          {/* Live preview badge */}
           {previewActive && (
             <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 z-10">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-[9px] uppercase tracking-wider text-white/80 font-semibold">Preview</span>
+              <span className="text-[9px] uppercase tracking-wider text-white/80 font-semibold">
+                Preview
+              </span>
             </div>
           )}
 
@@ -201,21 +203,26 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
   const [active, setActive] = useState<number | null>(null);
   const isMobile = useIsMobile();
 
-  // Lock body scroll when lightbox is open
   useEffect(() => {
-    if (active !== null) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = active !== null ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [active]);
+
   const colClass =
-    cols === 2 ? "sm:grid-cols-2" : cols === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2 lg:grid-cols-3";
+    cols === 2
+      ? "sm:grid-cols-2"
+      : cols === 4
+      ? "sm:grid-cols-2 lg:grid-cols-4"
+      : "sm:grid-cols-2 lg:grid-cols-3";
+
   const aspectClass =
-    aspect === "video" ? "aspect-video" : aspect === "square" ? "aspect-square" : "aspect-[9/16]";
+    aspect === "video"
+      ? "aspect-video"
+      : aspect === "square"
+      ? "aspect-square"
+      : "aspect-[9/16]";
+
+  const lb = getLightboxClasses(aspect);
 
   return (
     <>
@@ -239,85 +246,99 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
         ))}
       </motion.div>
 
-      {/* 3D popup lightbox — rendered via portal to avoid transform ancestor breaking fixed positioning */}
-      {typeof document !== "undefined" && createPortal(
-        <AnimatePresence>
-          {active !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[9999] bg-brand-navy-deep/90 backdrop-blur-md flex items-center justify-center p-4"
-              onClick={() => setActive(null)}
-              style={{ perspective: 1200 }}
-            >
-            {/* Screen-level Close Button */}
-            <button
-              onClick={() => setActive(null)}
-              className="absolute top-6 right-6 md:top-8 md:right-8 z-[110] w-12 h-12 rounded-full bg-card/50 backdrop-blur-md border border-border text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground hover:scale-110 transition-all"
-              aria-label="Close"
-            >
-              <X size={24}/>
-            </button>
-            {(() => {
-              const lb = getLightboxClasses(aspect);
-              return (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.6, rotateX: -30, y: 80 }}
-              animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              className={`relative w-full ${lb.maxW} flex flex-col  bg-card border border-border shadow-card group`}
-              style={{ transformStyle: "preserve-3d", maxHeight: "85vh" }}
-            >
-              {/* Inner Close Button - visible on hover over the player */}
-              <button
+      {/* Lightbox portal */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {active !== null && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[9999] bg-brand-navy-deep/90 backdrop-blur-md flex items-center justify-center p-4"
                 onClick={() => setActive(null)}
-                className="absolute top-2 right-2 md:top-4 md:right-4 z-[50] w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-red-500 hover:text-white hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
-                aria-label="Close video"
+                style={{ perspective: 1200 }}
               >
-                <X size={20} />
-              </button>
-              
-              {/* Video area — fills available space, capped by max-height */}
-              <div className={`relative flex-1 min-h-[200px] rounded-t-xl bg-black ${lb.aspectCls}`}>
-                {items[active].driveId ? (
-                  <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full h-full bg-black" className="object-contain" />
-                ) : items[active].src ? (
-                  <video
-                    src={items[active].src}
-                    controls
-                    autoPlay
-                    playsInline
-                    disablePictureInPicture
-                    controlsList="nodownload noplaybackrate"
-                    className="w-full h-full bg-black object-contain"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
-                    <img src={items[active].thumb} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20"/>
-                    <div className="relative">
-                      <Play className="text-brand-yellow mx-auto" size={40}/>
-                      <p className="mt-3 font-display text-lg font-bold text-foreground">Video coming soon</p>
-                      <p className="mt-1.5 text-xs text-muted-foreground">Add a Google Drive preview URL or MP4 link to play here.</p>
-                    </div>
+                {/* Outer close button */}
+                <button
+                  onClick={() => setActive(null)}
+                  className="absolute top-6 right-6 md:top-8 md:right-8 z-[110] w-12 h-12 rounded-full bg-card/50 backdrop-blur-md border border-border text-foreground flex items-center justify-center hover:bg-brand-yellow hover:text-primary-foreground hover:scale-110 transition-all"
+                  aria-label="Close"
+                >
+                  <X size={24} />
+                </button>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.6, rotateX: -30, y: 80 }}
+                  animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  onClick={(e) => e.stopPropagation()}
+                  className={`relative w-full ${lb.maxW} bg-card border border-border shadow-card rounded-xl overflow-hidden group`}
+                  style={{ transformStyle: "preserve-3d", maxHeight: "93vh" }}
+                >
+                  {/* Inner close button */}
+                  <button
+                    onClick={() => setActive(null)}
+                    className="absolute top-2 right-2 md:top-4 md:right-4 z-[200] w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-red-500 hover:text-white hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+                    aria-label="Close video"
+                  >
+                    <X size={20} />
+                  </button>
+
+                  {/* Video container — aspect ratio is the single source of truth for height */}
+                  <div className={`relative w-full ${lb.aspectCls} bg-black max-h-[85vh]`}>
+                    {items[active].driveId ? (
+                      <DriveVideoPlayer
+                        fileId={items[active].driveId!}
+                        controls
+                        containerClassName="absolute inset-0 w-full h-full"
+                        className="object-contain"
+                      />
+                    ) : items[active].src ? (
+                      <video
+                        src={items[active].src}
+                        controls
+                        autoPlay
+                        playsInline
+                        disablePictureInPicture
+                        controlsList="nodownload noplaybackrate"
+                        className="absolute inset-0 w-full h-full object-contain bg-black"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
+                        <img
+                          src={items[active].thumb}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover opacity-20"
+                        />
+                        <div className="relative">
+                          <Play className="text-brand-yellow mx-auto" size={40} />
+                          <p className="mt-3 font-display text-lg font-bold text-foreground">
+                            Video coming soon
+                          </p>
+                          <p className="mt-1.5 text-xs text-muted-foreground">
+                            Add a Google Drive preview URL or MP4 link to play here.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              {items[active].title && (
-                <div className="flex-shrink-0 p-4 border-t border-border rounded-b-xl">
-                  <p className="font-display font-bold text-sm text-foreground">{items[active].title}</p>
-                </div>
-              )}
-            </motion.div>
-              );
-            })()}
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+
+                  {/* Title bar */}
+                  {items[active].title && (
+                    <div className="p-4 border-t border-border">
+                      <p className="font-display font-bold text-sm text-foreground">
+                        {items[active].title}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </>
   );
 }

@@ -20,7 +20,6 @@ export function DriveVideoPlayer({
   
   const videoUrl = getDriveDirectLink(fileId);
 
-  // Attempt eager load when component mounts
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid || hasError) return;
@@ -44,36 +43,15 @@ export function DriveVideoPlayer({
           <span className="text-white/70 text-sm font-medium animate-pulse">Loading Video...</span>
         </div>
       )}
-      
-      {/* Fallback to Google Drive iframe if the direct video tag fails.
-         The iframe is offset to crop out Drive's top bar only,
-         keeping the video controls at the bottom fully visible. */}
-      {hasError ? (
-        <div className="absolute inset-0 overflow-hidden bg-black z-10">
-          <iframe
-            src={`https://drive.google.com/file/d/${fileId}/preview`}
-            allow="autoplay"
-            allowFullScreen
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: 'calc(100% + 40px)',
-              top: '-40px',
-              left: 0,
-              border: 'none',
-            }}
-            onLoad={() => setIsLoaded(true)}
-          />
-          {/* Cover Drive's top bar area */}
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-black z-20" />
-        </div>
-      ) : (
-        <video 
+
+      {/* Direct video tag — primary strategy */}
+      {!hasError && (
+        <video
           ref={videoRef}
-          className={`w-full h-full object-contain transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
-          autoPlay 
-          loop 
-          muted 
+          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+          autoPlay
+          loop
+          muted
           playsInline
           preload="auto"
           disablePictureInPicture
@@ -84,6 +62,19 @@ export function DriveVideoPlayer({
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
+      )}
+
+      {/* Fallback: Google Drive iframe — only when direct video fails */}
+      {hasError && (
+        <div className="absolute inset-0 bg-black">
+          <iframe
+            src={`https://drive.google.com/file/d/${fileId}/preview`}
+            allow="autoplay"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full border-0"
+            onLoad={() => setIsLoaded(true)}
+          />
+        </div>
       )}
     </div>
   );
