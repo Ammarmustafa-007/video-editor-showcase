@@ -46,8 +46,8 @@ export function DriveVideoPlayer({
       )}
       
       {/* Fallback to Google Drive iframe if the direct video tag fails.
-         The iframe is oversized and offset to crop out Drive's top bar
-         ("open in new window" link) and bottom info bar. */}
+         The iframe is offset to crop out Drive's top bar only,
+         keeping the video controls at the bottom fully visible. */}
       {hasError ? (
         <div className="absolute inset-0 overflow-hidden bg-black z-10">
           <iframe
@@ -57,16 +57,15 @@ export function DriveVideoPlayer({
             style={{
               position: 'absolute',
               width: '100%',
-              height: 'calc(100% + 120px)',
-              top: '-60px',
+              height: 'calc(100% + 40px)',
+              top: '-40px',
               left: 0,
               border: 'none',
-              pointerEvents: 'auto',
             }}
             onLoad={() => setIsLoaded(true)}
           />
-          {/* Block clicks on Drive's top bar to prevent "open in new window" */}
-          <div className="absolute top-0 left-0 w-full h-[60px] bg-black z-20" />
+          {/* Cover Drive's top bar area */}
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-black z-20" />
         </div>
       ) : (
         <video 

@@ -268,8 +268,8 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
               exit={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className={`relative w-full ${lb.maxW} rounded-xl bg-card border border-border shadow-card group`}
-              style={{ transformStyle: "preserve-3d" }}
+              className={`relative w-full ${lb.maxW} flex flex-col  bg-card border border-border shadow-card group`}
+              style={{ transformStyle: "preserve-3d", maxHeight: "85vh" }}
             >
               {/* Inner Close Button - visible on hover over the player */}
               <button
@@ -280,10 +280,10 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                 <X size={20} />
               </button>
               
-              {/* Video area with aspect ratio */}
-              <div className={`relative w-full ${lb.aspectCls} rounded-t-xl overflow-hidden bg-black`}>
+              {/* Video area — fills available space, capped by max-height */}
+              <div className={`relative flex-1 min-h-[200px] rounded-t-xl bg-black ${lb.aspectCls}`}>
                 {items[active].driveId ? (
-                  <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="absolute inset-0 bg-black" className="object-contain" />
+                  <DriveVideoPlayer fileId={items[active].driveId!} controls containerClassName="w-full h-full bg-black" className="object-contain" />
                 ) : items[active].src ? (
                   <video
                     src={items[active].src}
@@ -292,7 +292,7 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                     playsInline
                     disablePictureInPicture
                     controlsList="nodownload noplaybackrate"
-                    className="absolute inset-0 w-full h-full bg-black object-contain"
+                    className="w-full h-full bg-black object-contain"
                   />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
@@ -306,7 +306,7 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                 )}
               </div>
               {items[active].title && (
-                <div className="p-4 border-t border-border rounded-b-xl">
+                <div className="flex-shrink-0 p-4 border-t border-border rounded-b-xl">
                   <p className="font-display font-bold text-sm text-foreground">{items[active].title}</p>
                 </div>
               )}
