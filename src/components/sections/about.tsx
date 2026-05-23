@@ -21,7 +21,7 @@ export function AboutPage() {
         </Reveal>
         <Reveal delay={0.15} x={40}>
           <p className="text-base text-muted-foreground leading-relaxed">
-            Creative Video Editor specializing in storytelling and high-impact visuals. Experienced in
+            Creative Video Editor Abdullah Qureshi specializing in storytelling and high-impact visuals. Experienced in
             <span className="text-brand-yellow font-semibold"> Adobe Premiere Pro</span>, creating engaging content
             for social media, commercials, and branded campaigns. Skilled in cinematic editing, smooth
             transitions, and delivering content that captures attention and drives results.
