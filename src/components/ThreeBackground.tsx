@@ -1,145 +1,94 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Stars, Sphere, TorusKnot, MeshDistortMaterial, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { useScroll } from 'framer-motion';
 
-function AbstractShapes() {
-  const sphereRef1 = useRef<THREE.Mesh>(null);
-  const sphereRef2 = useRef<THREE.Mesh>(null);
-  const torusRef = useRef<THREE.Mesh>(null);
+const NLE_COLORS = [
+  '#2196F3', // Video Blue
+  '#4CAF50', // Audio Green
+  '#9C27B0', // Adjustment Magenta
+  '#FFEB3B', // Title Yellow
+  '#F44336', // Error/Marker Red
+  '#00BCD4', // Cyan
+];
+
+function FloatingClips({ scrollYProgress }: { scrollYProgress: any }) {
   const groupRef = useRef<THREE.Group>(null);
-  
-  const { scrollYProgress } = useScroll();
 
-  useFrame((state) => {
-    const scroll = scrollYProgress.get();
+  // Generate 80 random clip meshes
+  const clips = useMemo(() => {
+    return Array.from({ length: 80 }).map((_, i) => {
+      // Distribute in a cylinder around the Z axis
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 15 + 5;
+      const z = (Math.random() - 0.5) * 40;
+      
+      const isAudio = Math.random() > 0.6;
+      const color = NLE_COLORS[Math.floor(Math.random() * NLE_COLORS.length)];
+      
+      return {
+        id: i,
+        position: [Math.cos(angle) * radius, Math.sin(angle) * radius, z] as [number, number, number],
+        rotation: [Math.random() * Math.PI, Math.random() * Math.PI, 0] as [number, number, number],
+        scale: [Math.random() * 3 + 1, isAudio ? 0.3 : 0.8, Math.random() * 4 + 1] as [number, number, number],
+        color,
+      };
+    });
+  }, []);
+
+  useFrame((state, delta) => {
+    if (!groupRef.current) return;
+    const scroll = scrollYProgress.get() || 0;
     
-    if (groupRef.current) {
-      // The entire group twists and zooms based on scroll
-      groupRef.current.rotation.y = scroll * Math.PI * 4;
-      groupRef.current.rotation.x = scroll * Math.PI * 2;
-      groupRef.current.position.z = scroll * 15 - 5; // Zooms in as you scroll down
-    }
-
-    if (sphereRef1.current) {
-      sphereRef1.current.rotation.x = state.clock.elapsedTime * 0.2 + scroll * Math.PI * 2;
-      sphereRef1.current.rotation.y = state.clock.elapsedTime * 0.3 + scroll * Math.PI * 2;
-    }
-    if (sphereRef2.current) {
-      sphereRef2.current.rotation.x = state.clock.elapsedTime * 0.1 - scroll * Math.PI * 2;
-      sphereRef2.current.rotation.y = state.clock.elapsedTime * 0.2 - scroll * Math.PI * 2;
-    }
-    if (torusRef.current) {
-      torusRef.current.rotation.x = state.clock.elapsedTime * 0.5 + scroll * 10;
-      torusRef.current.rotation.z = state.clock.elapsedTime * 0.2;
-    }
+    // Smoothly rotate the entire group and pull it forward based on scroll
+    groupRef.current.rotation.z = scroll * Math.PI;
+    groupRef.current.position.z = scroll * 30; // Fly through effect
+    
+    // Constant slow rotation
+    groupRef.current.rotation.x += delta * 0.05;
+    groupRef.current.rotation.y += delta * 0.05;
   });
 
   return (
     <group ref={groupRef}>
-      <Float speed={1.5} rotationIntensity={3} floatIntensity={4}>
-        <Sphere ref={sphereRef1} args={[1, 64, 64]} position={[-4, 3, -2]}>
-          <MeshDistortMaterial
-            color="#FFD700" // brand yellow
-            envMapIntensity={1}
-            clearcoat={1}
-            clearcoatRoughness={0.1}
-            metalness={0.8}
-            roughness={0.2}
-            distort={0.4}
-            speed={2}
-          />
-        </Sphere>
-      </Float>
-      
-      <Float speed={2} rotationIntensity={2} floatIntensity={3}>
-        <Sphere ref={sphereRef2} args={[1.5, 64, 64]} position={[4, -2, -4]}>
-          <MeshDistortMaterial
-            color="#2E8B57" // brand green
-            envMapIntensity={1}
-            clearcoat={1}
-            clearcoatRoughness={0.1}
-            metalness={0.8}
-            roughness={0.3}
-            distort={0.6}
-            speed={1.5}
-            wireframe
-          />
-        </Sphere>
-      </Float>
-
-      <Float speed={3} rotationIntensity={5} floatIntensity={5}>
-        <TorusKnot ref={torusRef} args={[1.2, 0.4, 128, 32]} position={[0, -4, -8]}>
-          <MeshTransmissionMaterial
-            backside
-            samples={4}
-            thickness={2}
-            chromaticAberration={1}
-            anisotropy={0.3}
-            distortion={0.5}
-            distortionScale={0.5}
-            temporalDistortion={0.2}
-            iridescence={1}
-            iridescenceIOR={1}
-            iridescenceThicknessRange={[0, 1400]}
-            color="#ffffff"
-          />
-        </TorusKnot>
-      </Float>
+      {clips.map((clip) => (
+        <Float key={clip.id} speed={2} rotationIntensity={1} floatIntensity={2}>
+          <mesh position={clip.position} rotation={clip.rotation} scale={clip.scale}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial
+              color={clip.color}
+              transparent
+              opacity={0.8}
+              roughness={0.2}
+              metalness={0.8}
+              emissive={clip.color}
+              emissiveIntensity={0.2}
+            />
+          </mesh>
+        </Float>
+      ))}
     </group>
   );
 }
 
-function Particles() {
-  const mesh = useRef<THREE.InstancedMesh>(null);
-  const count = 200;
-  const dummy = new THREE.Object3D();
+export function ThreeBackground() {
   const { scrollYProgress } = useScroll();
 
-  useFrame((state) => {
-    const scroll = scrollYProgress.get();
-    const time = state.clock.elapsedTime;
-    
-    if (mesh.current) {
-      for (let i = 0; i < count; i++) {
-        const x = (Math.sin((i + time) * 0.1) * 20);
-        const y = (Math.cos((i + time) * 0.1) * 20) + (scroll * 100) % 20; // Falling effect on scroll
-        const z = (Math.sin((i + time) * 0.1) * 20) - 10 + scroll * 20;
-        
-        dummy.position.set(x, y, z);
-        dummy.rotation.set(time * 0.1 + i, time * 0.1 + i, 0);
-        
-        // Scale pulses
-        const s = Math.sin(time + i) * 0.1 + 0.1;
-        dummy.scale.set(s, s, s);
-        
-        dummy.updateMatrix();
-        mesh.current.setMatrixAt(i, dummy.matrix);
-      }
-      mesh.current.instanceMatrix.needsUpdate = true;
-    }
-  });
-
   return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <boxGeometry args={[0.5, 0.1, 0.1]} /> {/* Tiny cinematic debris/tape shapes */}
-      <meshBasicMaterial color="#FFD700" transparent opacity={0.6} />
-    </instancedMesh>
-  );
-}
-
-export function ThreeBackground() {
-  return (
-    <div className="fixed inset-0 z-[-1] pointer-events-none opacity-50 bg-brand-navy-deep">
-      <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
-        <fog attach="fog" args={['#0a0f18', 5, 30]} />
+    <div className="fixed inset-0 z-0 pointer-events-none bg-gradient-to-b from-brand-navy-deep to-[#050810]">
+      <Canvas 
+        camera={{ position: [0, 0, 15], fov: 60 }} 
+        dpr={[1, 1.5]} 
+        gl={{ antialias: false, powerPreference: "high-performance" }}
+      >
+        <fog attach="fog" args={['#050810', 10, 40]} />
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} />
-        <pointLight position={[-10, -10, -5]} intensity={1} color="#FFD700" />
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={2} />
-        <AbstractShapes />
-        <Particles />
+        <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />
+        <spotLight position={[-10, -10, 5]} intensity={2} color="#2196F3" />
+        
+        <FloatingClips scrollYProgress={scrollYProgress} />
+        <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       </Canvas>
     </div>
   );

@@ -128,13 +128,9 @@ function HomePage() {
 
   return (
     <>
-      {/* Skip heavy WebGL on mobile to prevent jank */}
-      {!isMobile && (
-        <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
-          <ThreeBackground />
-        </Suspense>
-      )}
-      {isMobile && <div className="fixed inset-0 bg-brand-navy-deep -z-10" />}
+      <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
+        <ThreeBackground />
+      </Suspense>
       <TimelineNavigation />
 
       <section id="home" ref={ref} className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-16">
@@ -170,7 +166,7 @@ function HomePage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mt-4 text-xl md:text-2xl font-display font-bold text-brand-yellow"
             >
-              Video Editor
+              Video Editor / Cinematographer
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}

@@ -66,14 +66,16 @@ export function DriveVideoPlayer({
 
       {/* Fallback: Google Drive iframe — only when direct video fails */}
       {hasError && (
-        <div className="absolute inset-0 bg-black">
+        <div className="absolute inset-0 bg-black overflow-hidden rounded-xl">
           <iframe
             src={`https://drive.google.com/file/d/${fileId}/preview`}
             allow="autoplay"
             allowFullScreen
-            className="absolute inset-0 w-full h-full border-0"
+            className="absolute inset-0 w-full h-full border-0 scale-[1.15] md:scale-[1.1]"
             onLoad={() => setIsLoaded(true)}
           />
+          {/* Invisible click blocker just in case a pixel of the button remains visible */}
+          <div className="absolute top-0 right-0 w-16 h-16 z-10 pointer-events-auto" />
         </div>
       )}
     </div>

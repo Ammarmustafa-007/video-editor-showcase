@@ -26,19 +26,19 @@ function getLightboxClasses(aspect: "video" | "portrait" | "square") {
   switch (aspect) {
     case "portrait":
       return {
-        maxW: "max-w-sm",
-        aspectCls: "aspect-[9/16]",
+        maxW: "max-w-[400px]",
+        aspectCls: "h-[75vh] md:h-[85vh] w-full",
       };
     case "square":
       return {
         maxW: "max-w-xl",
-        aspectCls: "aspect-square",
+        aspectCls: "aspect-square w-full",
       };
     case "video":
     default:
       return {
-        maxW: "max-w-4xl",
-        aspectCls: "aspect-video",
+        maxW: "max-w-5xl",
+        aspectCls: "aspect-video w-full",
       };
   }
 }
@@ -286,8 +286,8 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
                     <X size={20} />
                   </button>
 
-                  {/* Video container — aspect ratio is the single source of truth for height */}
-                  <div className={`relative w-full ${lb.aspectCls} bg-black max-h-[85vh]`}>
+                  {/* Video container */}
+                  <div className={`relative bg-black flex flex-col items-center justify-center shrink-0 ${lb.aspectCls}`}>
                     {items[active].driveId ? (
                       <DriveVideoPlayer
                         fileId={items[active].driveId!}
