@@ -17,7 +17,7 @@ export function SiteFooter() {
         {/* Massive CTA Section */}
         <div className="text-center mb-20">
           <h2 className="font-display text-4xl md:text-6xl font-extrabold text-foreground mb-6">
-            Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-amber-500">elevate</span> your content?
+            Ready to <span className="text-brand-yellow">elevate</span> your content?
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             Let's create something extraordinary together. Whether it's a wedding film or a high-converting brand campaign, I'm here to bring your vision to life.

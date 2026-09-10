@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { getDriveDirectLink } from '@/lib/videoConfig';
 import { Loader2 } from 'lucide-react';
 
+
+
 interface DriveVideoPlayerProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   fileId: string;
   className?: string;
@@ -64,18 +66,32 @@ export function DriveVideoPlayer({
         </video>
       )}
 
-      {/* Fallback: Google Drive iframe — only when direct video fails */}
+      {/* Fallback: Google Drive iframe embed */}
       {hasError && (
         <div className="absolute inset-0 bg-black overflow-hidden rounded-xl">
+          {/*
+            Google Drive's iframe cannot be customized via CSS due to cross-origin security.
+            On mobile, it natively renders two control areas: 
+            1. Middle overlay (Play, Pause, Skip, Progress)
+            2. Bottom bar (Volume, CC, Settings)
+            
+            We aggressively crop the iframe by making it 15% taller and shifting it up.
+            This hides the top header and completely chops off the bottom volume/settings bar.
+            Result: Only ONE set of controls (the middle play/progress overlay) is visible.
+          */}
           <iframe
             src={`https://drive.google.com/file/d/${fileId}/preview`}
             allow="autoplay"
             allowFullScreen
-            className="absolute inset-0 w-full h-full border-0 scale-[1.15] md:scale-[1.1]"
+            className="absolute border-0"
+            style={{
+              top: '-10%',
+              left: '-2%',
+              width: '104%',
+              height: '130%', // Very aggressive crop to push bottom and top bars completely off-screen
+            }}
             onLoad={() => setIsLoaded(true)}
           />
-          {/* Invisible click blocker just in case a pixel of the button remains visible */}
-          <div className="absolute top-0 right-0 w-16 h-16 z-10 pointer-events-auto" />
         </div>
       )}
     </div>
