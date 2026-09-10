@@ -85,10 +85,10 @@ export function DriveVideoPlayer({
             allowFullScreen
             className="absolute border-0"
             style={{
-              top: '-10%',
+              top: '-15%', // Shifts the 130% height iframe perfectly to center the video
               left: '-2%',
               width: '104%',
-              height: '130%', // Very aggressive crop to push bottom and top bars completely off-screen
+              height: '130%', 
             }}
             onLoad={() => setIsLoaded(true)}
           />
