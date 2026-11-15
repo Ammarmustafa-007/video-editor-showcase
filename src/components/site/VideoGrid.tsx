@@ -183,6 +183,8 @@ function VideoCard({
 }
 
 /* ─── Lightbox ─── */
+// The video floats over the page (dimmed and blurred behind it) in its own shape: no black bars at the sides.
+// Click anywhere outside the video, or press Escape, to close it.
 function Lightbox({
   item,
   aspect,
@@ -192,7 +194,15 @@ function Lightbox({
   aspect: "video" | "portrait" | "square";
   onClose: () => void;
 }) {
-  const isMobile = useIsMobile();
+  const [ratio, setRatio] = useState(aspect === "portrait" ? 9 / 16 : aspect === "square" ? 1 : 16 / 9);
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [onClose]);
+  const local = item.src && !item.src.includes("drive.google.com");
+  // the box takes the video's own shape and fits inside the screen with a margin
+  const box = { width: `min(92vw, calc((100dvh - 7rem) * ${ratio}))`, aspectRatio: String(ratio) };
 
   return createPortal(
     <AnimatePresence>
@@ -200,45 +210,28 @@ function Lightbox({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center"
+        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#08060f]/70 backdrop-blur-md"
         onClick={onClose}
+        role="dialog"
+        aria-label={item.title ?? "Video"}
       >
-        {/* Close button */}
         <button
           onClick={(e) => { e.stopPropagation(); onClose(); }}
-          className="absolute top-3 right-3 md:top-6 md:right-6 z-[110] w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-red-500/80 hover:border-red-500 hover:scale-110 active:scale-95 transition-colors"
+          className="absolute right-4 top-4 z-[110] grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20"
           aria-label="Close"
         >
-          <X size={18} />
+          <X size={18} strokeWidth={1.5} />
         </button>
-
-        {/* Title at top on mobile */}
-        {item.title && (
-          <div className="absolute top-3 left-3 right-14 md:hidden z-[100]">
-            <p className="font-display font-bold text-sm text-white/80 truncate">
-              {item.title}
-            </p>
-          </div>
-        )}
-
-        {/*
-          Video container:
-          - Mobile: nearly full screen (inset-2 equivalent) — no aspect ratio forced.
-            The video/iframe fills as much as possible, object-contain keeps proportions.
-          - Desktop: centered with proper aspect ratio constraint.
-        */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.94, rotateX: 8 }}
+          animate={{ opacity: 1, scale: 1, rotateX: 0 }}
           exit={{ opacity: 0, scale: 0.97 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className={isMobile
-            ? "absolute inset-2 top-12 bottom-8 rounded-lg overflow-hidden bg-black"
-            : `relative overflow-hidden rounded-xl bg-black shadow-2xl ${getDesktopSize(aspect)}`
-          }
+          style={{ ...box, transformPerspective: 1200 }}
+          className="relative overflow-hidden rounded-[16px] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
         >
-          {item.src && !item.src.includes("drive.google.com") ? (
+          {local ? (
             <video
               src={item.src}
               poster={item.thumb}
@@ -247,7 +240,8 @@ function Lightbox({
               playsInline
               disablePictureInPicture
               controlsList="nodownload noplaybackrate"
-              className="absolute inset-0 w-full h-full object-contain bg-black"
+              onLoadedMetadata={(e) => { const v = e.currentTarget; if (v.videoWidth && v.videoHeight) setRatio(v.videoWidth / v.videoHeight); }}
+              className="absolute inset-0 h-full w-full object-cover"
             />
           ) : item.driveId ? (
             <DriveVideoPlayer
@@ -256,39 +250,12 @@ function Lightbox({
               containerClassName="absolute inset-0 w-full h-full"
               className="object-contain"
             />
-          ) : item.src ? (
-            <video
-              src={item.src}
-              controls
-              autoPlay
-              playsInline
-              disablePictureInPicture
-              controlsList="nodownload noplaybackrate"
-              className="absolute inset-0 w-full h-full object-contain bg-black"
-            />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-navy-deep p-6 text-center">
-              <img
-                src={item.thumb}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover opacity-20"
-              />
-              <div className="relative">
-                <Play className="text-brand-yellow mx-auto" size={40} />
-                <p className="mt-3 font-display text-lg font-bold text-foreground">
-                  Video coming soon
-                </p>
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  Add a Google Drive preview URL or MP4 link to play here.
-                </p>
-              </div>
-            </div>
+            <img src={item.thumb} alt="" className="absolute inset-0 h-full w-full object-cover" />
           )}
         </motion.div>
-
-        {/* Title below video — desktop only */}
         {item.title && (
-          <p className="hidden md:block mt-4 font-display font-bold text-base text-white/90 text-center">
+          <p className="mt-4 max-w-[90vw] truncate text-center text-sm font-medium text-white/80" onClick={(e) => e.stopPropagation()}>
             {item.title}
           </p>
         )}
@@ -296,19 +263,6 @@ function Lightbox({
     </AnimatePresence>,
     document.body
   );
-}
-
-/** Desktop-only sizing with aspect ratio constraints */
-function getDesktopSize(aspect: "video" | "portrait" | "square") {
-  switch (aspect) {
-    case "portrait":
-      return "w-[35vw] max-w-[450px] aspect-[9/16]";
-    case "square":
-      return "w-[45vw] max-w-[600px] aspect-square";
-    case "video":
-    default:
-      return "w-[75vw] max-w-[1000px] aspect-video";
-  }
 }
 
 export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridProps) {

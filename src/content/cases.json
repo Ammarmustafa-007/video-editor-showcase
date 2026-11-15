@@ -5,8 +5,15 @@
       "client": "McLaren Cafe",
       "location": "Qatar",
       "title": "Turning a quiet café page into one that sells",
-      "summary": "A café in Qatar was posting videos nobody saw. From Lahore, my team and I rebuilt their page, their edits and their offers, and the numbers moved.",
-      "services": ["Video editing", "Color grading", "Page revamp", "Post design", "Page management"],
+      "summary": "A McLaren-branded café in Qatar was posting videos nobody saw. From Lahore, my team and I rebuilt their page, their edits and their offers, and cut versions that ran on digital billboards across the city.",
+      "services": [
+        "Video editing",
+        "Color grading",
+        "Page revamp",
+        "Post design",
+        "Page management",
+        "Billboard & ad edits"
+      ],
       "status": "Ongoing client",
       "challenge": [
         "Their videos weren't getting reach, and the page itself looked rough, so even the people who found it didn't stay.",
@@ -17,14 +24,36 @@
         "Revamped the whole page: profile, highlights and the grid, so it looks like one brand.",
         "Built an edit style and a colour look for the café and kept every video in it.",
         "Rescued weak footage in the edit with pacing, framing and colour instead of asking for reshoots.",
+        "Cut every hero video in several ratios, so the same edit ran as reels, as paid ads and on digital billboards.",
         "Designed posts and offer campaigns, and managed the page week to week, on every deadline."
       ],
       "results": [
         "Views and reach went up on their videos.",
+        "Our edits went up on digital billboards and ran as ads in different locations.",
         "Sales went up, and every new offer post pulled stronger numbers than the last.",
         "The client paid a bonus on top of the agreed fee, and they still work with us today."
       ],
-      "videos": []
+      "videos": [
+        {
+          "id": "mclaren-cafe-1",
+          "title": "McLaren Café, brand film",
+          "file": "work/mclaren-cafe-1.mp4",
+          "poster": "work/mclaren-cafe-1.jpg"
+        },
+        {
+          "id": "mclaren-cafe-2",
+          "title": "McLaren Café, pizza corridor",
+          "file": "work/mclaren-cafe-2.mp4",
+          "poster": "work/mclaren-cafe-2.jpg"
+        },
+        {
+          "id": "mclaren-cafe-3",
+          "title": "McLaren Café, coffee",
+          "file": "work/mclaren-cafe-3.mp4",
+          "poster": "work/mclaren-cafe-3.jpg"
+        }
+      ],
+      "logo": "mclaren-cafe"
     }
   ]
 }
