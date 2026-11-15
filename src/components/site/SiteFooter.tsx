@@ -1,17 +1,14 @@
 import { Mail, Phone, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { scrollToY } from "@/lib/smoothScroll";
+import { goToSection } from "@/lib/goToSection";
 import site from "@/content/site.json";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { MAIN_SERVICES, MORE_SERVICES, REGION_PAGES } from "@/lib/services";
 import { CASES } from "@/lib/cases";
 
 export function SiteFooter() {
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY - 80);
-    else window.location.href = `${import.meta.env.BASE_URL}#${id}`;
-  };
+  const router = useRouter();
+  const scrollTo = (id: string) => goToSection(router, id);
 
   return (
     <footer className="relative mt-24 border-t border-white/[0.08] overflow-hidden">

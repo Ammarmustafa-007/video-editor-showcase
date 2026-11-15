@@ -9,7 +9,8 @@ import {
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useEffect } from "react";
-import { jumpToY, startSmoothScroll } from "@/lib/smoothScroll";
+import { jumpToY, scrollToY, startSmoothScroll } from "@/lib/smoothScroll";
+import { takePendingSection } from "@/lib/goToSection";
 
 function NotFoundComponent() {
   return (
@@ -94,6 +95,19 @@ function useScrollMemory() {
       const back = pop && saved.has(key(toLocation));
       pop = false;
       const target = back ? saved.get(key(toLocation))! : 0;
+      // a header/footer link asked for a home-page section: open the page at the top, then glide to it
+      const section = takePendingSection();
+      if (section && !back) {
+        jumpToY(0);
+        let n = 0;
+        const find = () => {
+          const el = document.getElementById(section);
+          if (el) setTimeout(() => scrollToY(el.getBoundingClientRect().top + window.scrollY - 80), 150);
+          else if (n++ < 60) setTimeout(find, 50);
+        };
+        requestAnimationFrame(find);
+        return;
+      }
       const hash = !back && toLocation.hash ? document.getElementById(toLocation.hash) : null;
       let tries = 0;
       const go = () => {

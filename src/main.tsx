@@ -11,3 +11,6 @@ createRoot(document.getElementById("root")!).render(
     <RouterProvider router={router} />
   </StrictMode>,
 );
+
+// hide the loading screen once the app has drawn its first frame
+requestAnimationFrame(() => requestAnimationFrame(() => (window as unknown as { __bootDone?: () => void }).__bootDone?.()));

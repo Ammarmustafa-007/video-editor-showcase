@@ -11,6 +11,53 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot" aria-label="Loading Abdullah Qureshi's portfolio" role="status">
+      <style>
+        #boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#0b0816;color:#f3eaff;font-family:Montserrat,system-ui,sans-serif;transition:opacity .6s ease,visibility .6s;padding:0 max(16px,env(safe-area-inset-left,0px))}
+        #boot.done{opacity:0;visibility:hidden}
+        #boot .bw{width:min(420px,100%)}
+        #boot .mark{font-weight:600;letter-spacing:.08em;font-size:15px;text-align:center}
+        #boot .mark b{color:#c9a6ff;font-weight:600}
+        #boot .tl{position:relative;margin:28px 0 14px;height:46px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02);overflow:hidden}
+        #boot .trk{position:absolute;left:10px;right:10px;height:12px;display:flex;gap:4px}
+        #boot .trk:nth-child(1){top:8px}#boot .trk:nth-child(2){top:25px}
+        #boot .clip{height:100%;border-radius:3px;background:rgba(201,166,255,.12);transform:scaleX(0);transform-origin:left;animation:bclip .5s cubic-bezier(.22,1,.36,1) forwards}
+        #boot .trk:nth-child(2) .clip{background:rgba(127,216,255,.12)}
+        #boot .ph{position:absolute;top:0;bottom:0;width:2px;left:0;background:#ff5a7a;box-shadow:0 0 10px rgba(255,90,122,.6);animation:bph 2.4s linear infinite}
+        #boot .ph:before{content:"";position:absolute;top:-1px;left:-4px;border:5px solid transparent;border-top-color:#ff5a7a}
+        #boot .row{display:flex;justify-content:space-between;font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:rgba(255,255,255,.5)}
+        #boot .row .tc{color:#c9a6ff}
+        #boot .bar{margin-top:10px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+        #boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a983ff,#c9a6ff);transition:width .3s ease}
+        @keyframes bclip{to{transform:scaleX(1)}}
+        @keyframes bph{from{left:0}to{left:100%}}
+        @media (prefers-reduced-motion:reduce){#boot .ph{animation:none;left:50%}}
+      </style>
+      <div class="bw">
+        <div class="mark">ART BY <b>QURESHI</b></div>
+        <div class="tl">
+          <div class="trk"><span class="clip" style="flex:3;animation-delay:.1s"></span><span class="clip" style="flex:2;animation-delay:.35s"></span><span class="clip" style="flex:4;animation-delay:.6s"></span><span class="clip" style="flex:2;animation-delay:.85s"></span></div>
+          <div class="trk"><span class="clip" style="flex:5;animation-delay:.25s"></span><span class="clip" style="flex:3;animation-delay:.55s"></span><span class="clip" style="flex:3;animation-delay:.9s"></span></div>
+          <span class="ph"></span>
+        </div>
+        <div class="row"><span class="tc" id="boot-tc">00:00:00:00</span><span id="boot-st">Rendering portfolio</span><span id="boot-pc">0%</span></div>
+        <div class="bar"><i id="boot-bar"></i></div>
+      </div>
+      <script>
+        (function(){var s=performance.now(),p=0,b=document.getElementById("boot");
+        function pad(n){return(n<10?"0":"")+n}
+        function tick(){if(!b||b.classList.contains("done"))return;var t=(performance.now()-s)/1000;
+          p=p+(Math.max(0,93-p))*0.035;var f=Math.floor(t*30)%30,sec=Math.floor(t);
+          document.getElementById("boot-tc").textContent="00:00:"+pad(sec)+":"+pad(f);
+          document.getElementById("boot-pc").textContent=Math.round(p)+"%";
+          document.getElementById("boot-bar").style.width=p+"%";
+          if(t>4)document.getElementById("boot-st").textContent="Slow connection, still rendering";
+          requestAnimationFrame(tick)}
+        requestAnimationFrame(tick);
+        window.__bootDone=function(){if(!b)return;document.getElementById("boot-pc").textContent="100%";document.getElementById("boot-bar").style.width="100%";
+          setTimeout(function(){b.classList.add("done");setTimeout(function(){b.remove()},700)},180)};})();
+      </script>
+    </div>
     <!--noscript-->
     <script type="module" src="/src/main.tsx"></script>
   </body>

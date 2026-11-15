@@ -185,3 +185,18 @@
 @keyframes holo-orbit { to { transform: rotate(360deg); } }
 .holo-orbit { animation: holo-orbit 14s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .holo-orbit { animation: none; } }
+
+/* ---- build-in intro (BuildIntro.tsx) ---- */
+.build-intro { animation: build-out 0.6s ease 2.55s forwards; }
+@keyframes build-out { to { opacity: 0; } }
+.build-guide-v { position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, rgba(201,166,255,0.16) 15%, rgba(201,166,255,0.16) 85%, transparent); transform: scaleY(0); transform-origin: top; animation: build-draw-y 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+.build-guide-h { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, rgba(127,216,255,0.14) 10%, rgba(127,216,255,0.14) 90%, transparent); transform: scaleX(0); transform-origin: left; animation: build-draw-x 0.8s cubic-bezier(0.22,1,0.36,1) forwards; }
+@keyframes build-draw-y { to { transform: scaleY(1); } }
+@keyframes build-draw-x { to { transform: scaleX(1); } }
+.build-box { position: absolute; border: 1px dashed rgba(201,166,255,0.55); border-radius: 8px; background: rgba(201,166,255,0.035); opacity: 0; clip-path: inset(0 100% 0 0); animation: build-box 1.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+@keyframes build-box { 0% { opacity: 1; clip-path: inset(0 100% 0 0); } 30% { opacity: 1; clip-path: inset(0 0 0 0); } 70% { opacity: 1; clip-path: inset(0 0 0 0); } 100% { opacity: 0; clip-path: inset(0 0 0 0); } }
+.build-tag { position: absolute; top: -9px; left: 10px; padding: 0 6px; font: 500 10px/18px ui-monospace, SFMono-Regular, Menlo, monospace; color: #c9a6ff; background: #0d0a18; border: 1px solid rgba(201,166,255,0.35); border-radius: 4px; white-space: nowrap; }
+.build-log-line { animation: build-line 0.25s ease both; }
+@keyframes build-line { from { opacity: 0; transform: translateY(4px); } }
+.build-progress { width: 0; animation: build-progress 2.2s cubic-bezier(0.4,0,0.2,1) 0.2s forwards; }
+@keyframes build-progress { to { width: 100%; } }
