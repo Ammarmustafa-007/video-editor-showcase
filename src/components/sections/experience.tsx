@@ -41,20 +41,19 @@ const jobs = [
 export function ExperiencePage() {
   return (
     <>
-      <PageHero eyebrow="Experiences" title="Where I've shaped stories." />
+      <PageHero eyebrow="Experiences" title="Where I've shaped stories" />
       <section className="mx-auto max-w-4xl px-4 lg:px-8 py-10 md:py-16 space-y-5">
         {jobs.map((j, i) => (
-          <Reveal key={j.company} delay={i * 0.12} x={i % 2 === 0 ? -30 : 30} rotate={i % 2 === 0 ? -1 : 1}>
+          <Reveal key={j.company} delay={i * 0.12}>
             <motion.article
-              whileHover={{ scale: 1.015, y: -4, boxShadow: "0 20px 60px -15px rgba(180,140,255,0.15)" }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               className="p-6 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors"
             >
-              <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-wider text-brand-yellow font-semibold">
+              <div className="flex flex-wrap items-center gap-3 font-mono text-[12px] text-brand-yellow">
                 <span>{j.period}</span>
                 <span className="flex items-center gap-1 text-muted-foreground"><MapPin size={10}/> {j.location}</span>
               </div>
-              <h3 className="mt-2 font-display text-xl md:text-2xl font-extrabold text-foreground flex items-center gap-2">
+              <h3 className="mt-2 font-display text-xl md:text-2xl font-semibold text-foreground flex items-center gap-2">
                 <Briefcase className="text-brand-yellow" size={18}/> {j.role}
               </h3>
               <p className="mt-1 text-sm text-muted-foreground font-semibold">{j.company}</p>

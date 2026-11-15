@@ -1,20 +1,9 @@
+import { scrollToY } from "@/lib/smoothScroll";
+import { SECTIONS } from "@/lib/sections";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-const sections = [
-  { id: "home", label: "00:00:00" },
-  { id: "about", label: "00:01:15" },
-  { id: "education", label: "00:02:30" },
-  { id: "skills", label: "00:03:45" },
-  { id: "experience", label: "00:05:00" },
-  { id: "testimonials", label: "00:06:15" },
-  { id: "why-me", label: "00:07:30" },
-  { id: "weddings", label: "00:08:45" },
-  { id: "talking-head", label: "00:10:00" },
-  { id: "montage", label: "00:11:15" },
-  { id: "long-form", label: "00:12:30" },
-  { id: "contact", label: "00:13:45" },
-];
+const sections = SECTIONS.map((s) => ({ id: s.id, label: s.timecode }));
 
 export function TimelineNavigation() {
   const { scrollYProgress } = useScroll();
@@ -69,7 +58,7 @@ export function TimelineNavigation() {
     const element = document.getElementById(id);
     if (element) {
       const top = element.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
+      scrollToY(top);
     }
   };
 
@@ -108,7 +97,7 @@ export function TimelineNavigation() {
               >
                 {/* Tick mark */}
                 <div
-                  className={`w-[8px] h-[1.5px] absolute left-[7px] transition-all duration-300 ${
+                  className={`w-[8px] h-[1.5px] absolute left-[7px] transition-colors duration-300 ${
                     isActive
                       ? "bg-brand-yellow w-[12px]"
                       : "bg-white/30 group-hover:bg-brand-yellow"
@@ -116,7 +105,7 @@ export function TimelineNavigation() {
                 />
                 {/* Timecode label */}
                 <span
-                  className={`text-[9px] font-mono tracking-wider transition-all duration-300 whitespace-nowrap ${
+                  className={`text-[9px] font-mono tracking-wider transition-colors duration-300 whitespace-nowrap ${
                     isActive
                       ? "text-brand-yellow font-bold"
                       : "text-white/40 group-hover:text-white/70"

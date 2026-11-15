@@ -98,9 +98,8 @@ function VideoCard({
       <TiltCard intensity={8} className="cursor-pointer">
         <motion.button
           onClick={onOpen}
-          whileHover={{ scale: 1.03, y: -4 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-all`}
+          className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-colors`}
         >
           {/* Thumbnail */}
           <img
@@ -144,15 +143,12 @@ function VideoCard({
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent pointer-events-none" />
-          <span aria-hidden className="holo-sheen pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-          <span aria-hidden className="holo-corners pointer-events-none absolute inset-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
           {/* Play button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             <motion.span
               initial={{ scale: 0.5 }}
-              whileHover={{ scale: 1.1 }}
-              className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center shadow-glow"
+              className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center"
             >
               <Play
                 className="text-primary-foreground ml-0.5"
@@ -165,8 +161,8 @@ function VideoCard({
           {/* Live preview badge */}
           {previewActive && (
             <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 z-10">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-[9px] uppercase tracking-wider text-white/80 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span className="text-[11px] text-white/80 font-medium">
                 Preview
               </span>
             </div>
@@ -207,7 +203,7 @@ function Lightbox({
         {/* Close button */}
         <button
           onClick={(e) => { e.stopPropagation(); onClose(); }}
-          className="absolute top-3 right-3 md:top-6 md:right-6 z-[110] w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-red-500/80 hover:border-red-500 hover:scale-110 active:scale-95 transition-all"
+          className="absolute top-3 right-3 md:top-6 md:right-6 z-[110] w-9 h-9 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-red-500/80 hover:border-red-500 hover:scale-110 active:scale-95 transition-colors"
           aria-label="Close"
         >
           <X size={18} />

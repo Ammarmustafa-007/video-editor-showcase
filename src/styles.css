@@ -64,9 +64,9 @@
 :root {
   --radius: 0.625rem;
   /* Deep violet night — the hologram is the light in the room */
-  --background: oklch(0.15 0.035 292);
+  --background: oklch(0.14 0.02 290);
   --foreground: oklch(0.98 0.005 250);
-  --card: oklch(0.2 0.045 292);
+  --card: oklch(0.19 0.025 290);
   --card-foreground: oklch(0.98 0.005 250);
   --popover: oklch(0.2 0.045 292);
   --popover-foreground: oklch(0.98 0.005 250);
@@ -77,12 +77,12 @@
   --secondary: oklch(0.36 0.11 295);
   --secondary-foreground: oklch(0.98 0.005 250);
   --muted: oklch(0.27 0.04 292);
-  --muted-foreground: oklch(0.76 0.03 292);
+  --muted-foreground: oklch(0.74 0.015 290);
   --accent: oklch(0.36 0.11 295);
   --accent-foreground: oklch(0.98 0.005 250);
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 12%);
+  --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.78 0.14 300);
   /* Brand custom tokens */
@@ -91,7 +91,7 @@
   --brand-yellow: oklch(0.8 0.13 302);
   --brand-green: oklch(0.34 0.1 295);
   --gradient-hero: radial-gradient(ellipse at top, oklch(0.26 0.08 295) 0%, oklch(0.13 0.03 292) 70%);
-  --shadow-glow: 0 20px 60px -15px oklch(0.7 0.18 300 / 0.45);
+  --shadow-glow: none;
   --shadow-card: 0 25px 50px -12px oklch(0 0 0 / 0.5);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -177,77 +177,11 @@
     box-shadow: var(--shadow-card); 
     transition: box-shadow 0.5s ease-out, border-color 0.5s ease-out, transform 0.5s ease-out;
   }
-  .shadow-card:hover { box-shadow: 0 0 50px rgba(180, 140, 255, 0.14); }
+
 }
 
-@layer utilities {
-  .holo-text {
-    background: linear-gradient(180deg, #f3e8ff 0%, #c4a1ff 45%, #8b5cf6 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 22px rgba(167, 120, 255, 0.45));
-  }
-}
 
-/* ── Hologram surfaces ───────────────────────────────────────────── */
-@layer utilities {
-  /* a glass panel lit from inside, with an iridescent rim that slowly turns */
-  .holo-panel {
-    position: relative;
-    background: linear-gradient(160deg, rgba(36, 20, 78, 0.82), rgba(14, 8, 34, 0.9));
-    backdrop-filter: blur(14px);
-    box-shadow: 0 40px 120px -30px rgba(120, 70, 230, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    isolation: isolate;
-  }
-  .holo-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: inherit;
-    background: conic-gradient(from var(--holo-angle, 0deg), #7fd8ff, #c9a6ff, #ff8ad8, #ffc56b, #7fd8ff);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.55;
-    pointer-events: none;
-    animation: holo-spin 8s linear infinite;
-    z-index: 1;
-  }
-  /* perspective grid floor */
-  .holo-floor {
-    background:
-      linear-gradient(to top, rgba(140, 90, 255, 0.0), rgba(13, 8, 32, 1) 92%),
-      repeating-linear-gradient(90deg, rgba(160, 120, 255, 0.28) 0 1px, transparent 1px 80px),
-      repeating-linear-gradient(0deg, rgba(127, 216, 255, 0.22) 0 1px, transparent 1px 80px);
-    transform: perspective(600px) rotateX(62deg);
-    transform-origin: bottom;
-    -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%);
-    mask-image: linear-gradient(to top, #000 10%, transparent 85%);
-    animation: holo-floor 3s linear infinite;
-  }
-  .holo-corners {
-    background:
-      linear-gradient(#c9a6ff, #c9a6ff) top left / 18px 1px no-repeat,
-      linear-gradient(#c9a6ff, #c9a6ff) top left / 1px 18px no-repeat,
-      linear-gradient(#7fd8ff, #7fd8ff) top right / 18px 1px no-repeat,
-      linear-gradient(#7fd8ff, #7fd8ff) top right / 1px 18px no-repeat,
-      linear-gradient(#ff8ad8, #ff8ad8) bottom left / 18px 1px no-repeat,
-      linear-gradient(#ff8ad8, #ff8ad8) bottom left / 1px 18px no-repeat,
-      linear-gradient(#c9a6ff, #c9a6ff) bottom right / 18px 1px no-repeat,
-      linear-gradient(#c9a6ff, #c9a6ff) bottom right / 1px 18px no-repeat;
-  }
-  .holo-sheen {
-    background: linear-gradient(115deg, transparent 30%, rgba(127, 216, 255, 0.12) 45%, rgba(255, 138, 216, 0.12) 55%, transparent 70%);
-    background-size: 250% 100%;
-    animation: holo-sheen 6s ease-in-out infinite;
-  }
-}
-@property --holo-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@keyframes holo-spin { to { --holo-angle: 360deg; } }
-@keyframes holo-floor { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 0 0, 0 80px; } }
-@keyframes holo-sheen { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
-@media (prefers-reduced-motion: reduce) {
-  .holo-panel::before, .holo-floor, .holo-sheen { animation: none; }
-}
+
+@keyframes holo-orbit { to { transform: rotate(360deg); } }
+.holo-orbit { animation: holo-orbit 14s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .holo-orbit { animation: none; } }

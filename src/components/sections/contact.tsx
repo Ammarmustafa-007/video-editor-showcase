@@ -4,6 +4,7 @@ import portrait from "@/assets/portrait-exp.jpg";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/site/TiltCard";
+import { HoloPortrait } from "@/components/site/HoloPortrait";
 
 const cards = [
   { icon: Phone, label: "Phone", value: "+92 300 3322338", href: "https://wa.me/+923003322338?text=Hello" },
@@ -51,15 +52,10 @@ const itemVariants = {
 export function ContactPage() {
   return (
     <>
-      <PageHero eyebrow="Contact Me" title="Let's make something cinematic." subtitle="Available for freelance projects, brand collaborations and full-time roles." />
+      <PageHero eyebrow="Contact Me" title="Let's make something cinematic" subtitle="Available for freelance projects, brand collaborations and full-time roles" />
       <section className="mx-auto max-w-5xl px-4 lg:px-8 py-10 md:py-16 grid gap-8 lg:grid-cols-2 items-center">
-        <Reveal scale={0.85} rotate={-3}>
-          <TiltCard className="rounded-2xl overflow-hidden shadow-card max-w-sm group p-4 bg-card">
-            <div className="relative overflow-hidden rounded-2xl w-full flex justify-center items-center">
-              <img src={portrait} alt="Abdullah Qureshi" className="w-full max-w-[280px] h-auto object-cover object-top block rounded-2xl group-hover:scale-105 transition-transform duration-700"/>
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </div>
-          </TiltCard>
+        <Reveal>
+          <HoloPortrait src={portrait} alt="Abdullah Qureshi" shape="card" className="w-60 md:w-64 aspect-[9/14] my-6" />
         </Reveal>
         <motion.div
           variants={containerVariants}
@@ -73,15 +69,14 @@ export function ContactPage() {
             const inner = (
               <motion.div
                 variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -3, boxShadow: "0 15px 40px -10px rgba(180,140,255,0.15)" }}
                 transition={{ type: "spring", stiffness: 200 }}
                 className="p-5 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-colors h-full"
                 style={{ transformStyle: "preserve-3d" }}
               >
-                <motion.div whileHover={{ rotate: -15, scale: 1.2 }} transition={{ type: "spring" }}>
+                <motion.div transition={{ type: "spring" }}>
                   <c.icon className="text-brand-yellow" size={20} />
                 </motion.div>
-                <p className="mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">{c.label}</p>
+                <p className="mt-2 text-[12px] text-muted-foreground">{c.label}</p>
                 <p className="mt-1 font-display font-bold text-sm text-foreground break-words">{c.value}</p>
               </motion.div>
             );

@@ -8,6 +8,8 @@ import {
 
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { useEffect } from "react";
+import { startSmoothScroll } from "@/lib/smoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -74,6 +76,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => startSmoothScroll(), []);
 
   return (
     <QueryClientProvider client={queryClient}>

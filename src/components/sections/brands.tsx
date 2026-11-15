@@ -52,16 +52,15 @@ export function BrandsSection() {
   useAnimationFrame((_, dt) => {
     if (reduced || !ring.current) return;
     const push = Math.min(4, Math.abs(velocity.get()) / 600);
-    angle.current = (angle.current + (dt / 1000) * (hover ? 4 : 11 + push * 30)) % 360;
+    angle.current = (angle.current + (dt / 1000) * (hover ? 3 : 8 + push * 18)) % 360;
     ring.current.style.transform = `translateZ(${-radius}px) rotateY(${-angle.current}deg)`;
   });
 
   return (
     <section ref={section} aria-label="Brands" className="relative z-20 w-full overflow-hidden py-20 md:py-28">
-      <div aria-hidden className="holo-floor absolute inset-x-0 bottom-0 h-[60%] opacity-60" />
       <motion.div style={{ y: titleY }} className="relative mx-auto max-w-4xl px-4 text-center">
-        <p className="text-[12px] uppercase tracking-[0.4em] text-brand-yellow font-semibold">Trusted by</p>
-        <h2 className="mt-3 font-display text-3xl md:text-5xl font-extrabold text-foreground [text-wrap:balance]">
+        <p className="font-mono text-[13px] text-white/50">Trusted by</p>
+        <h2 className="mt-3 font-display text-3xl md:text-5xl font-medium tracking-[-0.025em] text-foreground [text-wrap:balance]">
           Brands whose stories I've cut
         </h2>
       </motion.div>
@@ -81,10 +80,9 @@ export function BrandsSection() {
                   transformStyle: "preserve-3d",
                 }}
               >
-                <div className="holo-panel group rounded-2xl p-2.5 transition-transform duration-300 hover:-translate-y-2" style={{ backfaceVisibility: "hidden" }}>
+                <div className="rounded-2xl border border-white/10 bg-[#171129] p-2" style={{ backfaceVisibility: "hidden" }}>
                   <div className="relative z-[2] flex h-[72px] md:h-[96px] items-center justify-center overflow-hidden rounded-xl bg-white px-4">
                     <img src={b.src} alt={b.id} className="max-h-[70%] max-w-full object-contain" />
-                    <span aria-hidden className="holo-sheen absolute inset-0" />
                   </div>
                 </div>
                 {/* reflection */}

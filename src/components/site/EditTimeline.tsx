@@ -135,12 +135,11 @@ export function EditTimeline() {
     <section ref={section} id="timeline" aria-label="Inside the edit" className="relative" style={{ height: reduced ? "220vh" : "560vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ perspective: 1400 }}>
         {/* grid floor the window rises from */}
-        <div aria-hidden className="holo-floor absolute inset-x-0 bottom-0 h-[55vh]" />
 
         <motion.div style={{ opacity: intro }} className="pointer-events-none absolute inset-x-0 top-[12vh] z-20 px-4 text-center">
-          <p className="text-[12px] uppercase tracking-[0.4em] text-brand-yellow font-semibold">Inside the edit</p>
-          <h2 className="mt-3 font-display text-3xl md:text-5xl font-extrabold text-foreground [text-wrap:balance]">
-            Every project starts on a timeline.
+          <p className="font-mono text-[13px] text-white/50"><span className="text-brand-yellow">00:07:45:00</span>&nbsp;&nbsp;Inside the edit</p>
+          <h2 className="mt-3 font-display text-3xl md:text-5xl font-medium tracking-[-0.025em] text-foreground [text-wrap:balance]">
+            Every project starts on a timeline
           </h2>
         </motion.div>
 
@@ -149,7 +148,7 @@ export function EditTimeline() {
           style={{ scale: winScale, rotateX: winRotX, rotateZ: winRotZ, y: winY, opacity: winOpacity, transformStyle: "preserve-3d" }}
           className="absolute left-3 right-3 md:left-[5vw] md:right-[5vw] lg:right-[112px] top-[9vh] bottom-[8vh] origin-bottom"
         >
-          <div className="holo-panel flex h-full flex-col overflow-hidden rounded-2xl">
+          <div className="flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#110c20] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
             {/* title bar */}
             <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-2.5">
               <span className="flex gap-1.5">
@@ -166,7 +165,7 @@ export function EditTimeline() {
             {/* monitors */}
             <div className="grid min-h-0 flex-[1.15] grid-cols-1 md:grid-cols-[1fr_1.6fr] gap-px bg-white/[0.04]">
               <div className="hidden md:flex flex-col bg-[#0d0820]/90 p-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Effect controls</p>
+                <p className="text-[12px] text-white/45">Effect controls</p>
                 <div className="mt-3 space-y-2.5 font-mono text-[11px]">
                   {[["Scale", "112.0"], ["Position", "960, 540"], ["Opacity", "100 %"], ["Lumetri", "Teal / Lilac"], ["Speed", "100 % · ramp"]].map(([a, b], i) => (
                     <div key={a} className="flex items-center justify-between gap-2">
@@ -192,7 +191,7 @@ export function EditTimeline() {
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                   <span className="absolute left-2 top-2 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white/80">{clip.label}</span>
-                  <span className="absolute right-2 top-2 flex items-center gap-1 font-mono text-[10px] text-[#ff6b9a]"><i className="h-1.5 w-1.5 rounded-full bg-[#ff6b9a] animate-pulse" />REC</span>
+                  <span className="absolute right-2 top-2 flex items-center gap-1 font-mono text-[10px] text-[#ff6b9a]"><i className="h-1.5 w-1.5 rounded-full bg-[#ff6b9a]" />REC</span>
                 </div>
                 <div className="mt-2 flex items-center justify-between font-mono text-[11px]">
                   <span ref={timecode} className="text-[#c9a6ff] tabular-nums">00:00:00:00</span>
@@ -281,9 +280,9 @@ export function EditTimeline() {
           style={{ opacity: exOpacity, scale: exScale, rotateY: exRotY }}
           className="absolute inset-0 z-30 flex items-center justify-center px-4"
         >
-          <div className="holo-panel w-full max-w-md rounded-3xl p-6 md:p-8">
-            <p className="text-[12px] uppercase tracking-[0.35em] text-brand-yellow font-semibold">Export</p>
-            <h3 className="mt-2 font-display text-2xl md:text-3xl font-extrabold text-foreground">Ready for the world</h3>
+          <div className="w-full max-w-md rounded-[20px] border border-white/10 bg-[#140f26] p-6 md:p-8 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
+            <p className="font-mono text-[13px] text-white/50"><span className="text-brand-yellow">00:08:30:00</span>&nbsp;&nbsp;Export</p>
+            <h3 className="mt-2 font-display text-2xl md:text-3xl font-semibold text-foreground">Ready for the world</h3>
             <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2 font-mono text-[12px]">
               <dt className="text-white/45">Format</dt><dd className="text-right text-white/85">H.264</dd>
               <dt className="text-white/45">Resolution</dt><dd className="text-right text-white/85">3840 × 2160</dd>
@@ -292,7 +291,7 @@ export function EditTimeline() {
             </dl>
             <div className="mt-6">
               {phase === "edit" && (
-                <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-yellow py-3 font-semibold text-primary-foreground shadow-glow">
+                <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-yellow py-3 font-semibold text-primary-foreground">
                   <Download size={16} /> Export
                 </div>
               )}
@@ -308,7 +307,7 @@ export function EditTimeline() {
                   {phase === "done" && (
                     <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-2 text-sm text-foreground">
                       <span className="grid h-6 w-6 place-items-center rounded-full bg-[#6bffc6]/20 text-[#6bffc6]"><Check size={14} /></span>
-                      Here's what came out of it. Keep scrolling.
+                      Here is what came out of it
                     </motion.p>
                   )}
                 </div>
