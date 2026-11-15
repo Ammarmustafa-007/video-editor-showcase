@@ -7,7 +7,7 @@ import m2 from "@/assets/montage-2.jpg";
 
 import { PageHero } from "@/components/site/PageHero";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
-import { getDriveThumbnail, type WorkSection } from "@/lib/videoConfig";
+import { asset, getDriveThumbnail, type WorkSection } from "@/lib/videoConfig";
 
 const LAYOUT = {
   wide: { cols: 2, aspect: "video", fallback: [w1, w2] },
@@ -19,9 +19,10 @@ const LAYOUT = {
 export function WorkPage({ section }: { section: WorkSection }) {
   const l = LAYOUT[section.layout] ?? LAYOUT.wide;
   const items: VideoItem[] = section.videos.map((v, i) => ({
-    thumb: getDriveThumbnail(v.id),
+    thumb: v.poster ? asset(v.poster) : getDriveThumbnail(v.id),
     fallbackThumb: l.fallback[i % 2],
     title: v.title,
+    src: v.file ? asset(v.file) : undefined,
     driveId: v.id,
   }));
   return (

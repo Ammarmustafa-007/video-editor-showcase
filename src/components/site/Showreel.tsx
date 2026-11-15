@@ -3,6 +3,7 @@ import { motion, useMotionValue, useScroll, useSpring, useTransform } from "fram
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import site from "@/content/site.json";
 import { timecodeFor } from "@/lib/sections";
+import { asset } from "@/lib/videoConfig";
 
 /**
  * The 70-second intro, standing in the page like a phone held up to the camera. It plays muted while it's on screen;
@@ -77,8 +78,8 @@ export function Showreel() {
               <div className="relative overflow-hidden rounded-[28px]">
                 <video
                   ref={video}
-                  src={reel.src}
-                  poster={reel.poster}
+                  src={asset(reel.src)}
+                  poster={asset(reel.poster)}
                   muted={muted}
                   loop
                   playsInline

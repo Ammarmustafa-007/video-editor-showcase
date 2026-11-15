@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "slug": "mclaren-cafe",
+      "client": "McLaren Cafe",
+      "location": "Qatar",
+      "title": "Turning a quiet café page into one that sells",
+      "summary": "A café in Qatar was posting videos nobody saw. From Lahore, my team and I rebuilt their page, their edits and their offers, and the numbers moved.",
+      "services": ["Video editing", "Color grading", "Page revamp", "Post design", "Page management"],
+      "status": "Ongoing client",
+      "challenge": [
+        "Their videos weren't getting reach, and the page itself looked rough, so even the people who found it didn't stay.",
+        "They are in Qatar and we work from Pakistan. Every shoot happened without us in the room.",
+        "The footage that came back wasn't shot the way the edits needed it. Making that footage look good was a job of its own."
+      ],
+      "approach": [
+        "Revamped the whole page: profile, highlights and the grid, so it looks like one brand.",
+        "Built an edit style and a colour look for the café and kept every video in it.",
+        "Rescued weak footage in the edit with pacing, framing and colour instead of asking for reshoots.",
+        "Designed posts and offer campaigns, and managed the page week to week, on every deadline."
+      ],
+      "results": [
+        "Views and reach went up on their videos.",
+        "Sales went up, and every new offer post pulled stronger numbers than the last.",
+        "The client paid a bonus on top of the agreed fee, and they still work with us today."
+      ],
+      "videos": []
+    }
+  ]
+}

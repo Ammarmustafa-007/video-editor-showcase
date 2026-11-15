@@ -60,8 +60,7 @@ function VideoCard({
   const [videoReady, setVideoReady] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
-  const hasDriveId = !!item.driveId;
-  const hasDirectSrc = !!item.src && !item.src.includes("drive.google.com");
+    const hasDirectSrc = !!item.src && !item.src.includes("drive.google.com");
 
   useEffect(() => {
     const el = cardRef.current;
@@ -74,19 +73,19 @@ function VideoCard({
     return () => observer.disconnect();
   }, []);
 
+  // the clip previews while the mouse is on the card (not every card at once: keeps the page light)
+  const [hover, setHover] = useState(false);
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid || !hasDirectSrc) return;
-    if (isVisible) {
+    if (isVisible && hover) {
       vid.play().catch(() => {});
     } else {
       vid.pause();
     }
-  }, [isVisible, videoReady, hasDirectSrc]);
+  }, [isVisible, hover, videoReady, hasDirectSrc]);
 
-  const previewActive =
-    isVisible &&
-    ((hasDriveId && videoReady) || (hasDirectSrc && videoReady));
+  const previewActive = isVisible && hover && hasDirectSrc && videoReady;
 
   return (
     <motion.div
@@ -98,6 +97,10 @@ function VideoCard({
       <TiltCard intensity={8} className="cursor-pointer">
         <motion.button
           onClick={onOpen}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          onFocus={() => setHover(true)}
+          onBlur={() => setHover(false)}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           className={`group relative w-full ${aspectClass} rounded-xl overflow-hidden bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-colors`}
         >
@@ -132,11 +135,11 @@ function VideoCard({
               playsInline
               disablePictureInPicture
               controlsList="nodownload noplaybackrate"
-              preload="metadata"
-              onCanPlayThrough={() => setVideoReady(true)}
+              preload={hover ? "auto" : "none"}
+              onCanPlay={() => setVideoReady(true)}
               onError={() => setVideoError(true)}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-                videoReady && isVisible ? "opacity-100" : "opacity-0"
+                previewActive ? "opacity-100" : "opacity-0"
               }`}
             />
           )}
@@ -235,7 +238,18 @@ function Lightbox({
             : `relative overflow-hidden rounded-xl bg-black shadow-2xl ${getDesktopSize(aspect)}`
           }
         >
-          {item.driveId ? (
+          {item.src && !item.src.includes("drive.google.com") ? (
+            <video
+              src={item.src}
+              poster={item.thumb}
+              controls
+              autoPlay
+              playsInline
+              disablePictureInPicture
+              controlsList="nodownload noplaybackrate"
+              className="absolute inset-0 w-full h-full object-contain bg-black"
+            />
+          ) : item.driveId ? (
             <DriveVideoPlayer
               fileId={item.driveId}
               controls
