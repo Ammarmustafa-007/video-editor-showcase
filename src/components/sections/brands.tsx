@@ -8,6 +8,7 @@ import appleLogo from "@/logos/apple-13.svg";
 import matwLogo from "@/logos/680ae7a0f646ac1f49be95dc_600600p532ednmain1240matw.svg";
 import baseusLogo from "@/logos/PHOTO_2025_10_23_17_49_53_1761214373.svg";
 import mclarenLogo from "@/logos/mclaren.svg";
+import mclarenCafeLogo from "@/logos/mclaren-cafe.png";
 
 const brands = [
   { id: "adidas", src: adidasLogo },
@@ -17,6 +18,7 @@ const brands = [
   { id: "mercedes", src: mercedesLogo },
   { id: "lenovo", src: lenovoLogo },
   { id: "mclaren", src: mclarenLogo },
+  { id: "McLaren Café", src: mclarenCafeLogo },
 ];
 
 /**

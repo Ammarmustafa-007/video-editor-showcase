@@ -2,11 +2,15 @@ import { Mail, Phone, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { scrollToY } from "@/lib/smoothScroll";
 import site from "@/content/site.json";
+import { Link } from "@tanstack/react-router";
+import { SERVICES } from "@/lib/services";
+import { CASES } from "@/lib/cases";
 
 export function SiteFooter() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY - 80);
+    else window.location.href = `${import.meta.env.BASE_URL}#${id}`;
   };
 
   return (
@@ -64,6 +68,18 @@ export function SiteFooter() {
               <button onClick={() => scrollTo("about")} className="text-left hover:text-brand-yellow transition-colors">About</button>
               <button onClick={() => scrollTo("weddings")} className="text-left hover:text-brand-yellow transition-colors">Showreels</button>
               <button onClick={() => scrollTo("testimonials")} className="text-left hover:text-brand-yellow transition-colors">Testimonials</button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-foreground font-medium text-sm mb-4">Services</p>
+            <div className="flex flex-col gap-3 text-muted-foreground">
+              {SERVICES.map((x) => (
+                <Link key={x.slug} to="/services/$slug" params={{ slug: x.slug }} className="hover:text-brand-yellow transition-colors">{x.nav}</Link>
+              ))}
+              {CASES.map((c) => (
+                <Link key={c.slug} to="/work/$slug" params={{ slug: c.slug }} className="hover:text-brand-yellow transition-colors">Case study: {c.client}</Link>
+              ))}
             </div>
           </div>
 

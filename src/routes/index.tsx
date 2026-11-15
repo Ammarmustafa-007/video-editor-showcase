@@ -22,6 +22,7 @@ import { WhyMePage } from "@/components/sections/why-me";
 import { ContactPage } from "@/components/sections/contact";
 import { WorkPage } from "@/components/sections/work";
 import { CaseStudiesPage } from "@/components/sections/cases";
+import { ServicesPage } from "@/components/sections/services";
 import { WORK } from "@/lib/videoConfig";
 import { BrandsSection } from "@/components/sections/brands";
 
@@ -163,6 +164,10 @@ function HomePage() {
       <BrandsSection />
 
       <div className="flex flex-col w-full [overflow-x:clip]">
+        <SectionWrapper id="services" entry="rise">
+          <ServicesPage />
+        </SectionWrapper>
+
         <SectionWrapper id="about" entry="tilt-left">
           <AboutPage />
         </SectionWrapper>

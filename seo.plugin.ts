@@ -17,7 +17,51 @@ function read(root: string) {
   const videos: Site = JSON.parse(fs.readFileSync(path.join(root, "src/content/videos.json"), "utf8"));
   const cf = path.join(root, "src/content/cases.json");
   const cases: Site[] = fs.existsSync(cf) ? JSON.parse(fs.readFileSync(cf, "utf8")).cases || [] : [];
-  return { site, videos, cases };
+  const sf = path.join(root, "src/content/services.json");
+  const services: Site[] = fs.existsSync(sf) ? JSON.parse(fs.readFileSync(sf, "utf8")).services || [] : [];
+  return { site, videos, cases, services };
+}
+
+/** The head of one service page: aimed at one search (e.g. "wedding video editor"), with Service + FAQ data for Google. */
+function serviceHead(site: Site, sv: Site) {
+  const s = site.seo || {};
+  const url = String(s.site_url || "").replace(/\/$/, "");
+  const page = `${url}/services/${sv.slug}`;
+  const img = s.image ? (String(s.image).startsWith("http") ? s.image : url + s.image) : "";
+  const name = `${site.hero.first} ${site.hero.last}`;
+  const title = `${sv.title} | ${name}`.slice(0, 95);
+  const desc = String(sv.intro).slice(0, 158);
+  const ld = [
+    { "@context": "https://schema.org", "@type": "Service", name: sv.title, serviceType: sv.keyword, description: sv.intro, url: page,
+      areaServed: [{ "@type": "Country", name: "United States" }, { "@type": "Country", name: "Canada" }, { "@type": "Country", name: "United Kingdom" }],
+      provider: { "@type": "Person", name, url } },
+    { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: (sv.faq || []).map(([q, a]: string[]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name, item: url + "/" }, { "@type": "ListItem", position: 2, name: sv.nav, item: page }] },
+  ];
+  return [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(desc)}" />`,
+    `<meta name="keywords" content="${esc(sv.keyword)}" />`,
+    `<link rel="canonical" href="${esc(page)}" />`,
+    `<meta name="theme-color" content="#0c0818" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:site_name" content="Art by Qureshi" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(desc)}" />`,
+    `<meta property="og:url" content="${esc(page)}" />`,
+    img ? `<meta property="og:image" content="${esc(img)}" />` : "",
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    s.google_verification ? `<meta name="google-site-verification" content="${esc(s.google_verification)}" />` : "",
+    `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`,
+  ].filter(Boolean).join("\n    ");
+}
+
+function serviceText(sv: Site) {
+  const li = (a: string[]) => (a || []).map((x) => `<li>${esc(x)}</li>`).join("");
+  const faq = (sv.faq || []).map(([q, a]: string[]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("");
+  return `<noscript><main><h1>${esc(sv.h1)}</h1><p>${esc(sv.intro)}</p><h2>What you get</h2><ul>${li(sv.points)}</ul>
+      <h2>How it works</h2><ol>${li(sv.process)}</ol><h2>Questions</h2>${faq}</main></noscript>`;
 }
 
 /** The head of one case-study page: its own title, description, address and an Article for Google. */
@@ -98,12 +142,13 @@ function head(site: Site, videos: Site) {
   return tags.filter(Boolean).join("\n    ");
 }
 
-function noscript(site: Site, videos: Site) {
+function noscript(site: Site, videos: Site, services: Site[] = [], cases: Site[] = []) {
   const name = `${site.hero.first} ${site.hero.last}`;
   const secs = (videos.sections || []).map((x: Site) => `<li><b>${esc(x.eyebrow)}</b>: ${esc(x.title)}. ${esc(x.subtitle || "")}</li>`).join("");
   const links = Object.entries(site.links || {}).map(([k, v]) => `<a href="${esc(v)}">${esc(k)}</a>`).join(" · ");
   return `<noscript><main><h1>${esc(name)}, ${esc(site.hero.role)}</h1><p>${esc(site.hero.tagline)}</p>
       <p>${(site.hero.stats || []).map((x: Site) => `${esc(x.value)} ${esc(x.label)}`).join(" · ")}</p><ul>${secs}</ul>
+      <nav>${services.map((x) => `<a href="/services/${esc(x.slug)}">${esc(x.title)}</a>`).join(" · ")}${cases.map((c) => ` · <a href="/work/${esc(c.slug)}">${esc(c.client)} case study</a>`).join("")}</nav>
       <p>Email: <a href="mailto:${esc(site.chat?.email)}">${esc(site.chat?.email)}</a> · ${links}</p></main></noscript>`;
 }
 
@@ -114,13 +159,13 @@ export function seo(): Plugin {
     name: "abq-seo",
     configResolved(c) { root = c.root; outDir = c.build.outDir; },
     transformIndexHtml(html) {
-      const { site, videos } = read(root);
+      const { site, videos, services, cases } = read(root);
       return html
         .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, `<!--seo-->\n    ${head(site, videos)}\n    <!--/seo-->`)
-        .replace("<!--noscript-->", noscript(site, videos));
+        .replace("<!--noscript-->", noscript(site, videos, services, cases));
     },
     closeBundle() {
-      const { site, cases } = read(root);
+      const { site, cases, services } = read(root);
       const s = site.seo || {};
       const url = String(s.site_url || "").replace(/\/$/, "");
       const out = path.isAbsolute(outDir) ? outDir : path.join(root, outDir);
@@ -135,7 +180,15 @@ export function seo(): Plugin {
           .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, `<!--seo-->\n    ${caseHead(site, c)}\n    <!--/seo-->`)
           .replace(/<noscript>[\s\S]*?<\/noscript>/, caseText(c)));
       }
+      for (const sv of services) {
+        const dir = path.join(out, "services", sv.slug);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, "index.html"), base
+          .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, `<!--seo-->\n    ${serviceHead(site, sv)}\n    <!--/seo-->`)
+          .replace(/<noscript>[\s\S]*?<\/noscript>/, serviceText(sv)));
+      }
       const urls = [`  <url><loc>${url}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+        ...services.map((sv) => `  <url><loc>${url}/services/${sv.slug}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`),
         ...cases.map((c) => `  <url><loc>${url}/work/${c.slug}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)];
       fs.writeFileSync(path.join(out, "sitemap.xml"),
         `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`);

@@ -1,0 +1,144 @@
+{
+  "services": [
+    {
+      "slug": "video-editor",
+      "keyword": "freelance video editor",
+      "nav": "Video editing",
+      "title": "Freelance Video Editor for Brands and Creators in the US and Canada",
+      "h1": "A freelance video editor for brands and creators in the US and Canada",
+      "intro": "I'm Abdullah Qureshi, a video editor and videographer with 5+ years and 500+ projects behind me. I edit reels, YouTube videos, wedding films and brand content for clients across the US, Canada and the UK, fully remote, with a clear brief, a fixed timeline and revisions until it's right.",
+      "sections": ["talking-head", "montage", "long-form", "weddings"],
+      "points": [
+        "Short-form edits for Reels, TikTok and YouTube Shorts with subtitles, sound design and motion",
+        "Long-form YouTube edits that keep people watching to the end",
+        "Wedding films cut from your footage, in your style",
+        "Brand, restaurant and product montages with a colour look that matches the brand",
+        "Colour grading and sound clean-up on every project"
+      ],
+      "process": [
+        "You send the footage (a Drive or Dropbox link works) and tell me what it's for.",
+        "We agree on the brief, the length, the deadline and the price before I start.",
+        "I send a first cut, you leave notes, I revise until it's right.",
+        "You get the final files in every ratio you need: 9:16, 1:1, 16:9."
+      ],
+      "faq": [
+        ["How much does it cost to hire a video editor?", "It depends on the project: the length, how much footage there is, the deadline and the level of polish. Every project balances cheap, fast and quality. Send me what you have and I'll reply with a quote."],
+        ["Do you work with clients in the US and Canada?", "Yes. Most of my clients are outside Pakistan, in the US, Canada and the UK. Everything runs remotely: footage by link, notes by message or a quick call."],
+        ["What software do you edit in?", "Adobe Premiere Pro for the edit and colour, and After Effects for motion graphics and titles."],
+        ["Can I see work similar to my project?", "Yes. The portfolio has wedding films, talking-head reels, brand montages and long-form edits. Tell me what you're making and I'll point you to the closest examples."]
+      ]
+    },
+    {
+      "slug": "short-form-video-editor",
+      "keyword": "short form video editor",
+      "nav": "Reels & short-form",
+      "title": "Short-Form Video Editor for Reels, TikTok and YouTube Shorts",
+      "h1": "Short-form video editing for Reels, TikTok and YouTube Shorts",
+      "intro": "Short-form lives or dies in the first second. I cut talking-head reels, product clips and brand montages with a hook up front, clean subtitles, sound design and motion that keeps people watching, built for creators and brands in the US and Canada.",
+      "sections": ["talking-head", "montage"],
+      "points": [
+        "Hook-first structure: the strongest line or shot goes first",
+        "Readable, on-brand subtitles and text on screen",
+        "Sound design, music and clean audio",
+        "Motion graphics and transitions that serve the message, not distract from it",
+        "Exports in 9:16, plus 1:1 and 16:9 if you need them"
+      ],
+      "process": [
+        "Send your raw clips or a long video to cut down.",
+        "Tell me the platform, the goal (views, leads, sales) and your style references.",
+        "I deliver a first batch, you give notes, I lock the style for the next ones.",
+        "We can keep it going weekly once the style is set."
+      ],
+      "faq": [
+        ["How much does short-form video editing cost?", "It depends on how many videos, their length, the turnaround and how much motion and design each one needs. Tell me your plan and I'll quote it."],
+        ["Can you make my talking-head videos look professional?", "Yes. Most of my reels start as a person talking to camera; the edit, subtitles, sound and pacing are what make them hold attention."],
+        ["Do you also cut long videos into shorts?", "Yes. Send a podcast, interview or long video and I'll cut the strongest moments into vertical clips."],
+        ["Can we work on a monthly basis?", "Yes. Once the style is locked, a steady weekly batch works well for creators and brands."]
+      ]
+    },
+    {
+      "slug": "youtube-video-editor",
+      "keyword": "youtube video editor",
+      "nav": "YouTube & long-form",
+      "title": "YouTube Video Editor for Long-Form Creators and Brands",
+      "h1": "A YouTube video editor for long-form creators and brands",
+      "intro": "Long-form is about pacing: cutting the dead air without losing the story. I edit YouTube videos, documentaries and brand films with a clear structure, B-roll, music, colour and graphics, for creators and companies in the US and Canada.",
+      "sections": ["long-form", "talking-head"],
+      "points": [
+        "Story-first structure with a strong open",
+        "Tight pacing, B-roll and visual variety so viewers stay",
+        "Colour grading and clean, levelled audio",
+        "Titles, lower thirds and simple motion graphics",
+        "Thumbnail stills and short cut-downs on request"
+      ],
+      "process": [
+        "Share the raw footage and any script or notes.",
+        "We agree on the style, the length and the deadline.",
+        "First cut, your notes, revisions until it's right.",
+        "Final export ready to upload, plus shorts if you want them."
+      ],
+      "faq": [
+        ["How much does a YouTube editor cost?", "It depends on the video length, how much raw footage there is, graphics, and how fast you need it. Tell me about your channel and I'll quote it."],
+        ["Can you match my channel's existing style?", "Yes. Send two or three videos you like and I'll match the pacing, graphics and look."],
+        ["Do you do documentaries and brand films too?", "Yes. Long-form on my site includes documentary, brand film and deep-dive edits."],
+        ["How do we share files?", "Google Drive or Dropbox links work best. I send cuts back the same way."]
+      ]
+    },
+    {
+      "slug": "wedding-video-editor",
+      "keyword": "wedding video editor",
+      "nav": "Wedding films",
+      "title": "Wedding Video Editor: Outsource Your Wedding Film Edits",
+      "h1": "Wedding film editing for filmmakers who'd rather be shooting",
+      "intro": "You shoot the day, I build the film. I edit cinematic, emotional wedding films and highlight reels from your footage, in your style, so you can take more bookings without living in the timeline. I work with wedding filmmakers and couples in the US, Canada and beyond.",
+      "sections": ["weddings"],
+      "points": [
+        "Highlight films, full-length films and social teasers",
+        "Story built around vows, speeches and the moments that matter",
+        "Music edit, sound clean-up and colour grading",
+        "Your style matched from your past films",
+        "Vertical teasers for Instagram from the same footage"
+      ],
+      "process": [
+        "Send the footage and your references or past films.",
+        "Tell me the music, the length and the delivery date.",
+        "First cut, your notes, revisions until it's right.",
+        "Final films delivered in the formats you deliver to your couples."
+      ],
+      "faq": [
+        ["How much does wedding video editing cost?", "It depends on the length of the film, the hours of footage, cameras and audio sources, and the deadline. Send me the details and I'll quote it."],
+        ["Can you edit in my style?", "Yes. Send two or three of your films and I'll match the pacing, music feel and grade."],
+        ["Do you edit for wedding filmmakers or couples?", "Both. Most of the work is for filmmakers who outsource the edit."],
+        ["Can you also make vertical teasers?", "Yes. I can cut short vertical teasers from the same footage for social media."]
+      ]
+    },
+    {
+      "slug": "commercial-video-editor",
+      "keyword": "commercial video editor",
+      "nav": "Brands & commercials",
+      "title": "Commercial Video Editor for Brands, Restaurants and Products",
+      "h1": "Commercial and brand video editing that sells",
+      "intro": "Brand videos have one job: make people want what you sell. I edit restaurant, café, sports and product content, from social ads to edits that ran on digital billboards, with a colour look and pace built around your brand.",
+      "sections": ["montage", "long-form"],
+      "points": [
+        "Social ads, product and menu videos, brand montages",
+        "One edit cut in every ratio: reels, feed, ads and billboards",
+        "A colour look that stays consistent across your page",
+        "Weak footage rescued in the edit: pacing, framing and colour",
+        "Offer and campaign videos that tie into your posts"
+      ],
+      "process": [
+        "Send your footage and tell me what you're promoting.",
+        "We agree on the formats, the deadline and the price.",
+        "First cut, your notes, revisions until it's right.",
+        "Final files in every size your campaign needs."
+      ],
+      "faq": [
+        ["How much does a commercial edit cost?", "It depends on the number of videos and formats, how much footage there is, and the timeline. Tell me about the campaign and I'll quote it."],
+        ["Have you worked with restaurants and cafés?", "Yes. One example is McLaren Café in Qatar: page revamp, edits and offers, with edits that ran as ads and on digital billboards."],
+        ["Can you work with footage we already shot?", "Yes. Most projects start from your footage, even when it wasn't shot the ideal way."],
+        ["Do you deliver for ads and billboards?", "Yes. I deliver each edit in the ratios and lengths each placement needs."]
+      ]
+    }
+  ]
+}
