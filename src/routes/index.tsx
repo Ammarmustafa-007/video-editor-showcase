@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { useRef, lazy, Suspense } from "react";
 const HologramPortrait = lazy(() => import("@/components/HologramPortrait").then((m) => ({ default: m.HologramPortrait })));
 import { ZoomWord } from "@/components/site/ZoomWord";
 import { ChatWidget } from "@/components/site/ChatWidget";
+import { EditTimeline } from "@/components/site/EditTimeline";
 import site from "@/content/site.json";
 import { useIsMobile } from "@/hooks/useIsMobile";
 const ThreeBackground = lazy(() => import("@/components/ThreeBackground").then(m => ({ default: m.ThreeBackground })));
@@ -33,66 +34,62 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type SectionConfig = {
-  id: string;
-  children: React.ReactNode;
-  /** Entry direction: 'left' | 'right' | 'bottom' | 'zoom' */
-  entry?: "left" | "right" | "bottom" | "zoom";
-};
+type Entry = "swipe-left" | "swipe-right" | "flip" | "spin" | "zoom-in" | "zoom-out";
+type SectionConfig = { id: string; children: React.ReactNode; entry?: Entry };
 
-function SectionWrapper({ id, children, entry = "bottom" }: SectionConfig) {
+const k01 = (p: number, a: number, b: number) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+/**
+ * Every section arrives in 3D, each in its own way: a page swiping in from the side, a page flipping up, a full turn,
+ * a zoom in from far away or a zoom down from too close. It settles flat while you read, then sinks back as you leave.
+ */
+function SectionWrapper({ id, children, entry = "zoom-in" }: SectionConfig) {
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const flat = reduced;
+  const m = isMobile ? 0.45 : 1; // gentler on phones
 
-  // Base smooth opacity — simpler on mobile
-  const rawOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-  const opacity = isMobile ? rawOpacity : useSpring(rawOpacity, { stiffness: 100, damping: 25 });
+  const inT = (v: number) => 1 - ease(k01(v, 0.02, 0.3)); // 1 while arriving, 0 once settled
+  const outT = (v: number) => k01(v, 0.8, 1);             // 0 while reading, 1 as it leaves
 
-  // 3D perspective-driven entry based on direction — disabled on mobile
-  const rawY = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    isMobile ? [30, 0, 0, 0] : entry === "zoom" ? [0, 0, 0, 0] : [80, 0, 0, -40]
-  );
-  const rawX = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    isMobile ? [0, 0, 0, 0] : entry === "left" ? [-60, 0, 0, 0] : entry === "right" ? [60, 0, 0, 0] : [0, 0, 0, 0]
-  );
-  const rawScale = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    isMobile ? [1, 1, 1, 1] : entry === "zoom" ? [0.85, 1, 1, 0.92] : [0.95, 1, 1, 0.97]
-  );
-  const rawRotateY = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    [0, 0, 0, 0]
-  );
-
-  // Skip springs on mobile — they cause jank on low-end GPUs
-  const y = isMobile ? rawY : useSpring(rawY, { stiffness: 80, damping: 20 });
-  const x = isMobile ? rawX : useSpring(rawX, { stiffness: 80, damping: 20 });
-  const scale = isMobile ? rawScale : useSpring(rawScale, { stiffness: 100, damping: 22 });
-  const rotateY = isMobile ? rawRotateY : useSpring(rawRotateY, { stiffness: 80, damping: 20 });
+  const opacity = useTransform(p, (v) => (flat ? 1 : Math.min(k01(v, 0.0, 0.16), 1 - outT(v) * 0.9)));
+  const x = useTransform(p, (v) => {
+    if (flat) return "0vw";
+    const i = inT(v);
+    return `${(entry === "swipe-left" ? -70 : entry === "swipe-right" ? 70 : 0) * i * m}vw`;
+  });
+  const y = useTransform(p, (v) => (flat ? 0 : (entry === "flip" ? 120 : 60) * inT(v) * m - 60 * outT(v) * m));
+  const rotateY = useTransform(p, (v) => {
+    if (flat) return 0;
+    const i = inT(v);
+    if (entry === "swipe-left") return 55 * i * m;
+    if (entry === "swipe-right") return -55 * i * m;
+    if (entry === "spin") return -360 * i * (isMobile ? 0 : 1);
+    return 0;
+  });
+  const rotateX = useTransform(p, (v) => (flat ? 0 : (entry === "flip" ? 70 * inT(v) * m : 0) - 14 * outT(v) * m));
+  const scale = useTransform(p, (v) => {
+    if (flat) return 1;
+    const i = inT(v);
+    const s = entry === "zoom-in" ? 1 - 0.45 * i : entry === "zoom-out" ? 1 + 0.6 * i : entry === "spin" ? 1 - 0.35 * i : 1 - 0.08 * i;
+    return s * (1 - 0.12 * outT(v));
+  });
 
   return (
-    <motion.section
-      id={id}
-      ref={ref}
-      style={isMobile
-        ? { opacity, y }
-        : { scale, opacity, y, x, rotateY, transformPerspective: 1200 }
-      }
-      className="relative z-10 flex flex-col justify-center py-6 md:py-10"
-    >
-      <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem]">
-        <div className="overflow-hidden transition-all duration-700 ease-out hover:shadow-[0_0_50px_rgba(180,140,255,0.08)] rounded-[2rem] hover:bg-brand-navy-deep/25 backdrop-blur-sm p-3 md:p-6 border border-transparent hover:border-brand-yellow/10">
-          {children}
+    <section id={id} ref={ref} className="relative z-10 flex flex-col justify-center py-6 md:py-10" style={{ perspective: isMobile ? 900 : 1400 }}>
+      <motion.div
+        style={{ opacity, x, y, rotateY, rotateX, scale, transformStyle: "preserve-3d", transformOrigin: entry === "flip" ? "50% 100%" : "50% 50%" }}
+        className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem] will-change-transform"
+      >
+        <div className="relative rounded-[2rem] p-3 md:p-6 transition-colors duration-700 hover:bg-brand-navy-deep/25">
+          <span aria-hidden className="holo-corners pointer-events-none absolute inset-0 rounded-[2rem] opacity-70" />
+          <div className="relative overflow-hidden rounded-[1.6rem]">{children}</div>
         </div>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 }
 
@@ -245,48 +242,50 @@ function HomePage() {
 
       <BrandsSection />
 
-      <div className="flex flex-col w-full">
-        <SectionWrapper id="about" entry="left">
+      <div className="flex flex-col w-full [overflow-x:clip]">
+        <SectionWrapper id="about" entry="swipe-left">
           <AboutPage />
         </SectionWrapper>
 
-        <SectionWrapper id="education" entry="right">
+        <SectionWrapper id="education" entry="swipe-right">
           <EducationPage />
         </SectionWrapper>
 
-        <SectionWrapper id="skills" entry="zoom">
+        <SectionWrapper id="skills" entry="spin">
           <SkillsPage />
         </SectionWrapper>
 
-        <SectionWrapper id="experience" entry="left">
+        <SectionWrapper id="experience" entry="flip">
           <ExperiencePage />
         </SectionWrapper>
 
-        <SectionWrapper id="testimonials" entry="right">
+        <SectionWrapper id="testimonials" entry="zoom-out">
           <TestimonialsPage />
         </SectionWrapper>
 
-        <SectionWrapper id="why-me" entry="zoom">
+        <SectionWrapper id="why-me" entry="swipe-left">
           <WhyMePage />
         </SectionWrapper>
 
-        <SectionWrapper id="weddings" entry="left">
+        <EditTimeline />
+
+        <SectionWrapper id="weddings" entry="zoom-in">
           <WeddingsPage />
         </SectionWrapper>
 
-        <SectionWrapper id="talking-head" entry="right">
+        <SectionWrapper id="talking-head" entry="swipe-right">
           <TalkingHeadPage />
         </SectionWrapper>
 
-        <SectionWrapper id="montage" entry="zoom">
+        <SectionWrapper id="montage" entry="flip">
           <MontagePage />
         </SectionWrapper>
 
-        <SectionWrapper id="long-form" entry="left">
+        <SectionWrapper id="long-form" entry="swipe-left">
           <LongFormPage />
         </SectionWrapper>
 
-        <SectionWrapper id="contact" entry="zoom">
+        <SectionWrapper id="contact" entry="zoom-out">
           <ContactPage />
         </SectionWrapper>
       </div>
