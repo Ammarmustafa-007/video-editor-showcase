@@ -5,7 +5,10 @@ import content from "@/content/videos.json";
  * Nova portal (Only you → Portfolio) without touching code: add a section, rename it, add or reorder videos.
  * Each video is a Google Drive file id and a title.
  */
-export type VideoEntry = { id: string; title: string };
+export type VideoEntry = { id: string; title: string; file?: string; poster?: string };
+
+/** A file the site serves itself (public/...), right in both the live site and the preview build. */
+export const asset = (p: string) => (/^https?:/.test(p) ? p : `${import.meta.env.BASE_URL}${p.replace(/^\.?\//, "")}`);
 export type WorkLayout = "wide" | "reels" | "square";
 export type WorkSection = { id: string; eyebrow: string; title: string; subtitle?: string; layout: WorkLayout; videos: VideoEntry[] };
 

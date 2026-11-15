@@ -21,6 +21,7 @@ import { TestimonialsPage } from "@/components/sections/testimonials";
 import { WhyMePage } from "@/components/sections/why-me";
 import { ContactPage } from "@/components/sections/contact";
 import { WorkPage } from "@/components/sections/work";
+import { CaseStudiesPage } from "@/components/sections/cases";
 import { WORK } from "@/lib/videoConfig";
 import { BrandsSection } from "@/components/sections/brands";
 
@@ -193,6 +194,10 @@ function HomePage() {
             <WorkPage section={w} />
           </SectionWrapper>
         ))}
+
+        <SectionWrapper id="case-studies" entry="rise">
+          <CaseStudiesPage />
+        </SectionWrapper>
 
         <SectionWrapper id="contact" entry="depth">
           <ContactPage />

@@ -15,7 +15,44 @@ const esc = (s: unknown) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&
 function read(root: string) {
   const site: Site = JSON.parse(fs.readFileSync(path.join(root, "src/content/site.json"), "utf8"));
   const videos: Site = JSON.parse(fs.readFileSync(path.join(root, "src/content/videos.json"), "utf8"));
-  return { site, videos };
+  const cf = path.join(root, "src/content/cases.json");
+  const cases: Site[] = fs.existsSync(cf) ? JSON.parse(fs.readFileSync(cf, "utf8")).cases || [] : [];
+  return { site, videos, cases };
+}
+
+/** The head of one case-study page: its own title, description, address and an Article for Google. */
+function caseHead(site: Site, c: Site) {
+  const s = site.seo || {};
+  const url = String(s.site_url || "").replace(/\/$/, "");
+  const page = `${url}/work/${c.slug}`;
+  const img = s.image ? (String(s.image).startsWith("http") ? s.image : url + s.image) : "";
+  const name = `${site.hero.first} ${site.hero.last}`;
+  const title = `${c.client} case study: ${c.title} | ${name}`.slice(0, 90);
+  const ld = { "@context": "https://schema.org", "@type": "Article", headline: c.title, description: c.summary, url: page, image: img || undefined,
+    author: { "@type": "Person", name, url }, about: { "@type": "Organization", name: c.client, address: c.location || undefined },
+    keywords: (c.services || []).join(", ") };
+  return [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(c.summary)}" />`,
+    `<meta name="author" content="${esc(name)}" />`,
+    `<link rel="canonical" href="${esc(page)}" />`,
+    `<meta name="theme-color" content="#0c0818" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:site_name" content="Art by Qureshi" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(c.summary)}" />`,
+    `<meta property="og:url" content="${esc(page)}" />`,
+    img ? `<meta property="og:image" content="${esc(img)}" />` : "",
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    s.google_verification ? `<meta name="google-site-verification" content="${esc(s.google_verification)}" />` : "",
+    `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`,
+  ].filter(Boolean).join("\n    ");
+}
+
+function caseText(c: Site) {
+  const li = (a: string[]) => (a || []).map((x) => `<li>${esc(x)}</li>`).join("");
+  return `<noscript><main><h1>${esc(c.title)}</h1><p>${esc(c.client)}${c.location ? ", " + esc(c.location) : ""}. ${esc(c.summary)}</p>
+      <h2>The problem</h2><ul>${li(c.challenge)}</ul><h2>What we did</h2><ul>${li(c.approach)}</ul><h2>What happened</h2><ul>${li(c.results)}</ul></main></noscript>`;
 }
 
 function head(site: Site, videos: Site) {
@@ -83,14 +120,25 @@ export function seo(): Plugin {
         .replace("<!--noscript-->", noscript(site, videos));
     },
     closeBundle() {
-      const { site } = read(root);
+      const { site, cases } = read(root);
       const s = site.seo || {};
       const url = String(s.site_url || "").replace(/\/$/, "");
       const out = path.isAbsolute(outDir) ? outDir : path.join(root, outDir);
       if (!fs.existsSync(out) || !url) return;
       const today = new Date().toISOString().slice(0, 10);
+      // one real HTML file per case study, so Google gets its own title, description and text for each page
+      const base = fs.readFileSync(path.join(out, "index.html"), "utf8");
+      for (const c of cases) {
+        const dir = path.join(out, "work", c.slug);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, "index.html"), base
+          .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, `<!--seo-->\n    ${caseHead(site, c)}\n    <!--/seo-->`)
+          .replace(/<noscript>[\s\S]*?<\/noscript>/, caseText(c)));
+      }
+      const urls = [`  <url><loc>${url}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+        ...cases.map((c) => `  <url><loc>${url}/work/${c.slug}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)];
       fs.writeFileSync(path.join(out, "sitemap.xml"),
-        `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${url}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>\n`);
+        `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`);
       fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`);
       if (/^[a-f0-9]{16,64}$/i.test(s.indexnow_key || "")) fs.writeFileSync(path.join(out, `${s.indexnow_key}.txt`), s.indexnow_key);
     },

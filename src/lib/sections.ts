@@ -14,7 +14,7 @@ const before = [
   { id: "testimonials", label: "Testimonials" },
   { id: "why-me", label: "Why Me" },
 ];
-const after = [{ id: "contact", label: "Contact Me" }];
+const after = [{ id: "case-studies", label: "Case Studies" }, { id: "contact", label: "Contact Me" }];
 
 function tc(i: number) {
   const s = i * 75;
