@@ -81,7 +81,7 @@ export function DockingHologram({ slot }: { slot: RefObject<HTMLDivElement | nul
       {/* a faint base under the docked bust so it reads as an object, not a sticker */}
       <motion.span aria-hidden style={{ opacity: ring }} className="pointer-events-none absolute inset-x-[8%] bottom-[2%] h-[14%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(150,110,255,0.35),transparent)]" />
       <Suspense fallback={null}>
-        <HologramPortrait className="pointer-events-none h-full w-full" />
+        <HologramPortrait className="pointer-events-none absolute inset-y-0 -left-[30%] -right-[30%]" />
       </Suspense>
     </motion.div>
   );

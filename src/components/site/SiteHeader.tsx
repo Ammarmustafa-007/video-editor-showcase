@@ -1,6 +1,6 @@
-import { scrollToY } from "@/lib/smoothScroll";
+import { goToSection } from "@/lib/goToSection";
 import { SECTIONS } from "@/lib/sections";
-import { Link as RouterLink } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -10,15 +10,10 @@ const links = SECTIONS.map((s) => ({ to: `#${s.id}`, label: s.label }));
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
+  const router = useRouter();
   const handleScroll = (id: string) => {
     setOpen(false);
-    setTimeout(() => {
-      const element = document.getElementById(id.substring(1));
-      if (element) {
-        const top = element.getBoundingClientRect().top + window.scrollY - 80;
-        scrollToY(top);
-      }
-    }, 10);
+    setTimeout(() => goToSection(router, id.substring(1)), 10);
   };
 
   return (

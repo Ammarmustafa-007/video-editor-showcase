@@ -4,6 +4,7 @@ import { ArrowRight, Play } from "lucide-react";
 import { useRef } from "react";
 import { scrollToY } from "@/lib/smoothScroll";
 import { DockingHologram } from "@/components/site/DockingHologram";
+import { BuildIntro } from "@/components/site/BuildIntro";
 import { StarField } from "@/components/site/StarField";
 import { ZoomWord } from "@/components/site/ZoomWord";
 import { Showreel } from "@/components/site/Showreel";
@@ -96,25 +97,26 @@ function HomePage() {
       <TimelineNavigation />
       <ChatWidget />
       <DockingHologram slot={slot} />
+      <BuildIntro slot={slot} />
 
       <section id="home" ref={ref} className="relative overflow-hidden min-h-screen pt-16">
         <motion.div style={{ opacity }} className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[88rem] grid-cols-1 items-center gap-4 px-4 md:px-8 lg:grid-cols-12 lg:px-12">
           {/* left: who */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
+            transition={{ duration: 0.7, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
             className="order-2 lg:order-1 lg:col-span-4 text-center lg:text-left"
           >
             <p className="mb-4 font-mono text-[13px] text-white/50">
               <span className="text-brand-yellow">00:00:00:00</span>&nbsp;&nbsp;{hero.eyebrow}
             </p>
-            <h1 className="font-display text-5xl md:text-6xl xl:text-7xl font-semibold leading-[1.02] tracking-[-0.03em] text-foreground">
+            <h1 data-build="h1 · name" className="font-display text-5xl md:text-6xl xl:text-7xl font-semibold leading-[1.02] tracking-[-0.03em] text-foreground">
               {hero.first}
               <br />
               <span className="text-brand-yellow">{hero.last}</span>
             </h1>
-            <p className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-lg md:text-xl font-medium text-foreground/90 lg:justify-start">
+            <p data-build="role" className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-lg md:text-xl font-medium text-foreground/90 lg:justify-start">
               {hero.role.split(" · ")[0]}
               {hero.role.split(" · ")[1] && (
                 <button type="button" onClick={() => { const el = document.getElementById("ai-videos"); if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY - 80); }} className="inline-flex items-center gap-2 rounded-full border border-[#c9a6ff]/40 bg-[#c9a6ff]/10 px-3 py-1 text-sm font-medium text-brand-yellow transition-colors hover:bg-[#c9a6ff]/20">
@@ -122,7 +124,7 @@ function HomePage() {
                 </button>
               )}
             </p>
-            <p className="mt-2 text-base text-white/60 max-w-md mx-auto lg:mx-0">{hero.tagline}</p>
+            <p data-build="tagline" className="mt-2 text-base text-white/60 max-w-md mx-auto lg:mx-0">{hero.tagline}</p>
           </motion.div>
 
           {/* centre: the box the hologram starts in (it is drawn by DockingHologram, fixed on top) */}
@@ -132,12 +134,12 @@ function HomePage() {
 
           {/* right: numbers + actions */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, clipPath: "inset(0 0 0 100%)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0 0%)" }}
+            transition={{ duration: 0.7, delay: 1.45, ease: [0.22, 1, 0.36, 1] }}
             className="order-3 lg:col-span-3 flex flex-col items-center lg:items-end gap-8 pb-16 lg:pb-0 lg:pr-20 xl:pr-24"
           >
-            <dl className="flex lg:flex-col gap-6 lg:gap-5 text-center lg:text-right">
+            <dl data-build="stats" className="flex lg:flex-col gap-6 lg:gap-5 text-center lg:text-right">
               {hero.stats.map((st) => (
                 <div key={st.label}>
                   <dt className="sr-only">{st.label}</dt>
@@ -146,7 +148,7 @@ function HomePage() {
                 </div>
               ))}
             </dl>
-            <div className="flex flex-wrap justify-center lg:justify-end gap-3">
+            <div data-build="actions" className="flex flex-wrap justify-center lg:justify-end gap-3">
               <button
                 onClick={() => handleScroll("#contact")}
                 className="group inline-flex h-11 items-center gap-2 rounded-[10px] bg-brand-yellow px-5 text-sm font-medium text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition-[transform,background-color] duration-150 hover:bg-[#d9c2ff] active:scale-[0.98]"

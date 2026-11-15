@@ -12,7 +12,7 @@ import depthUrl from "@/assets/holo/bust-depth.png";
  * cloud and assemble from the top down; after that the whole head turns to look at the mouse.
  */
 
-type Cloud = { target: Float32Array; start: Float32Array; color: Float32Array; rand: Float32Array; delay: Float32Array; count: number };
+type Cloud = { target: Float32Array; start: Float32Array; color: Float32Array; rand: Float32Array; delay: Float32Array; count: number; halfW: number };
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((res, rej) => {
@@ -61,7 +61,7 @@ async function buildCloud(step: number): Promise<Cloud> {
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
       const r = 4 + Math.random() * 5;
-      s.push(r * Math.sin(ph) * Math.cos(th), r * Math.sin(ph) * Math.sin(th) * 0.7, r * Math.cos(ph) - 2);
+      s.push(r * Math.sin(ph) * Math.cos(th) * 1.6, r * Math.sin(ph) * Math.sin(th) * 0.8, r * Math.cos(ph) - 2);
       col.push(px[i] / 255, px[i + 1] / 255, px[i + 2] / 255);
       rnd.push(Math.random());
       del.push((jy / H) * 0.55 + Math.random() * 0.25); // assembles from the top of the head down
@@ -69,7 +69,7 @@ async function buildCloud(step: number): Promise<Cloud> {
   }
   return {
     target: new Float32Array(t), start: new Float32Array(s), color: new Float32Array(col),
-    rand: new Float32Array(rnd), delay: new Float32Array(del), count: t.length / 3,
+    rand: new Float32Array(rnd), delay: new Float32Array(del), count: t.length / 3, halfW: (W / 2) * scale,
   };
 }
 
@@ -80,6 +80,7 @@ const vertex = /* glsl */ `
   uniform float uPixelRatio;
   uniform float uYaw;
   uniform float uPitch;
+  uniform float uHalfW;
   attribute vec3 aStart;
   attribute vec3 aColor;
   attribute float aRand;
@@ -120,7 +121,9 @@ const vertex = /* glsl */ `
     p.x += g * 0.12 * sign(aRand - 0.5);
 
     // the bust dissolves into the projector beam: points near the bottom thin out and drift down
-    float keep = smoothstep(-1.95, -0.85, position.y);
+    // ...and the outer edges of the shoulders thin out too, so the sides never end in a straight cut
+    float side = 1.0 - smoothstep(uHalfW * 0.72, uHalfW * 0.98, abs(position.x));
+    float keep = smoothstep(-1.95, -0.85, position.y) * side;
     float alive = step(aRand, keep * 1.15);
     p.y -= (1.0 - keep) * (0.15 + 0.25 * fract(uTime * 0.2 + aRand * 7.0)) * e;
 
@@ -206,6 +209,7 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
     uPixelRatio: { value: Math.min(gl.getPixelRatio(), 1.75) },
     uYaw: { value: 0 },
     uPitch: { value: 0 },
+    uHalfW: { value: cloud.halfW },
   }), [cloud, gl, reduced]);
 
   useFrame((state, dt) => {
@@ -240,31 +244,74 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
   );
 }
 
-/** The projector the hologram floats above: rings on the floor, a cone of light. */
+const beamVertex = /* glsl */ `
+  varying vec2 vUv;
+  varying vec3 vN;
+  varying vec3 vV;
+  void main() {
+    vUv = uv;
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vN = normalize(normalMatrix * normal);
+    vV = normalize(-mv.xyz);
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const beamFragment = /* glsl */ `
+  uniform float uTime;
+  varying vec2 vUv;
+  varying vec3 vN;
+  varying vec3 vV;
+  void main() {
+    // brightest at the projector, gone well before the top: no hard lid
+    float h = pow(1.0 - vUv.y, 2.2);
+    // facing the camera = see-through middle; the silhouette edges fade out too, so there is no hard outline
+    float facing = abs(dot(vN, vV));
+    float edge = smoothstep(0.25, 0.85, facing);
+    // a few soft rays drifting round the cone
+    float rays = 0.75 + 0.25 * sin(vUv.x * 6.2831 * 9.0 + uTime * 0.6) * sin(vUv.x * 6.2831 * 4.0 - uTime * 0.4);
+    vec3 col = mix(vec3(0.78, 0.47, 1.0), vec3(0.55, 0.82, 1.0), vUv.y);
+    gl_FragColor = vec4(col, h * edge * rays * 0.16);
+  }
+`;
+
+function radialTexture(stops: [number, string][]) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 256;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  for (const [o, col] of stops) g.addColorStop(o, col);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 256, 256);
+  return new THREE.CanvasTexture(c);
+}
+
+/** The projector the hologram floats above: rings on the floor, a cone of light that opens out and melts into the page. */
 function Projector() {
   const ring = useRef<THREE.Mesh>(null);
   const ticks = useRef<THREE.Group>(null);
-  const cone = useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = 4;
-    c.height = 128;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createLinearGradient(0, 0, 0, 128);
-    g.addColorStop(0, "rgba(140,200,255,0)");
-    g.addColorStop(0.6, "rgba(168,120,255,0.07)");
-    g.addColorStop(1, "rgba(200,120,255,0.2)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 4, 128);
-    return new THREE.CanvasTexture(c);
-  }, []);
+  const beam = useRef<THREE.ShaderMaterial>(null);
+  const floorGlow = useMemo(() => radialTexture([[0, "rgba(170,120,255,0.55)"], [0.35, "rgba(140,90,240,0.22)"], [1, "rgba(120,80,230,0)"]]), []);
+  const backGlow = useMemo(() => radialTexture([[0, "rgba(150,100,255,0.22)"], [0.5, "rgba(110,80,220,0.08)"], [1, "rgba(90,60,200,0)"]]), []);
+  const beamUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
   useFrame((s) => {
     const t = s.clock.elapsedTime;
     if (ring.current) (ring.current.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(t * 2) * 0.18;
     if (ticks.current) ticks.current.rotation.y = t * 0.25;
+    if (beam.current) beam.current.uniforms.uTime.value = t;
   });
   const tickMarks = useMemo(() => Array.from({ length: 72 }, (_, i) => i), []);
   return (
     <group position={[0, -2.02, 0]}>
+      {/* a wide soft glow behind the bust, so the light fades into the page instead of ending at an edge */}
+      <mesh position={[0, 2.1, -1.6]}>
+        <planeGeometry args={[9, 7.5]} />
+        <meshBasicMaterial map={backGlow} transparent blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      {/* light spilling out across the floor on both sides */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} scale={[1, 0.42, 1]}>
+        <planeGeometry args={[9, 9]} />
+        <meshBasicMaterial map={floorGlow} transparent blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
+      </mesh>
       <group scale={[1, 1, 0.5]}>
         <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.52, 1.58, 128]} />
@@ -286,9 +333,10 @@ function Projector() {
             </mesh>
           ))}
         </group>
-        <mesh position={[0, 1.1, 0]}>
-          <cylinderGeometry args={[1.9, 1.52, 2.2, 64, 1, true]} />
-          <meshBasicMaterial map={cone} transparent blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
+        {/* the beam opens wide as it rises (1.5 at the base, 3.2 at the top) and fades out on every side */}
+        <mesh position={[0, 1.5, 0]}>
+          <cylinderGeometry args={[3.2, 1.52, 3.0, 96, 1, true]} />
+          <shaderMaterial ref={beam} vertexShader={beamVertex} fragmentShader={beamFragment} uniforms={beamUniforms} transparent blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
         </mesh>
       </group>
     </group>
@@ -315,7 +363,19 @@ export function HologramPortrait({ className = "" }: { className?: string }) {
   }, []);
 
   return (
-    <div ref={wrap} className={className} aria-label="Hologram portrait of Abdullah Qureshi" role="img">
+    <div
+      ref={wrap}
+      className={className}
+      aria-label="Hologram portrait of Abdullah Qureshi"
+      role="img"
+      // the canvas is wider than its box; its edges and floor fade to nothing so it never reads as a cut-out
+      style={{
+        maskImage: "linear-gradient(to right, transparent, #000 18%, #000 82%, transparent), linear-gradient(to bottom, #000 78%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, #000 18%, #000 82%, transparent), linear-gradient(to bottom, #000 78%, transparent)",
+        maskComposite: "intersect",
+        WebkitMaskComposite: "source-in",
+      }}
+    >
       {cloud && (
         <Canvas
           frameloop={visible ? "always" : "never"}
