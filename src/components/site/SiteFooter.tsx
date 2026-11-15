@@ -1,6 +1,7 @@
 import { Mail, Phone, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { scrollToY } from "@/lib/smoothScroll";
+import site from "@/content/site.json";
 
 export function SiteFooter() {
   const scrollTo = (id: string) => {
@@ -22,12 +23,14 @@ export function SiteFooter() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             Wedding films, brand campaigns, reels and long-form. Send me what you have and I'll tell you how I would cut it.
           </p>
-          <button 
-            onClick={() => scrollTo("contact")}
+          <a
+            href={site.links.call}
+            target="_blank"
+            rel="noreferrer"
             className="group inline-flex h-12 items-center gap-2 rounded-[10px] bg-brand-yellow px-6 text-base font-medium text-brand-navy-deep transition-[transform,background-color] duration-150 hover:bg-[#d9c2ff] active:scale-[0.98]"
           >
-            Start a project <ArrowRight size={18} strokeWidth={1.5} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+            Book a 30-minute call <ArrowRight size={18} strokeWidth={1.5} className="group-hover:translate-x-1 transition-transform" />
+          </a>
         </div>
 
         <div className="grid gap-12 md:grid-cols-4 border-t border-white/10 pt-12">

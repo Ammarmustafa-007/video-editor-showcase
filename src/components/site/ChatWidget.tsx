@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Mail, MessageCircle, Send, X } from "lucide-react";
+import { CalendarDays, Mail, MessageCircle, Send, X } from "lucide-react";
 import site from "@/content/site.json";
 
 /**
@@ -125,6 +125,9 @@ export function ChatWidget() {
                   <div className="mt-3 flex flex-col gap-2">
                     <a href={`mailto:${email}?subject=${encodeURIComponent("Project enquiry")}`} className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2 text-sm text-foreground hover:bg-white/10">
                       <Mail size={15} className="text-brand-yellow" /> {email}
+                    </a>
+                    <a href={site.links.call} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2 text-sm text-foreground hover:bg-white/10">
+                      <CalendarDays size={15} className="text-brand-yellow" /> Book a 30-minute call
                     </a>
                     <a href={whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2 text-sm text-foreground hover:bg-white/10">
                       <MessageCircle size={15} className="text-brand-yellow" /> WhatsApp

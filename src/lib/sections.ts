@@ -6,6 +6,7 @@ import { WORK } from "@/lib/videoConfig";
  */
 const before = [
   { id: "home", label: "My Portfolio" },
+  { id: "showreel", label: "Showreel" },
   { id: "about", label: "About Me" },
   { id: "education", label: "Education" },
   { id: "skills", label: "Skills" },

@@ -1,4 +1,5 @@
-import { Mail, Phone, User } from "lucide-react";
+import { ArrowUpRight, CalendarDays, Mail, Phone } from "lucide-react";
+import site from "@/content/site.json";
 import { motion } from "framer-motion";
 import portrait from "@/assets/portrait-exp.jpg";
 import { PageHero } from "@/components/site/PageHero";
@@ -9,7 +10,6 @@ import { HoloPortrait } from "@/components/site/HoloPortrait";
 const cards = [
   { icon: Phone, label: "Phone", value: "+92 300 3322338", href: "https://wa.me/+923003322338?text=Hello" },
   { icon: Mail, label: "Email", value: "connect.qureshiiii@gmail.com", href: "mailto:connect.qureshiiii@gmail.com" },
-  { icon: User, label: "Name", value: <>Abdullah <span className="text-brand-yellow">Qureshi</span></> },
   { icon: ({ size = 20 }: { size?: number; className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none">
       <defs>
@@ -25,12 +25,12 @@ const cards = [
       <circle cx="12" cy="12" r="5" stroke="url(#ig-gradient)" strokeWidth="2" />
       <circle cx="17.5" cy="6.5" r="1.5" fill="url(#ig-gradient)" />
     </svg>
-  ), label: "Instagram", value: "@art_by_qureshii", href: "https://instagram.com/art_by_qureshii" },
+  ), label: "Instagram", value: "@art_by_qureshii", href: site.links.instagram },
   { icon: ({ size = 20 }: { size?: number; className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="#0A66C2">
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
     </svg>
-  ), label: "LinkedIn", value: "Abdullah Qureshi", href: "https://www.linkedin.com/in/abdullahqureshiii/" },
+  ), label: "LinkedIn", value: "Abdullah Qureshi", href: site.links.linkedin },
 ];
 
 const containerVariants = {
@@ -65,6 +65,20 @@ export function ContactPage() {
           className="grid gap-3 sm:grid-cols-2"
           style={{ perspective: 800 }}
         >
+          <motion.a
+            variants={itemVariants}
+            href={site.links.call}
+            target="_blank"
+            rel="noreferrer"
+            className="group sm:col-span-2 flex items-center gap-4 rounded-xl border border-[#c9a6ff]/40 bg-[#c9a6ff]/[0.08] p-5 transition-colors hover:bg-[#c9a6ff]/[0.14]"
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-brand-yellow text-primary-foreground"><CalendarDays size={20} strokeWidth={1.5} /></span>
+            <span className="min-w-0">
+              <span className="block font-display text-base font-medium text-foreground">Book a 30-minute call</span>
+              <span className="block text-[13px] text-muted-foreground">Pick a time that suits you. We talk through your footage and what you need.</span>
+            </span>
+            <ArrowUpRight size={18} strokeWidth={1.5} className="ml-auto shrink-0 text-brand-yellow transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </motion.a>
           {cards.map((c) => {
             const inner = (
               <motion.div
@@ -77,7 +91,7 @@ export function ContactPage() {
                   <c.icon className="text-brand-yellow" size={20} />
                 </motion.div>
                 <p className="mt-2 text-[12px] text-muted-foreground">{c.label}</p>
-                <p className="mt-1 font-display font-bold text-sm text-foreground break-words">{c.value}</p>
+                <p className="mt-1 font-display font-medium text-sm text-foreground break-words">{c.value}</p>
               </motion.div>
             );
             return c.href ? (

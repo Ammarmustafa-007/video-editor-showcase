@@ -6,6 +6,7 @@ import { scrollToY } from "@/lib/smoothScroll";
 import { DockingHologram } from "@/components/site/DockingHologram";
 import { StarField } from "@/components/site/StarField";
 import { ZoomWord } from "@/components/site/ZoomWord";
+import { Showreel } from "@/components/site/Showreel";
 import { ChatWidget } from "@/components/site/ChatWidget";
 import { EditTimeline } from "@/components/site/EditTimeline";
 import site from "@/content/site.json";
@@ -26,8 +27,8 @@ import { BrandsSection } from "@/components/sections/brands";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Abdullah Qureshi — Video Editor" },
-      { name: "description", content: "Creative video editor crafting cinematic stories for brands, weddings and creators." },
+      { title: site.seo.title },
+      { name: "description", content: site.seo.description },
     ],
   }),
   component: HomePage,
@@ -144,7 +145,7 @@ function HomePage() {
                 Hire me <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-150 group-hover:translate-x-0.5" />
               </button>
               <button
-                onClick={() => handleScroll(`#${WORK[0]?.id ?? "contact"}`)}
+                onClick={() => handleScroll("#showreel")}
                 className="inline-flex h-11 items-center gap-2 rounded-[10px] border border-white/10 bg-white/[0.04] px-5 text-sm font-medium text-foreground transition-[transform,background-color] duration-150 hover:bg-white/[0.08] active:scale-[0.98]"
               >
                 <Play size={16} strokeWidth={1.5} /> Watch the work
@@ -153,6 +154,8 @@ function HomePage() {
           </motion.div>
         </motion.div>
       </section>
+
+      <Showreel />
 
       <ZoomWord />
 
