@@ -22,6 +22,54 @@
       ]
     },
     {
+      "id": "ai-videos",
+      "eyebrow": "AI Videos",
+      "title": "AI video editing",
+      "subtitle": "Stories built with AI tools like Higgsfield, then cut, timed and captioned by hand",
+      "layout": "reels",
+      "videos": [
+        {
+          "id": "ai-video-1",
+          "title": "AI Video 1",
+          "file": "work/ai-video-1.mp4",
+          "poster": "work/ai-video-1.jpg"
+        },
+        {
+          "id": "ai-video-2",
+          "title": "AI Video 2",
+          "file": "work/ai-video-2.mp4",
+          "poster": "work/ai-video-2.jpg"
+        }
+      ]
+    },
+    {
+      "id": "ai-songs",
+      "eyebrow": "AI Songs",
+      "title": "AI music videos",
+      "subtitle": "Animated AI songs with characters, scenes and lyrics edited to the beat",
+      "layout": "reels",
+      "videos": [
+        {
+          "id": "ai-song-1",
+          "title": "AI Song 1",
+          "file": "work/ai-song-1.mp4",
+          "poster": "work/ai-song-1.jpg"
+        },
+        {
+          "id": "ai-song-3",
+          "title": "AI Song 2",
+          "file": "work/ai-song-3.mp4",
+          "poster": "work/ai-song-3.jpg"
+        },
+        {
+          "id": "ai-song-4",
+          "title": "AI Song 3",
+          "file": "work/ai-song-4.mp4",
+          "poster": "work/ai-song-4.jpg"
+        }
+      ]
+    },
+    {
       "id": "talking-head",
       "eyebrow": "Talking Head Reels",
       "title": "Short-form that converts",

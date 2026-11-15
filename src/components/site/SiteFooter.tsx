@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { scrollToY } from "@/lib/smoothScroll";
 import site from "@/content/site.json";
 import { Link } from "@tanstack/react-router";
-import { SERVICES } from "@/lib/services";
+import { MAIN_SERVICES, MORE_SERVICES, REGION_PAGES } from "@/lib/services";
 import { CASES } from "@/lib/cases";
 
 export function SiteFooter() {
@@ -74,7 +74,7 @@ export function SiteFooter() {
           <div>
             <p className="text-foreground font-medium text-sm mb-4">Services</p>
             <div className="flex flex-col gap-3 text-muted-foreground">
-              {SERVICES.map((x) => (
+              {[...MAIN_SERVICES, ...MORE_SERVICES].map((x) => (
                 <Link key={x.slug} to="/services/$slug" params={{ slug: x.slug }} className="hover:text-brand-yellow transition-colors">{x.nav}</Link>
               ))}
               {CASES.map((c) => (
@@ -84,7 +84,13 @@ export function SiteFooter() {
           </div>
 
           <div className="space-y-4 text-base text-muted-foreground">
-            <p className="text-foreground font-medium text-sm mb-4">Get in touch</p>
+            <p className="text-foreground font-medium text-sm mb-4">Where I work</p>
+            <div className="flex flex-col gap-3">
+              {REGION_PAGES.map((x) => (
+                <Link key={x.slug} to="/services/$slug" params={{ slug: x.slug }} className="hover:text-brand-yellow transition-colors">Video editor, {x.nav}</Link>
+              ))}
+            </div>
+            <p className="text-foreground font-medium text-sm mb-4 pt-4">Get in touch</p>
             <a href="https://wa.me/+923003322338?text=Hello" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-brand-yellow transition-colors group">
               <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand-yellow/20"><Phone size={14}/></div>
               +92 300 3322338

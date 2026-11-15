@@ -33,7 +33,7 @@ function serviceHead(site: Site, sv: Site) {
   const desc = String(sv.intro).slice(0, 158);
   const ld = [
     { "@context": "https://schema.org", "@type": "Service", name: sv.title, serviceType: sv.keyword, description: sv.intro, url: page,
-      areaServed: [{ "@type": "Country", name: "United States" }, { "@type": "Country", name: "Canada" }, { "@type": "Country", name: "United Kingdom" }],
+      areaServed: ["United States", "Canada", "Australia", "United Arab Emirates", "Saudi Arabia", "Qatar", "United Kingdom"].map((name) => ({ "@type": "Country", name })),
       provider: { "@type": "Person", name, url } },
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: (sv.faq || []).map(([q, a]: string[]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
