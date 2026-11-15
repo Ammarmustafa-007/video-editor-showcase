@@ -114,7 +114,14 @@ function HomePage() {
               <br />
               <span className="text-brand-yellow">{hero.last}</span>
             </h1>
-            <p className="mt-5 text-lg md:text-xl font-medium text-foreground/90">{hero.role}</p>
+            <p className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-lg md:text-xl font-medium text-foreground/90 lg:justify-start">
+              {hero.role.split(" · ")[0]}
+              {hero.role.split(" · ")[1] && (
+                <button type="button" onClick={() => { const el = document.getElementById("ai-videos"); if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY - 80); }} className="inline-flex items-center gap-2 rounded-full border border-[#c9a6ff]/40 bg-[#c9a6ff]/10 px-3 py-1 text-sm font-medium text-brand-yellow transition-colors hover:bg-[#c9a6ff]/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-yellow" />{hero.role.split(" · ")[1]}
+                </button>
+              )}
+            </p>
             <p className="mt-2 text-base text-white/60 max-w-md mx-auto lg:mx-0">{hero.tagline}</p>
           </motion.div>
 

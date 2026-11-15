@@ -9,7 +9,7 @@ import {
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useEffect } from "react";
-import { startSmoothScroll } from "@/lib/smoothScroll";
+import { jumpToY, startSmoothScroll } from "@/lib/smoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -74,9 +74,43 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/**
+ * Opening a new page starts at its top. Back / Forward return to exactly where you were on that page.
+ * (Positions are kept per address for this visit; the home page is long, so we retry until it has grown back.)
+ */
+function useScrollMemory() {
+  const router = useRouter();
+  useEffect(() => {
+    const saved = new Map<string, number>();
+    let pop = false;
+    const onPop = () => { pop = true; };
+    window.addEventListener("popstate", onPop);
+    const key = (l: { pathname: string; searchStr?: string }) => l.pathname + (l.searchStr || "");
+    const offBefore = router.subscribe("onBeforeNavigate", ({ fromLocation }) => {
+      if (fromLocation) saved.set(key(fromLocation), window.scrollY);
+    });
+    const offResolved = router.subscribe("onResolved", ({ toLocation, fromLocation }) => {
+      if (fromLocation && key(fromLocation) === key(toLocation)) { pop = false; return; } // same page (e.g. #section)
+      const back = pop && saved.has(key(toLocation));
+      pop = false;
+      const target = back ? saved.get(key(toLocation))! : 0;
+      const hash = !back && toLocation.hash ? document.getElementById(toLocation.hash) : null;
+      let tries = 0;
+      const go = () => {
+        if (hash) { jumpToY(hash.getBoundingClientRect().top + window.scrollY - 80); return; }
+        jumpToY(target);
+        if (back && Math.abs(window.scrollY - target) > 4 && tries++ < 20) setTimeout(go, 60);
+      };
+      requestAnimationFrame(go);
+    });
+    return () => { window.removeEventListener("popstate", onPop); offBefore(); offResolved(); };
+  }, [router]);
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => startSmoothScroll(), []);
+  useScrollMemory();
 
   return (
     <QueryClientProvider client={queryClient}>

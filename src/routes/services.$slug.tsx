@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowUpRight, CalendarDays, Check, ChevronDown } from "lucid
 import { StarField } from "@/components/site/StarField";
 import { ChatWidget } from "@/components/site/ChatWidget";
 import { VideoGrid, type VideoItem } from "@/components/site/VideoGrid";
-import { SERVICES, serviceBySlug, type Service } from "@/lib/services";
+import { MAIN_SERVICES, serviceBySlug, type Service } from "@/lib/services";
 import { CASES } from "@/lib/cases";
 import { WORK, asset, getDriveThumbnail } from "@/lib/videoConfig";
 import site from "@/content/site.json";
@@ -33,13 +33,13 @@ function ServicePage() {
   const s: Service = Route.useLoaderData();
   const pool = s.sections.flatMap((id) => WORK.find((w) => w.id === id)?.videos ?? []);
   const reels = s.sections[0] && WORK.find((w) => w.id === s.sections[0])?.layout === "reels";
-  const items: VideoItem[] = pool.slice(0, reels ? 8 : 6).map((v) => ({
+  const items: VideoItem[] = (s.group === "region" ? s.sections.flatMap((id) => (WORK.find((w) => w.id === id)?.videos ?? []).slice(0, 2)) : pool).slice(0, reels ? 8 : 6).map((v) => ({
     thumb: v.poster ? asset(v.poster) : getDriveThumbnail(v.id),
     title: v.title,
     src: v.file ? asset(v.file) : undefined,
     driveId: v.id,
   }));
-  const cases = ["video-editor", "commercial-video-editor", "short-form-video-editor"].includes(s.slug) ? CASES : [];
+  const cases = ["video-editor", "commercial-video-editor", "short-form-video-editor", "video-editor-uae-gulf"].includes(s.slug) ? CASES : [];
 
   return (
     <>
@@ -116,7 +116,7 @@ function ServicePage() {
         <section className="mt-16 border-t border-white/[0.08] pt-10">
           <h2 className="mb-4 font-mono text-[13px] font-normal text-white/50">Other services</h2>
           <div className="flex flex-wrap gap-2">
-            {SERVICES.filter((x) => x.slug !== s.slug).map((x) => (
+            {MAIN_SERVICES.filter((x) => x.slug !== s.slug).map((x) => (
               <Link key={x.slug} to="/services/$slug" params={{ slug: x.slug }} className="rounded-[10px] border border-white/10 px-4 py-2 text-sm text-white/80 transition-colors hover:border-[#c9a6ff]/60 hover:text-white">{x.nav}</Link>
             ))}
           </div>
