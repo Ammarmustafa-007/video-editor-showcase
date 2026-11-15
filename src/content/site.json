@@ -6,9 +6,18 @@
     "role": "Video Editor / Videographer",
     "tagline": "Cinematic storytelling, smooth transitions and post-production that turns attention into results.",
     "stats": [
-      { "value": "500+", "label": "Projects" },
-      { "value": "200", "label": "Clients" },
-      { "value": "5+", "label": "Years" }
+      {
+        "value": "500+",
+        "label": "Projects"
+      },
+      {
+        "value": "200",
+        "label": "Clients"
+      },
+      {
+        "value": "5+",
+        "label": "Years"
+      }
     ]
   },
   "zoom": {
@@ -21,5 +30,37 @@
     "endpoint": "https://novaclipshq.studio/api/abq/chat",
     "email": "connect.qureshiiii@gmail.com",
     "whatsapp": "https://wa.me/923003322338?text=Hello%20Abdullah"
+  },
+  "showreel": {
+    "src": "./showreel/intro-720.mp4",
+    "poster": "./showreel/poster.webp",
+    "title": "Meet me in 70 seconds",
+    "text": "Who I am, how I work and what I make for clients.",
+    "length": "01:09"
+  },
+  "links": {
+    "call": "https://calendly.com/art_by_qureshi/30min",
+    "instagram": "https://www.instagram.com/art_by_qureshii",
+    "linkedin": "https://www.linkedin.com/in/abdullahqureshiii",
+    "tiktok": "https://www.tiktok.com/@mrqureshhii"
+  },
+  "seo": {
+    "site_url": "https://artbyqureshi.me",
+    "title": "Abdullah Qureshi | Video Editor & Videographer in Lahore",
+    "description": "Video editor and videographer for brands, weddings and creators: reels with subtitles, wedding films, brand montages and long-form in Premiere Pro.",
+    "keywords": [
+      "video editor",
+      "videographer",
+      "wedding video editor",
+      "reels editor",
+      "Premiere Pro editor",
+      "color grading",
+      "Lahore video editor",
+      "freelance video editor"
+    ],
+    "image": "/og.jpg",
+    "location": "Lahore, Pakistan",
+    "google_verification": "",
+    "indexnow_key": ""
   }
 }

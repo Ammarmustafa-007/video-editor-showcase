@@ -3,6 +3,7 @@ import viteReact from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import { seo } from "./seo.plugin";
 
 export default defineConfig({
   plugins: [
@@ -13,6 +14,7 @@ export default defineConfig({
       generatedRouteTree: "./src/routeTree.gen.ts",
     }),
     viteReact(),
+    seo(),
   ],
   resolve: {
     alias: {
