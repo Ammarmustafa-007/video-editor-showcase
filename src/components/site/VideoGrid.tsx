@@ -144,6 +144,8 @@ function VideoCard({
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-deep/90 via-transparent to-transparent pointer-events-none" />
+          <span aria-hidden className="holo-sheen pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <span aria-hidden className="holo-corners pointer-events-none absolute inset-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
           {/* Play button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">

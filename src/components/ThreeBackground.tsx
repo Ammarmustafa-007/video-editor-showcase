@@ -164,13 +164,62 @@ function GlowingParticles({ count = 200 }: { count?: number }) {
 }
 
 /**
+ * Wireframe holograms floating at the sides of the page. The camera flies past them as the page scrolls, so they slide
+ * by in depth; each one turns slowly on its own.
+ */
+const SHAPES: { kind: "ico" | "torus" | "octa" | "knot" | "reel"; pos: [number, number, number]; size: number; color: string; spin: number }[] = [
+  { kind: "ico", pos: [-11, 3, -2], size: 2.2, color: "#b18cff", spin: 0.25 },
+  { kind: "reel", pos: [12, -4, -8], size: 2.6, color: "#7fd8ff", spin: -0.2 },
+  { kind: "octa", pos: [-13, -6, -16], size: 2.4, color: "#ff8ad8", spin: 0.3 },
+  { kind: "knot", pos: [13, 6, -22], size: 1.8, color: "#c9a6ff", spin: 0.18 },
+  { kind: "torus", pos: [-12, 5, -30], size: 2.6, color: "#7fd8ff", spin: -0.22 },
+  { kind: "ico", pos: [12, -7, -38], size: 3, color: "#ff8ad8", spin: 0.2 },
+];
+
+function HoloShapes() {
+  const refs = useRef<(THREE.Group | null)[]>([]);
+  useFrame((state, dt) => {
+    refs.current.forEach((g, i) => {
+      if (!g) return;
+      g.rotation.y += dt * SHAPES[i].spin;
+      g.rotation.x += dt * SHAPES[i].spin * 0.4;
+      g.position.y = SHAPES[i].pos[1] + Math.sin(state.clock.elapsedTime * 0.4 + i) * 0.6;
+    });
+  });
+  return (
+    <>
+      {SHAPES.map((sh, i) => (
+        <group key={i} ref={(el) => { refs.current[i] = el; }} position={sh.pos}>
+          <mesh>
+            {sh.kind === "ico" && <icosahedronGeometry args={[sh.size, 1]} />}
+            {sh.kind === "octa" && <octahedronGeometry args={[sh.size, 0]} />}
+            {sh.kind === "torus" && <torusGeometry args={[sh.size, sh.size * 0.28, 10, 32]} />}
+            {sh.kind === "knot" && <torusKnotGeometry args={[sh.size, sh.size * 0.22, 90, 10]} />}
+            {sh.kind === "reel" && <cylinderGeometry args={[sh.size, sh.size, sh.size * 0.35, 14, 1, true]} />}
+            <meshBasicMaterial color={sh.color} wireframe transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
+          </mesh>
+          <mesh scale={0.985}>
+            {sh.kind === "ico" && <icosahedronGeometry args={[sh.size, 1]} />}
+            {sh.kind === "octa" && <octahedronGeometry args={[sh.size, 0]} />}
+            {sh.kind === "torus" && <torusGeometry args={[sh.size, sh.size * 0.28, 10, 32]} />}
+            {sh.kind === "knot" && <torusKnotGeometry args={[sh.size, sh.size * 0.22, 90, 10]} />}
+            {sh.kind === "reel" && <cylinderGeometry args={[sh.size, sh.size, sh.size * 0.35, 14, 1, true]} />}
+            <meshBasicMaterial color={sh.color} transparent opacity={0.05} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+      ))}
+    </>
+  );
+}
+
+/**
  * A very subtle camera drift that responds to page scroll,
  * creating a parallax / fly-through-space effect.
  */
 function CameraDrift({ scrollYProgress }: { scrollYProgress: any }) {
   useFrame((state) => {
     const scroll = scrollYProgress.get() || 0;
-    state.camera.position.z = 15 - scroll * 8;
+    state.camera.position.z = 15 - scroll * 48;
     state.camera.position.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.3;
     state.camera.position.x = Math.cos(state.clock.elapsedTime * 0.1) * 0.2;
   });
@@ -187,9 +236,9 @@ export function ThreeBackground() {
       style={{
         background:
           'radial-gradient(ellipse at 20% 50%, rgba(10,15,40,0.4) 0%, transparent 50%), ' +
-          'radial-gradient(ellipse at 80% 30%, rgba(30,10,50,0.3) 0%, transparent 50%), ' +
-          'radial-gradient(ellipse at 50% 80%, rgba(5,20,30,0.3) 0%, transparent 50%), ' +
-          'linear-gradient(180deg, #010204 0%, #030610 30%, #06081a 60%, #020408 100%)',
+          'radial-gradient(ellipse at 80% 30%, rgba(90,40,160,0.22) 0%, transparent 50%), ' +
+          'radial-gradient(ellipse at 50% 80%, rgba(40,90,140,0.14) 0%, transparent 50%), ' +
+          'linear-gradient(180deg, #05030f 0%, #0a0620 30%, #0d0828 60%, #06040f 100%)',
       }}
     >
       <Canvas
@@ -219,6 +268,9 @@ export function ThreeBackground() {
 
         {/* Subtle glowing particles */}
         <GlowingParticles count={80} />
+
+        {/* Floating wireframe holograms */}
+        <HoloShapes />
 
         {/* Scroll-based camera drift */}
         <CameraDrift scrollYProgress={scrollYProgress} />

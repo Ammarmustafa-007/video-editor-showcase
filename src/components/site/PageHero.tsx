@@ -30,13 +30,13 @@ export function PageHero({ eyebrow, title, subtitle, children }: PageHeroProps) 
       {/* animated yellow blob */}
       <motion.div
         aria-hidden
-        className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-brand-yellow/10 blur-3xl"
+        className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-[#ff8ad8]/12 blur-3xl"
         animate={{ scale: [1, 1.3, 1], rotate: [0, 40, 0], x: [0, 20, 0] }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         aria-hidden
-        className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-brand-green/20 blur-3xl"
+        className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-[#7fd8ff]/12 blur-3xl"
         animate={{ scale: [1.1, 0.9, 1.1], rotate: [0, -40, 0], y: [0, -20, 0] }}
         transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
       />
