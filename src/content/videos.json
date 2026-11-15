@@ -9,11 +9,15 @@
       "videos": [
         {
           "id": "1PEpwVfwgxFqOW-G8OXf0HNQ8oD4LR232",
-          "title": "Wedding 1"
+          "title": "Wedding 1",
+          "file": "work/1PEpwVfwgxFqOW-G8OXf0HNQ8oD4LR232.mp4",
+          "poster": "work/1PEpwVfwgxFqOW-G8OXf0HNQ8oD4LR232.jpg"
         },
         {
           "id": "1tH_vr-nrb4cHJWrIuZ7RLZctsBoCOqv-",
-          "title": "Wedding 2"
+          "title": "Wedding 2",
+          "file": "work/1tH_vr-nrb4cHJWrIuZ7RLZctsBoCOqv-.mp4",
+          "poster": "work/1tH_vr-nrb4cHJWrIuZ7RLZctsBoCOqv-.jpg"
         }
       ]
     },
@@ -26,47 +30,69 @@
       "videos": [
         {
           "id": "1vimMXESjgh5lowwjDEiyRZRTCLY6dUwZ",
-          "title": "Talking Head 1"
+          "title": "Talking Head 1",
+          "file": "work/1vimMXESjgh5lowwjDEiyRZRTCLY6dUwZ.mp4",
+          "poster": "work/1vimMXESjgh5lowwjDEiyRZRTCLY6dUwZ.jpg"
         },
         {
           "id": "1fcB3lNsNXitlpPra4fvneY8MicwMLYAm",
-          "title": "Talking Head 2"
+          "title": "Talking Head 2",
+          "file": "work/1fcB3lNsNXitlpPra4fvneY8MicwMLYAm.mp4",
+          "poster": "work/1fcB3lNsNXitlpPra4fvneY8MicwMLYAm.jpg"
         },
         {
           "id": "1YunU6jTGYAp2bauxID3T1M1E2-N9Mxa1",
-          "title": "Talking Head 3"
+          "title": "Talking Head 3",
+          "file": "work/1YunU6jTGYAp2bauxID3T1M1E2-N9Mxa1.mp4",
+          "poster": "work/1YunU6jTGYAp2bauxID3T1M1E2-N9Mxa1.jpg"
         },
         {
           "id": "1nZ88LKxroW8h4B9zCn_nUvjEUhP-ZKjc",
-          "title": "Talking Head 4"
+          "title": "Talking Head 4",
+          "file": "work/1nZ88LKxroW8h4B9zCn_nUvjEUhP-ZKjc.mp4",
+          "poster": "work/1nZ88LKxroW8h4B9zCn_nUvjEUhP-ZKjc.jpg"
         },
         {
           "id": "1Dvg-wsa9qBau-b7i-I0fmYRpOu4PBkrC",
-          "title": "Talking Head 5"
+          "title": "Talking Head 5",
+          "file": "work/1Dvg-wsa9qBau-b7i-I0fmYRpOu4PBkrC.mp4",
+          "poster": "work/1Dvg-wsa9qBau-b7i-I0fmYRpOu4PBkrC.jpg"
         },
         {
           "id": "1Q47Emdfqf_d98OaMykz1gOhfsgTgnres",
-          "title": "Talking Head 6"
+          "title": "Talking Head 6",
+          "file": "work/1Q47Emdfqf_d98OaMykz1gOhfsgTgnres.mp4",
+          "poster": "work/1Q47Emdfqf_d98OaMykz1gOhfsgTgnres.jpg"
         },
         {
           "id": "1wFYwQio4mcLdQF7di79PXeRNd_YGtDjh",
-          "title": "Talking Head 7"
+          "title": "Talking Head 7",
+          "file": "work/1wFYwQio4mcLdQF7di79PXeRNd_YGtDjh.mp4",
+          "poster": "work/1wFYwQio4mcLdQF7di79PXeRNd_YGtDjh.jpg"
         },
         {
           "id": "1LTHnfmSINgEAE60BRjNn0ARSXIztPuG6",
-          "title": "Talking Head 8"
+          "title": "Talking Head 8",
+          "file": "work/1LTHnfmSINgEAE60BRjNn0ARSXIztPuG6.mp4",
+          "poster": "work/1LTHnfmSINgEAE60BRjNn0ARSXIztPuG6.jpg"
         },
         {
           "id": "100txo2zfjmgw9PXuE3uW3adXaYvmWxVF",
-          "title": "Talking Head 9"
+          "title": "Talking Head 9",
+          "file": "work/100txo2zfjmgw9PXuE3uW3adXaYvmWxVF.mp4",
+          "poster": "work/100txo2zfjmgw9PXuE3uW3adXaYvmWxVF.jpg"
         },
         {
           "id": "1JRyXNl3Wzp9pbWxnHxbyBkahlZHoIC3L",
-          "title": "Talking Head 10"
+          "title": "Talking Head 10",
+          "file": "work/1JRyXNl3Wzp9pbWxnHxbyBkahlZHoIC3L.mp4",
+          "poster": "work/1JRyXNl3Wzp9pbWxnHxbyBkahlZHoIC3L.jpg"
         },
         {
           "id": "1XAdd-iAiqf4NMeXCoCiFpvkouTwzZDMB",
-          "title": "Talking Head 11"
+          "title": "Talking Head 11",
+          "file": "work/1XAdd-iAiqf4NMeXCoCiFpvkouTwzZDMB.mp4",
+          "poster": "work/1XAdd-iAiqf4NMeXCoCiFpvkouTwzZDMB.jpg"
         }
       ]
     },
@@ -79,87 +105,129 @@
       "videos": [
         {
           "id": "1c-beOO9SBVKHQIGIh84FGaxQjLILswe1",
-          "title": "Montage 1"
+          "title": "Montage 1",
+          "file": "work/1c-beOO9SBVKHQIGIh84FGaxQjLILswe1.mp4",
+          "poster": "work/1c-beOO9SBVKHQIGIh84FGaxQjLILswe1.jpg"
         },
         {
           "id": "14JTHhjS6qNC-F_aeBLp9OGO77FhzBJ8e",
-          "title": "Montage 2"
+          "title": "Montage 2",
+          "file": "work/14JTHhjS6qNC-F_aeBLp9OGO77FhzBJ8e.mp4",
+          "poster": "work/14JTHhjS6qNC-F_aeBLp9OGO77FhzBJ8e.jpg"
         },
         {
           "id": "1jaijdgqf3AWzKW2cEKZlg5-p_V66waZB",
-          "title": "Montage 3"
+          "title": "Montage 3",
+          "file": "work/1jaijdgqf3AWzKW2cEKZlg5-p_V66waZB.mp4",
+          "poster": "work/1jaijdgqf3AWzKW2cEKZlg5-p_V66waZB.jpg"
         },
         {
           "id": "107BAvyVsIjKoH_NbVvxLJwW-6symCk5u",
-          "title": "Montage 4"
+          "title": "Montage 4",
+          "file": "work/107BAvyVsIjKoH_NbVvxLJwW-6symCk5u.mp4",
+          "poster": "work/107BAvyVsIjKoH_NbVvxLJwW-6symCk5u.jpg"
         },
         {
           "id": "1AMBfznm4L4dwhL4NJRhaSOdAFswjRAX7",
-          "title": "Montage 5"
+          "title": "Montage 5",
+          "file": "work/1AMBfznm4L4dwhL4NJRhaSOdAFswjRAX7.mp4",
+          "poster": "work/1AMBfznm4L4dwhL4NJRhaSOdAFswjRAX7.jpg"
         },
         {
           "id": "1Yay2Z2EqYd6Kl67M_50oBFIdO3cTIJFn",
-          "title": "Montage 6"
+          "title": "Montage 6",
+          "file": "work/1Yay2Z2EqYd6Kl67M_50oBFIdO3cTIJFn.mp4",
+          "poster": "work/1Yay2Z2EqYd6Kl67M_50oBFIdO3cTIJFn.jpg"
         },
         {
           "id": "1OD1m23hjHkta5gDn6vsIEs5hN5RNAHxk",
-          "title": "Montage 7"
+          "title": "Montage 7",
+          "file": "work/1OD1m23hjHkta5gDn6vsIEs5hN5RNAHxk.mp4",
+          "poster": "work/1OD1m23hjHkta5gDn6vsIEs5hN5RNAHxk.jpg"
         },
         {
           "id": "1soYcU50O61YBb4AGaOMVMu9HNX56NBZc",
-          "title": "Montage 8"
+          "title": "Montage 8",
+          "file": "work/1soYcU50O61YBb4AGaOMVMu9HNX56NBZc.mp4",
+          "poster": "work/1soYcU50O61YBb4AGaOMVMu9HNX56NBZc.jpg"
         },
         {
           "id": "1S47EiPascuGthtmEc48R1aDZhreJX4nO",
-          "title": "Montage 9"
+          "title": "Montage 9",
+          "file": "work/1S47EiPascuGthtmEc48R1aDZhreJX4nO.mp4",
+          "poster": "work/1S47EiPascuGthtmEc48R1aDZhreJX4nO.jpg"
         },
         {
           "id": "1QzmWGHowsKKQUQgEvPo0HKKxPS4gh7cn",
-          "title": "Montage 10"
+          "title": "Montage 10",
+          "file": "work/1QzmWGHowsKKQUQgEvPo0HKKxPS4gh7cn.mp4",
+          "poster": "work/1QzmWGHowsKKQUQgEvPo0HKKxPS4gh7cn.jpg"
         },
         {
           "id": "1_-COoSqhmHzwBlU0hkOwGelkz0QnZjeb",
-          "title": "Montage 11"
+          "title": "Montage 11",
+          "file": "work/1_-COoSqhmHzwBlU0hkOwGelkz0QnZjeb.mp4",
+          "poster": "work/1_-COoSqhmHzwBlU0hkOwGelkz0QnZjeb.jpg"
         },
         {
           "id": "1N-PcwpkUNx4TZ7CAR9LfuzSF3v9xY5Hm",
-          "title": "Montage 12"
+          "title": "Montage 12",
+          "file": "work/1N-PcwpkUNx4TZ7CAR9LfuzSF3v9xY5Hm.mp4",
+          "poster": "work/1N-PcwpkUNx4TZ7CAR9LfuzSF3v9xY5Hm.jpg"
         },
         {
           "id": "1e1PbXzpWXo-O86h5srq4Z75EEaYeRikO",
-          "title": "Montage 13"
+          "title": "Montage 13",
+          "file": "work/1e1PbXzpWXo-O86h5srq4Z75EEaYeRikO.mp4",
+          "poster": "work/1e1PbXzpWXo-O86h5srq4Z75EEaYeRikO.jpg"
         },
         {
           "id": "1AJqUFcRR2m_Cttfl7rYfHwsg__U4mKVm",
-          "title": "Montage 14"
+          "title": "Montage 14",
+          "file": "work/1AJqUFcRR2m_Cttfl7rYfHwsg__U4mKVm.mp4",
+          "poster": "work/1AJqUFcRR2m_Cttfl7rYfHwsg__U4mKVm.jpg"
         },
         {
           "id": "1YMDQOQoxLZsvfWS8KYOTARN-yw5yQ7lD",
-          "title": "Montage 15"
+          "title": "Montage 15",
+          "file": "work/1YMDQOQoxLZsvfWS8KYOTARN-yw5yQ7lD.mp4",
+          "poster": "work/1YMDQOQoxLZsvfWS8KYOTARN-yw5yQ7lD.jpg"
         },
         {
           "id": "1m8Iy0AzTJxFliw4Dqe7iZBnJ8GzP59_7",
-          "title": "Montage 16"
+          "title": "Montage 16",
+          "file": "work/1m8Iy0AzTJxFliw4Dqe7iZBnJ8GzP59_7.mp4",
+          "poster": "work/1m8Iy0AzTJxFliw4Dqe7iZBnJ8GzP59_7.jpg"
         },
         {
           "id": "1ZpHTUXBxUyLeijfsljLCOWPYPe7N2zKz",
-          "title": "Montage 17"
+          "title": "Montage 17",
+          "file": "work/1ZpHTUXBxUyLeijfsljLCOWPYPe7N2zKz.mp4",
+          "poster": "work/1ZpHTUXBxUyLeijfsljLCOWPYPe7N2zKz.jpg"
         },
         {
           "id": "1t5XxJC59ziGWm-tIFAJ_fNhTcvTrfv-i",
-          "title": "Montage 18"
+          "title": "Montage 18",
+          "file": "work/1t5XxJC59ziGWm-tIFAJ_fNhTcvTrfv-i.mp4",
+          "poster": "work/1t5XxJC59ziGWm-tIFAJ_fNhTcvTrfv-i.jpg"
         },
         {
           "id": "1vjO7yseLKju_u4jSVjC7JATZ_IK-h-t5",
-          "title": "Montage 19"
+          "title": "Montage 19",
+          "file": "work/1vjO7yseLKju_u4jSVjC7JATZ_IK-h-t5.mp4",
+          "poster": "work/1vjO7yseLKju_u4jSVjC7JATZ_IK-h-t5.jpg"
         },
         {
           "id": "1rP_vzYTxx502XqvKdkreo1wPBhsLSGrT",
-          "title": "Montage 20"
+          "title": "Montage 20",
+          "file": "work/1rP_vzYTxx502XqvKdkreo1wPBhsLSGrT.mp4",
+          "poster": "work/1rP_vzYTxx502XqvKdkreo1wPBhsLSGrT.jpg"
         },
         {
           "id": "1PcD-qaEWXS_6e1P_1XmRLJvIdl77fl8t",
-          "title": "Montage 21"
+          "title": "Montage 21",
+          "file": "work/1PcD-qaEWXS_6e1P_1XmRLJvIdl77fl8t.mp4",
+          "poster": "work/1PcD-qaEWXS_6e1P_1XmRLJvIdl77fl8t.jpg"
         }
       ]
     },
@@ -172,23 +240,33 @@
       "videos": [
         {
           "id": "18kEbAglebVarqttwQRZrxZdysf4Gal8N",
-          "title": "Long Form 1"
+          "title": "Long Form 1",
+          "file": "work/18kEbAglebVarqttwQRZrxZdysf4Gal8N.mp4",
+          "poster": "work/18kEbAglebVarqttwQRZrxZdysf4Gal8N.jpg"
         },
         {
           "id": "1luCT68Jp12Sb83EiGs0p4PoA0gQdBD2p",
-          "title": "Long Form 2"
+          "title": "Long Form 2",
+          "file": "work/1luCT68Jp12Sb83EiGs0p4PoA0gQdBD2p.mp4",
+          "poster": "work/1luCT68Jp12Sb83EiGs0p4PoA0gQdBD2p.jpg"
         },
         {
           "id": "1SLC6CMvb3yis89ia--Lgc1ISr_wo_iwe",
-          "title": "Long Form 3"
+          "title": "Long Form 3",
+          "file": "work/1SLC6CMvb3yis89ia--Lgc1ISr_wo_iwe.mp4",
+          "poster": "work/1SLC6CMvb3yis89ia--Lgc1ISr_wo_iwe.jpg"
         },
         {
           "id": "1FrCQLwzD9AKJaZIogb0N95hyMp9Jsdjs",
-          "title": "Long Form 4"
+          "title": "Long Form 4",
+          "file": "work/1FrCQLwzD9AKJaZIogb0N95hyMp9Jsdjs.mp4",
+          "poster": "work/1FrCQLwzD9AKJaZIogb0N95hyMp9Jsdjs.jpg"
         },
         {
           "id": "1_r35e3jQXjXnYUYThKrv85-a2p-YZb4E",
-          "title": "Long Form 5"
+          "title": "Long Form 5",
+          "file": "work/1_r35e3jQXjXnYUYThKrv85-a2p-YZb4E.mp4",
+          "poster": "work/1_r35e3jQXjXnYUYThKrv85-a2p-YZb4E.jpg"
         }
       ]
     }
