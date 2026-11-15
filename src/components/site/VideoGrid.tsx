@@ -26,14 +26,17 @@ const containerVariants = {
   show: { transition: { staggerChildren: 0.06 } },
 };
 
+// cards fly in from depth, tilted like frames on a turning reel, and settle flat
 const itemVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.9, rotateX: 10 },
+  hidden: (i: number) => ({ opacity: 0, y: 90, z: -260, scale: 0.86, rotateX: 38, rotateY: i % 2 ? -14 : 14 }),
   show: {
     opacity: 1,
     y: 0,
+    z: 0,
     scale: 1,
     rotateX: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+    rotateY: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -89,6 +92,7 @@ function VideoCard({
     <motion.div
       ref={cardRef}
       variants={itemVariants}
+      custom={index}
       style={{ transformStyle: "preserve-3d" }}
     >
       <TiltCard intensity={8} className="cursor-pointer">
@@ -329,7 +333,7 @@ export function VideoGrid({ items, cols = 3, aspect = "portrait" }: VideoGridPro
         whileInView="show"
         viewport={{ once: true, margin: "-30px" }}
         className={`grid gap-3 sm:gap-4 md:gap-6 lg:gap-8 ${colClass}`}
-        style={{ perspective: 800 }}
+        style={{ perspective: 1400 }}
       >
         {items.map((it, i) => (
           <VideoCard

@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { useRef, lazy, Suspense } from "react";
-import portrait from "@/assets/portrait-hero.jpg";
-import { TiltCard } from "@/components/site/TiltCard";
+const HologramPortrait = lazy(() => import("@/components/HologramPortrait").then((m) => ({ default: m.HologramPortrait })));
+import { ZoomWord } from "@/components/site/ZoomWord";
+import { ChatWidget } from "@/components/site/ChatWidget";
+import site from "@/content/site.json";
 import { useIsMobile } from "@/hooks/useIsMobile";
 const ThreeBackground = lazy(() => import("@/components/ThreeBackground").then(m => ({ default: m.ThreeBackground })));
 import { TimelineNavigation } from "@/components/site/TimelineNavigation";
@@ -86,7 +88,7 @@ function SectionWrapper({ id, children, entry = "bottom" }: SectionConfig) {
       className="relative z-10 flex flex-col justify-center py-6 md:py-10"
     >
       <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem]">
-        <div className="overflow-hidden transition-all duration-700 ease-out hover:shadow-[0_0_50px_rgba(255,215,0,0.08)] rounded-[2rem] hover:bg-brand-navy-deep/25 backdrop-blur-sm p-3 md:p-6 border border-transparent hover:border-brand-yellow/10">
+        <div className="overflow-hidden transition-all duration-700 ease-out hover:shadow-[0_0_50px_rgba(180,140,255,0.08)] rounded-[2rem] hover:bg-brand-navy-deep/25 backdrop-blur-sm p-3 md:p-6 border border-transparent hover:border-brand-yellow/10">
           {children}
         </div>
       </div>
@@ -101,18 +103,20 @@ function StatBadge({ label, value, delay }: { label: string; value: string; dela
       initial={{ opacity: 0, scale: 0.5, rotateZ: -10 }}
       animate={{ opacity: 1, scale: 1, rotateZ: 0 }}
       transition={{ duration: 0.8, delay, type: "spring", bounce: 0.4 }}
-      className="bg-card/80 backdrop-blur-sm border border-border rounded-xl px-4 py-2 text-center shadow-card"
+      className="bg-card/60 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center lg:text-right min-w-[96px]"
     >
-      <p className="text-xl md:text-2xl font-display font-extrabold text-brand-yellow">{value}</p>
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-2xl md:text-3xl font-display font-extrabold text-foreground tabular-nums">{value}</p>
+      <p className="text-[11px] tracking-wide text-muted-foreground">{label}</p>
     </motion.div>
   );
 }
 
+const hero = site.hero;
+
 function HomePage() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
 
@@ -132,106 +136,99 @@ function HomePage() {
         <ThreeBackground />
       </Suspense>
       <TimelineNavigation />
+      <ChatWidget />
 
-      <section id="home" ref={ref} className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-16">
-        <motion.div style={{ y, opacity, scale }} className="relative w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem] py-6 md:py-14 grid gap-8 md:grid-cols-2 items-center z-10">
-          <div>
+      <section id="home" ref={ref} className="relative overflow-hidden min-h-screen pt-16">
+        {/* the name, huge and faint, behind the hologram */}
+        <motion.div aria-hidden style={{ y, opacity }} className="pointer-events-none absolute inset-0 flex items-center justify-center select-none">
+          <span className="font-display font-black uppercase leading-none text-transparent [-webkit-text-stroke:1px_rgba(180,140,255,0.16)] text-[24vw] md:text-[19vw] tracking-tight">
+            {hero.last}
+          </span>
+        </motion.div>
+
+        <motion.div style={{ opacity, scale }} className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[88rem] grid-cols-1 items-center gap-2 px-4 md:px-8 lg:grid-cols-12 lg:px-12">
+          {/* left: who */}
+          <div className="order-2 lg:order-1 lg:col-span-4 text-center lg:text-left">
             <motion.p
-              initial={{ opacity: 0, x: -50, filter: "blur(10px)" }}
+              initial={{ opacity: 0, x: -30, filter: "blur(8px)" }}
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.8, type: "spring", bounce: 0.5 }}
-              className="text-[15px] uppercase tracking-[0.4em] text-brand-yellow font-semibold mb-4 ml-3"
+              transition={{ duration: 0.8, delay: 1.6 }}
+              className="text-[13px] uppercase tracking-[0.4em] text-brand-yellow font-semibold mb-3"
             >
-              Meet 
+              {hero.eyebrow}
             </motion.p>
             <motion.h1
-              initial={{ opacity: 0, y: 60, rotateX: 50 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[0.95] text-foreground"
-              style={{ perspective: 800 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.1, delay: 1.7, ease: [0.22, 1, 0.36, 1] }}
+              className="font-display text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[0.95] text-foreground"
             >
-              Abdullah <br />
-              <motion.span
-                className="text-brand-yellow inline-block"
-                whileHover={{ scale: 1.05, rotateZ: -2, color: "#ef4444" }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                Qureshi
-              </motion.span>
+              {hero.first} <br />
+              <span className="text-brand-yellow holo-text">{hero.last}</span>
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, x: 60, filter: "blur(8px)" }}
-              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-4 text-xl md:text-2xl font-display font-bold text-brand-yellow"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.9 }}
+              className="mt-4 text-lg md:text-xl font-display font-semibold text-foreground/90"
             >
-              Video Editor / Cinematographer
+              {hero.role}
             </motion.p>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="mt-4 text-sm md:text-base text-muted-foreground max-w-md"
+              transition={{ duration: 0.8, delay: 2.0 }}
+              className="mt-3 text-sm md:text-base text-muted-foreground max-w-md mx-auto lg:mx-0"
             >
-              Cinematic storytelling, smooth transitions and post-production that converts attention into results.
+              {hero.tagline}
             </motion.p>
+          </div>
 
-            {/* Stats row */}
-            <div className="mt-6 flex gap-3">
-              <StatBadge label="Projects" value="100+" delay={0.6} />
-              <StatBadge label="Clients" value="250" delay={0.75} />
-              <StatBadge label="Years" value="5+" delay={0.9} />
+          {/* centre: the hologram */}
+          <div className="order-1 lg:order-2 lg:col-span-5 relative">
+            <Suspense fallback={<div className="mx-auto h-[56vh] md:h-[72vh] lg:h-[84vh] w-full max-w-[640px]" />}>
+              <HologramPortrait className="mx-auto h-[56vh] md:h-[72vh] lg:h-[84vh] w-full max-w-[640px]" />
+            </Suspense>
+          </div>
+
+          {/* right: numbers + actions */}
+          <div className="order-3 lg:col-span-3 flex flex-col items-center lg:items-end gap-5 pb-16 lg:pb-0 lg:pr-20 xl:pr-24">
+            <div className="flex lg:flex-col gap-3 lg:gap-4">
+              {hero.stats.map((st, k) => (
+                <StatBadge key={st.label} label={st.label} value={st.value} delay={2.1 + k * 0.12} />
+              ))}
             </div>
-
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 1, type: "spring" }}
-              className="mt-6 flex flex-wrap gap-3"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 2.5 }}
+              className="flex flex-wrap justify-center lg:justify-end gap-3"
             >
               <motion.button
                 onClick={() => handleScroll("#contact")}
-                whileHover={{ scale: 1.08, boxShadow: "0 0 35px rgba(255,215,0,0.5)" }}
-                whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/50 text-brand-yellow font-semibold px-5 py-2.5 rounded-full shadow-glow transition-all text-sm"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className="group inline-flex items-center gap-2 bg-brand-yellow text-primary-foreground font-semibold px-5 py-2.5 rounded-full shadow-glow text-sm"
               >
-                Hire Me <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+                Hire me <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </motion.button>
               <motion.button
                 onClick={() => handleScroll("#weddings")}
-                whileHover={{ scale: 1.08, borderColor: "rgba(255,215,0,0.6)" }}
-                whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 text-foreground font-semibold px-5 py-2.5 rounded-full transition-all text-sm hover:bg-white/10"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className="group inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/12 text-foreground font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-white/10"
               >
-                <Play size={14} className="group-hover:text-brand-yellow" /> View Showreels
+                <Play size={14} /> Watch the work
               </motion.button>
             </motion.div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.4, rotateY: 50, z: -600 }}
-            animate={{ opacity: 1, scale: 1, rotateY: 0, z: 0 }}
-            transition={{ duration: 1.5, type: "spring", bounce: 0.35 }}
-            className="relative mx-auto perspective-[2000px] group cursor-pointer"
-          >
-            <TiltCard className="rounded-2xl overflow-hidden shadow-card bg-brand-green/80 backdrop-blur-sm p-3 md:p-4 max-w-xs border border-brand-green group-hover:border-brand-yellow transition-colors duration-500 group-hover:shadow-[0_0_50px_rgba(255,215,0,0.3)]">
-              <div className="rounded-xl overflow-hidden relative">
-                {/* Glitch/Flash hover overlay */}
-                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-colors z-10 mix-blend-overlay duration-300" />
-                <img src={portrait} alt="Abdullah Qureshi portrait" className="w-full h-auto block group-hover:scale-110 transition-transform duration-700 ease-out" />
-              </div>
-              <p className="mt-3 font-display text-lg font-extrabold text-brand-yellow tracking-widest group-hover:tracking-[0.3em] transition-all duration-500">My Portfolio</p>
-            </TiltCard>
-          </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          transition={{ delay: 3 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
         >
           <motion.div
             animate={{ y: [0, 8, 0] }}
@@ -240,9 +237,11 @@ function HomePage() {
           >
             <motion.div className="w-1 h-2 rounded-full bg-brand-yellow" />
           </motion.div>
-          <span className="text-[9px] uppercase tracking-[0.3em] text-white/30">Scroll</span>
+          <span className="text-[9px] uppercase tracking-[0.3em] text-white/40">Scroll</span>
         </motion.div>
       </section>
+
+      <ZoomWord />
 
       <BrandsSection />
 

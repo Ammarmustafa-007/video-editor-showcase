@@ -45,7 +45,7 @@ export function PageHero({ eyebrow, title, subtitle, children }: PageHeroProps) 
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,215,0,0.02) 3px, rgba(255,215,0,0.02) 4px)",
+          background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(180,140,255,0.02) 3px, rgba(180,140,255,0.02) 4px)",
         }}
       />
       <div className="relative mx-auto max-w-5xl px-4 lg:px-8 py-14 md:py-20">

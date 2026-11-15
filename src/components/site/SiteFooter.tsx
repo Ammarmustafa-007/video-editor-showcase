@@ -24,7 +24,7 @@ export function SiteFooter() {
           </p>
           <button 
             onClick={() => scrollTo("contact")}
-            className="group inline-flex items-center gap-2 bg-brand-yellow text-brand-navy-deep font-bold px-8 py-4 rounded-full shadow-[0_0_40px_rgba(255,215,0,0.3)] hover:shadow-[0_0_60px_rgba(255,215,0,0.5)] transition-all transform hover:scale-105 text-lg"
+            className="group inline-flex items-center gap-2 bg-brand-yellow text-brand-navy-deep font-bold px-8 py-4 rounded-full shadow-[0_0_40px_rgba(180,140,255,0.3)] hover:shadow-[0_0_60px_rgba(180,140,255,0.5)] transition-all transform hover:scale-105 text-lg"
           >
             Start a Project <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>

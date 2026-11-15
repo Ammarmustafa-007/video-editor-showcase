@@ -1,0 +1,25 @@
+{
+  "hero": {
+    "eyebrow": "Meet",
+    "first": "Abdullah",
+    "last": "Qureshi",
+    "role": "Video Editor / Videographer",
+    "tagline": "Cinematic storytelling, smooth transitions and post-production that turns attention into results.",
+    "stats": [
+      { "value": "500+", "label": "Projects" },
+      { "value": "200", "label": "Clients" },
+      { "value": "5+", "label": "Years" }
+    ]
+  },
+  "zoom": {
+    "word": "EDITOR",
+    "before": "Video",
+    "after": "& Videographer",
+    "line": "Every frame has a reason."
+  },
+  "chat": {
+    "endpoint": "https://novaclipshq.studio/api/abq/chat",
+    "email": "connect.qureshiiii@gmail.com",
+    "whatsapp": "https://wa.me/923003322338?text=Hello%20Abdullah"
+  }
+}
