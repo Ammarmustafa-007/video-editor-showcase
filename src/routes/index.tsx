@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import { useRef, lazy, Suspense } from "react";
-const HologramPortrait = lazy(() => import("@/components/HologramPortrait").then((m) => ({ default: m.HologramPortrait })));
+import { useRef } from "react";
+import { scrollToY } from "@/lib/smoothScroll";
+import { DockingHologram } from "@/components/site/DockingHologram";
+import { StarField } from "@/components/site/StarField";
 import { ZoomWord } from "@/components/site/ZoomWord";
 import { ChatWidget } from "@/components/site/ChatWidget";
 import { EditTimeline } from "@/components/site/EditTimeline";
 import site from "@/content/site.json";
 import { useIsMobile } from "@/hooks/useIsMobile";
-const ThreeBackground = lazy(() => import("@/components/ThreeBackground").then(m => ({ default: m.ThreeBackground })));
 import { TimelineNavigation } from "@/components/site/TimelineNavigation";
 
 import { AboutPage } from "@/components/sections/about";
@@ -17,11 +18,9 @@ import { SkillsPage } from "@/components/sections/skills";
 import { ExperiencePage } from "@/components/sections/experience";
 import { TestimonialsPage } from "@/components/sections/testimonials";
 import { WhyMePage } from "@/components/sections/why-me";
-import { WeddingsPage } from "@/components/sections/work.weddings";
-import { TalkingHeadPage } from "@/components/sections/work.talking-head";
-import { MontagePage } from "@/components/sections/work.montage";
-import { LongFormPage } from "@/components/sections/work.long-form";
 import { ContactPage } from "@/components/sections/contact";
+import { WorkPage } from "@/components/sections/work";
+import { WORK } from "@/lib/videoConfig";
 import { BrandsSection } from "@/components/sections/brands";
 
 export const Route = createFileRoute("/")({
@@ -34,77 +33,41 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-type Entry = "swipe-left" | "swipe-right" | "flip" | "spin" | "zoom-in" | "zoom-out";
+type Entry = "rise" | "tilt-left" | "tilt-right" | "depth";
 type SectionConfig = { id: string; children: React.ReactNode; entry?: Entry };
 
 const k01 = (p: number, a: number, b: number) => Math.min(1, Math.max(0, (p - a) / (b - a)));
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 
 /**
- * Every section arrives in 3D, each in its own way: a page swiping in from the side, a page flipping up, a full turn,
- * a zoom in from far away or a zoom down from too close. It settles flat while you read, then sinks back as you leave.
+ * Sections sit in 3D space. Each one comes up out of the page at a slight angle (tilted back, turned a little to one
+ * side, or set further away) and settles flat while you read. Small angles, no spins: the depth is the point.
  */
-function SectionWrapper({ id, children, entry = "zoom-in" }: SectionConfig) {
+function SectionWrapper({ id, children, entry = "rise" }: SectionConfig) {
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const flat = reduced;
-  const m = isMobile ? 0.45 : 1; // gentler on phones
+  const m = reduced ? 0 : isMobile ? 0.5 : 1;
 
-  const inT = (v: number) => 1 - ease(k01(v, 0.02, 0.3)); // 1 while arriving, 0 once settled
-  const outT = (v: number) => k01(v, 0.8, 1);             // 0 while reading, 1 as it leaves
+  const inT = (v: number) => 1 - ease(k01(v, 0.0, 0.32));
+  const outT = (v: number) => k01(v, 0.82, 1);
 
-  const opacity = useTransform(p, (v) => (flat ? 1 : Math.min(k01(v, 0.0, 0.16), 1 - outT(v) * 0.9)));
-  const x = useTransform(p, (v) => {
-    if (flat) return "0vw";
-    const i = inT(v);
-    return `${(entry === "swipe-left" ? -70 : entry === "swipe-right" ? 70 : 0) * i * m}vw`;
-  });
-  const y = useTransform(p, (v) => (flat ? 0 : (entry === "flip" ? 120 : 60) * inT(v) * m - 60 * outT(v) * m));
-  const rotateY = useTransform(p, (v) => {
-    if (flat) return 0;
-    const i = inT(v);
-    if (entry === "swipe-left") return 55 * i * m;
-    if (entry === "swipe-right") return -55 * i * m;
-    if (entry === "spin") return -360 * i * (isMobile ? 0 : 1);
-    return 0;
-  });
-  const rotateX = useTransform(p, (v) => (flat ? 0 : (entry === "flip" ? 70 * inT(v) * m : 0) - 14 * outT(v) * m));
-  const scale = useTransform(p, (v) => {
-    if (flat) return 1;
-    const i = inT(v);
-    const s = entry === "zoom-in" ? 1 - 0.45 * i : entry === "zoom-out" ? 1 + 0.6 * i : entry === "spin" ? 1 - 0.35 * i : 1 - 0.08 * i;
-    return s * (1 - 0.12 * outT(v));
-  });
+  const opacity = useTransform(p, (v) => (reduced ? 1 : Math.min(0.25 + 0.75 * k01(v, 0, 0.18), 1 - 0.6 * outT(v))));
+  const rotateX = useTransform(p, (v) => m * (entry === "rise" ? 16 : entry === "depth" ? 8 : 6) * inT(v) - m * 8 * outT(v));
+  const rotateY = useTransform(p, (v) => m * (entry === "tilt-left" ? 12 : entry === "tilt-right" ? -12 : 0) * inT(v));
+  const z = useTransform(p, (v) => m * (entry === "depth" ? -260 : -120) * inT(v) - m * 120 * outT(v));
+  const y = useTransform(p, (v) => m * 40 * inT(v));
 
   return (
-    <section id={id} ref={ref} className="relative z-10 flex flex-col justify-center py-6 md:py-10" style={{ perspective: isMobile ? 900 : 1400 }}>
+    <section id={id} ref={ref} className="relative z-10 flex flex-col justify-center py-6 md:py-10" style={{ perspective: isMobile ? 1000 : 1600 }}>
       <motion.div
-        style={{ opacity, x, y, rotateY, rotateX, scale, transformStyle: "preserve-3d", transformOrigin: entry === "flip" ? "50% 100%" : "50% 50%" }}
+        style={{ opacity, rotateX, rotateY, z, y, transformStyle: "preserve-3d", transformOrigin: "50% 100%" }}
         className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem] will-change-transform"
       >
-        <div className="relative rounded-[2rem] p-3 md:p-6 transition-colors duration-700 hover:bg-brand-navy-deep/25">
-          <span aria-hidden className="holo-corners pointer-events-none absolute inset-0 rounded-[2rem] opacity-70" />
-          <div className="relative overflow-hidden rounded-[1.6rem]">{children}</div>
-        </div>
+        <div className="relative overflow-hidden rounded-[20px] border border-white/[0.06] bg-[#120d22]/70 p-3 md:p-6">{children}</div>
       </motion.div>
     </section>
-  );
-}
-
-/** Floating badge with count-up animation */
-function StatBadge({ label, value, delay }: { label: string; value: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.5, rotateZ: -10 }}
-      animate={{ opacity: 1, scale: 1, rotateZ: 0 }}
-      transition={{ duration: 0.8, delay, type: "spring", bounce: 0.4 }}
-      className="bg-card/60 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center lg:text-right min-w-[96px]"
-    >
-      <p className="text-2xl md:text-3xl font-display font-extrabold text-foreground tabular-nums">{value}</p>
-      <p className="text-[11px] tracking-wide text-muted-foreground">{label}</p>
-    </motion.div>
   );
 }
 
@@ -112,129 +75,82 @@ const hero = site.hero;
 
 function HomePage() {
   const ref = useRef<HTMLDivElement>(null);
+  const slot = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   const handleScroll = (id: string) => {
     const element = document.getElementById(id.substring(1));
     if (element) {
       const top = element.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
+      scrollToY(top);
     }
   };
 
-  const isMobile = useIsMobile();
-
   return (
     <>
-      <Suspense fallback={<div className="fixed inset-0 bg-brand-navy-deep -z-10" />}>
-        <ThreeBackground />
-      </Suspense>
+      <StarField />
       <TimelineNavigation />
       <ChatWidget />
+      <DockingHologram slot={slot} />
 
       <section id="home" ref={ref} className="relative overflow-hidden min-h-screen pt-16">
-        {/* the name, huge and faint, behind the hologram */}
-        <motion.div aria-hidden style={{ y, opacity }} className="pointer-events-none absolute inset-0 flex items-center justify-center select-none">
-          <span className="font-display font-black uppercase leading-none text-transparent [-webkit-text-stroke:1px_rgba(180,140,255,0.16)] text-[24vw] md:text-[19vw] tracking-tight">
-            {hero.last}
-          </span>
-        </motion.div>
-
-        <motion.div style={{ opacity, scale }} className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[88rem] grid-cols-1 items-center gap-2 px-4 md:px-8 lg:grid-cols-12 lg:px-12">
+        <motion.div style={{ opacity }} className="relative z-10 mx-auto grid min-h-[calc(100vh-4rem)] max-w-[88rem] grid-cols-1 items-center gap-4 px-4 md:px-8 lg:grid-cols-12 lg:px-12">
           {/* left: who */}
-          <div className="order-2 lg:order-1 lg:col-span-4 text-center lg:text-left">
-            <motion.p
-              initial={{ opacity: 0, x: -30, filter: "blur(8px)" }}
-              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.8, delay: 1.6 }}
-              className="text-[13px] uppercase tracking-[0.4em] text-brand-yellow font-semibold mb-3"
-            >
-              {hero.eyebrow}
-            </motion.p>
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, delay: 1.7, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-5xl md:text-6xl xl:text-7xl font-extrabold leading-[0.95] text-foreground"
-            >
-              {hero.first} <br />
-              <span className="text-brand-yellow holo-text">{hero.last}</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.9 }}
-              className="mt-4 text-lg md:text-xl font-display font-semibold text-foreground/90"
-            >
-              {hero.role}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 2.0 }}
-              className="mt-3 text-sm md:text-base text-muted-foreground max-w-md mx-auto lg:mx-0"
-            >
-              {hero.tagline}
-            </motion.p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            className="order-2 lg:order-1 lg:col-span-4 text-center lg:text-left"
+          >
+            <p className="mb-4 font-mono text-[13px] text-white/50">
+              <span className="text-brand-yellow">00:00:00:00</span>&nbsp;&nbsp;{hero.eyebrow}
+            </p>
+            <h1 className="font-display text-5xl md:text-6xl xl:text-7xl font-semibold leading-[1.02] tracking-[-0.03em] text-foreground">
+              {hero.first}
+              <br />
+              <span className="text-brand-yellow">{hero.last}</span>
+            </h1>
+            <p className="mt-5 text-lg md:text-xl font-medium text-foreground/90">{hero.role}</p>
+            <p className="mt-2 text-base text-white/60 max-w-md mx-auto lg:mx-0">{hero.tagline}</p>
+          </motion.div>
 
-          {/* centre: the hologram */}
+          {/* centre: the box the hologram starts in (it is drawn by DockingHologram, fixed on top) */}
           <div className="order-1 lg:order-2 lg:col-span-5 relative">
-            <Suspense fallback={<div className="mx-auto h-[56vh] md:h-[72vh] lg:h-[84vh] w-full max-w-[640px]" />}>
-              <HologramPortrait className="mx-auto h-[56vh] md:h-[72vh] lg:h-[84vh] w-full max-w-[640px]" />
-            </Suspense>
+            <div ref={slot} className="mx-auto h-[56vh] md:h-[72vh] lg:h-[84vh] w-full max-w-[640px]" />
           </div>
 
           {/* right: numbers + actions */}
-          <div className="order-3 lg:col-span-3 flex flex-col items-center lg:items-end gap-5 pb-16 lg:pb-0 lg:pr-20 xl:pr-24">
-            <div className="flex lg:flex-col gap-3 lg:gap-4">
-              {hero.stats.map((st, k) => (
-                <StatBadge key={st.label} label={st.label} value={st.value} delay={2.1 + k * 0.12} />
-              ))}
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 2.5 }}
-              className="flex flex-wrap justify-center lg:justify-end gap-3"
-            >
-              <motion.button
-                onClick={() => handleScroll("#contact")}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center gap-2 bg-brand-yellow text-primary-foreground font-semibold px-5 py-2.5 rounded-full shadow-glow text-sm"
-              >
-                Hire me <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              <motion.button
-                onClick={() => handleScroll("#weddings")}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/12 text-foreground font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-white/10"
-              >
-                <Play size={14} /> Watch the work
-              </motion.button>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 3 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
-        >
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center pt-1.5"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            className="order-3 lg:col-span-3 flex flex-col items-center lg:items-end gap-8 pb-16 lg:pb-0 lg:pr-20 xl:pr-24"
           >
-            <motion.div className="w-1 h-2 rounded-full bg-brand-yellow" />
+            <dl className="flex lg:flex-col gap-6 lg:gap-5 text-center lg:text-right">
+              {hero.stats.map((st) => (
+                <div key={st.label}>
+                  <dt className="sr-only">{st.label}</dt>
+                  <dd className="font-display text-3xl md:text-4xl font-medium tabular-nums text-foreground">{st.value}</dd>
+                  <dd className="text-[13px] text-white/50">{st.label}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="flex flex-wrap justify-center lg:justify-end gap-3">
+              <button
+                onClick={() => handleScroll("#contact")}
+                className="group inline-flex h-11 items-center gap-2 rounded-[10px] bg-brand-yellow px-5 text-sm font-medium text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition-[transform,background-color] duration-150 hover:bg-[#d9c2ff] active:scale-[0.98]"
+              >
+                Hire me <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-150 group-hover:translate-x-0.5" />
+              </button>
+              <button
+                onClick={() => handleScroll(`#${WORK[0]?.id ?? "contact"}`)}
+                className="inline-flex h-11 items-center gap-2 rounded-[10px] border border-white/10 bg-white/[0.04] px-5 text-sm font-medium text-foreground transition-[transform,background-color] duration-150 hover:bg-white/[0.08] active:scale-[0.98]"
+              >
+                <Play size={16} strokeWidth={1.5} /> Watch the work
+              </button>
+            </div>
           </motion.div>
-          <span className="text-[9px] uppercase tracking-[0.3em] text-white/40">Scroll</span>
         </motion.div>
       </section>
 
@@ -243,49 +159,39 @@ function HomePage() {
       <BrandsSection />
 
       <div className="flex flex-col w-full [overflow-x:clip]">
-        <SectionWrapper id="about" entry="swipe-left">
+        <SectionWrapper id="about" entry="tilt-left">
           <AboutPage />
         </SectionWrapper>
 
-        <SectionWrapper id="education" entry="swipe-right">
+        <SectionWrapper id="education" entry="tilt-right">
           <EducationPage />
         </SectionWrapper>
 
-        <SectionWrapper id="skills" entry="spin">
+        <SectionWrapper id="skills" entry="depth">
           <SkillsPage />
         </SectionWrapper>
 
-        <SectionWrapper id="experience" entry="flip">
+        <SectionWrapper id="experience" entry="rise">
           <ExperiencePage />
         </SectionWrapper>
 
-        <SectionWrapper id="testimonials" entry="zoom-out">
+        <SectionWrapper id="testimonials" entry="tilt-left">
           <TestimonialsPage />
         </SectionWrapper>
 
-        <SectionWrapper id="why-me" entry="swipe-left">
+        <SectionWrapper id="why-me" entry="tilt-right">
           <WhyMePage />
         </SectionWrapper>
 
         <EditTimeline />
 
-        <SectionWrapper id="weddings" entry="zoom-in">
-          <WeddingsPage />
-        </SectionWrapper>
+        {WORK.map((w, i) => (
+          <SectionWrapper key={w.id} id={w.id} entry={(["depth", "tilt-left", "tilt-right", "rise"] as const)[i % 4]}>
+            <WorkPage section={w} />
+          </SectionWrapper>
+        ))}
 
-        <SectionWrapper id="talking-head" entry="swipe-right">
-          <TalkingHeadPage />
-        </SectionWrapper>
-
-        <SectionWrapper id="montage" entry="flip">
-          <MontagePage />
-        </SectionWrapper>
-
-        <SectionWrapper id="long-form" entry="swipe-left">
-          <LongFormPage />
-        </SectionWrapper>
-
-        <SectionWrapper id="contact" entry="zoom-out">
+        <SectionWrapper id="contact" entry="depth">
           <ContactPage />
         </SectionWrapper>
       </div>

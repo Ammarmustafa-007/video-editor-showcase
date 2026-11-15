@@ -1,22 +1,11 @@
+import { scrollToY } from "@/lib/smoothScroll";
+import { SECTIONS } from "@/lib/sections";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-const links = [
-  { to: "#home", label: "My Portfolio" },
-  { to: "#about", label: "About Me" },
-  { to: "#education", label: "Education" },
-  { to: "#skills", label: "Skills" },
-  { to: "#experience", label: "Experiences" },
-  { to: "#testimonials", label: "Testimonials" },
-  { to: "#why-me", label: "Why Me" },
-  { to: "#weddings", label: "Weddings" },
-  { to: "#talking-head", label: "Talking Head Reels" },
-  { to: "#montage", label: "Montage Reels" },
-  { to: "#long-form", label: "Long Form" },
-  { to: "#contact", label: "Contact Me" },
-] as const;
+const links = SECTIONS.map((s) => ({ to: `#${s.id}`, label: s.label }));
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -27,7 +16,7 @@ export function SiteHeader() {
       const element = document.getElementById(id.substring(1));
       if (element) {
         const top = element.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
+        scrollToY(top);
       }
     }, 10);
   };
@@ -42,7 +31,7 @@ export function SiteHeader() {
       <div className="mx-auto max-w-7xl flex items-center justify-between px-4 lg:px-8 h-16">
         <button
           onClick={() => handleScroll("#home")}
-          className="font-display font-extrabold tracking-wide text-foreground text-sm md:text-base cursor-pointer"
+          className="font-display font-semibold tracking-wide text-foreground text-sm md:text-base cursor-pointer"
         >
           ART BY <span className="text-brand-yellow">QURESHI</span>
         </button>
@@ -67,7 +56,7 @@ export function SiteHeader() {
                 <button
                   key={l.to}
                   onClick={() => handleScroll(l.to)}
-                  className="py-3 text-left text-sm md:text-base text-muted-foreground hover:text-brand-yellow font-medium uppercase tracking-wider transition-colors border-b border-border/30 last:border-0"
+                  className="py-3 text-left text-sm md:text-base text-muted-foreground hover:text-brand-yellow font-medium transition-colors border-b border-border/30 last:border-0"
                 >
                   {l.label}
                 </button>

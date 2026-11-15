@@ -101,7 +101,7 @@ export function ZoomWord() {
         </svg>
 
         <motion.p
-          className="absolute left-0 right-0 text-center font-display font-bold uppercase tracking-[0.5em] text-brand-yellow"
+          className="absolute left-0 right-0 text-center font-display font-medium uppercase tracking-[0.3em] text-brand-yellow"
           style={{ top: `calc(50% - ${fontSize * 0.62}px)`, opacity: extraOpacity, y: extraY, fontSize: Math.max(14, fontSize * 0.09) }}
         >
           {before}
@@ -110,11 +110,11 @@ export function ZoomWord() {
           className="absolute left-0 right-0 text-center px-6"
           style={{ top: `calc(50% + ${fontSize * 0.5}px)`, opacity: extraOpacity, y: extraY }}
         >
-          <p className="font-display font-extrabold text-foreground" style={{ fontSize: Math.max(22, fontSize * 0.2) }}>{after}</p>
+          <p className="font-display font-semibold text-foreground" style={{ fontSize: Math.max(22, fontSize * 0.2) }}>{after}</p>
           <p className="mt-3 text-muted-foreground text-base md:text-lg">{line}</p>
         </motion.div>
-        <motion.p style={{ opacity: hint }} className="absolute bottom-8 left-0 right-0 text-center text-[11px] uppercase tracking-[0.35em] text-white/70">
-          Keep scrolling
+        <motion.p style={{ opacity: hint }} className="absolute bottom-8 left-0 right-0 text-center text-[13px] text-white/60">
+          Scroll
         </motion.p>
       </motion.div>
     </section>

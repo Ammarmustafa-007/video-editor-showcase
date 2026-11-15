@@ -50,7 +50,7 @@ export function ChatWidget() {
       const t = setTimeout(() => ctl.abort(), 30000);
       const r = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Requested-With": "novaclips" },
         body: JSON.stringify({ visitor: id.current, messages: next.slice(-10).map((m) => ({ role: m.role === "me" ? "user" : "assistant", text: m.text })) }),
         signal: ctl.signal,
       });
@@ -76,7 +76,7 @@ export function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label={open ? "Close chat" : "Ask about my work"}
-        className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-brand-yellow pl-4 pr-5 py-3 text-sm font-semibold text-primary-foreground shadow-glow"
+        className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-brand-yellow pl-4 pr-5 py-3 text-sm font-semibold text-primary-foreground"
       >
         {open ? <X size={18} /> : <MessageCircle size={18} />}
         <span className="hidden sm:inline">{open ? "Close" : "Ask about my work"}</span>
@@ -89,13 +89,13 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="fixed bottom-20 right-4 left-4 sm:left-auto z-[60] flex h-[min(560px,72vh)] sm:w-[380px] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#130b29]/95 backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(120,70,220,0.55)]"
+            className="fixed bottom-20 right-4 left-4 sm:left-auto z-[60] flex h-[min(560px,72vh)] sm:w-[380px] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#130b29]/95 backdrop-blur-xl shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7)]"
             role="dialog"
             aria-label="Chat about Abdullah's work"
           >
             <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
               <span className="relative flex h-2.5 w-2.5">
-                <span className={`absolute inline-flex h-full w-full rounded-full ${offline ? "bg-white/30" : "bg-emerald-400/60 animate-ping"}`} />
+                <span className={`absolute inline-flex h-full w-full rounded-full ${offline ? "bg-white/30" : "bg-emerald-400/60"}`} />
                 <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${offline ? "bg-white/40" : "bg-emerald-400"}`} />
               </span>
               <div>

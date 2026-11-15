@@ -95,8 +95,9 @@ const vertex = /* glsl */ `
   // only the head turns: points above the neck and inside the head's width follow the mouse,
   // the shoulders and chest stay where they are, with a soft blend across the neck
   vec3 turnHead(vec3 q) {
-    float w = smoothstep(-0.62, -0.18, q.y) * (1.0 - smoothstep(0.78, 1.02, abs(q.x)));
-    vec3 pivot = vec3(0.0, -0.45, -0.1);
+    float w = smoothstep(-0.78, -0.12, q.y) * (1.0 - smoothstep(0.8, 1.1, abs(q.x)));
+    w = w * w * (3.0 - 2.0 * w);
+    vec3 pivot = vec3(0.0, -0.25, -0.6); // roughly where the neck meets the skull, behind the face
     vec3 r = q - pivot;
     float cy = cos(uYaw * w), sy = sin(uYaw * w);
     r = vec3(cy * r.x + sy * r.z, r.y, -sy * r.x + cy * r.z);
@@ -215,9 +216,9 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
     if (!reduced) u.uProgress.value = Math.min(2, (performance.now() - start.current) / 1000 / 2.6);
     // the face looks at the mouse (or sways slowly on touch screens / before the mouse moves); the body stays still
     const p = pointer.current;
-    const tx = p.active ? p.x * 0.6 : Math.sin(state.clock.elapsedTime * 0.35) * 0.22;
-    const ty = p.active ? p.y * 0.3 : Math.sin(state.clock.elapsedTime * 0.27) * 0.06;
-    const k = 1 - Math.pow(0.0025, dt);
+    const tx = p.active ? p.x * 0.42 : Math.sin(state.clock.elapsedTime * 0.35) * 0.16;
+    const ty = p.active ? p.y * 0.2 : Math.sin(state.clock.elapsedTime * 0.27) * 0.04;
+    const k = 1 - Math.pow(0.02, dt); // slower, softer follow
     u.uYaw.value += (tx - u.uYaw.value) * k;
     u.uPitch.value += (ty - u.uPitch.value) * k;
   });
@@ -239,11 +240,10 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
   );
 }
 
-/** The projector the hologram floats above: rings on the floor, a cone of light, and motes of light rising through it. */
+/** The projector the hologram floats above: rings on the floor, a cone of light. */
 function Projector() {
   const ring = useRef<THREE.Mesh>(null);
   const ticks = useRef<THREE.Group>(null);
-  const motes = useRef<THREE.Points>(null);
   const cone = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = 4;
@@ -257,37 +257,10 @@ function Projector() {
     ctx.fillRect(0, 0, 4, 128);
     return new THREE.CanvasTexture(c);
   }, []);
-  const moteGeo = useMemo(() => {
-    const n = 140;
-    const pos = new Float32Array(n * 3);
-    const rnd = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.sqrt(Math.random()) * 1.5;
-      pos[i * 3] = Math.cos(a) * r;
-      pos[i * 3 + 1] = Math.random() * 2.6;
-      pos[i * 3 + 2] = Math.sin(a) * r;
-      rnd[i] = Math.random();
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.userData.rnd = rnd;
-    return g;
-  }, []);
-  useFrame((s, dt) => {
+  useFrame((s) => {
     const t = s.clock.elapsedTime;
     if (ring.current) (ring.current.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(t * 2) * 0.18;
     if (ticks.current) ticks.current.rotation.y = t * 0.25;
-    if (motes.current) {
-      const a = motes.current.geometry.attributes.position as THREE.BufferAttribute;
-      const rnd = motes.current.geometry.userData.rnd as Float32Array;
-      for (let i = 0; i < a.count; i++) {
-        let y = a.getY(i) + dt * (0.18 + rnd[i] * 0.35);
-        if (y > 2.8) y = 0;
-        a.setY(i, y);
-      }
-      a.needsUpdate = true;
-    }
   });
   const tickMarks = useMemo(() => Array.from({ length: 72 }, (_, i) => i), []);
   return (
@@ -318,41 +291,7 @@ function Projector() {
           <meshBasicMaterial map={cone} transparent blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
         </mesh>
       </group>
-      <points ref={motes} geometry={moteGeo}>
-        <pointsMaterial color="#bfe6ff" size={0.035} transparent opacity={0.8} blending={THREE.AdditiveBlending} depthWrite={false} />
-      </points>
     </group>
-  );
-}
-
-/** Two thin scanner rings that orbit the bust on tilted paths. */
-function Orbits() {
-  const a = useRef<THREE.Group>(null);
-  const b = useRef<THREE.Group>(null);
-  useFrame((s) => {
-    const t = s.clock.elapsedTime;
-    if (a.current) { a.current.rotation.y = t * 0.45; a.current.position.y = Math.sin(t * 0.5) * 1.2 + 0.2; }
-    if (b.current) { b.current.rotation.y = -t * 0.3; }
-  });
-  return (
-    <>
-      <group ref={a}>
-        <mesh rotation={[-Math.PI / 2 + 0.08, 0, 0]}>
-          <torusGeometry args={[1.45, 0.004, 6, 160]} />
-          <meshBasicMaterial color="#8fe3ff" transparent opacity={0.55} blending={THREE.AdditiveBlending} depthWrite={false} />
-        </mesh>
-        <mesh position={[1.45, 0, 0]}>
-          <sphereGeometry args={[0.03, 12, 12]} />
-          <meshBasicMaterial color="#ffffff" />
-        </mesh>
-      </group>
-      <group ref={b} rotation={[0.35, 0, 0.5]}>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[2.05, 0.003, 6, 200, Math.PI * 1.3]} />
-          <meshBasicMaterial color="#ff8ad8" transparent opacity={0.4} blending={THREE.AdditiveBlending} depthWrite={false} />
-        </mesh>
-      </group>
-    </>
   );
 }
 
@@ -382,11 +321,11 @@ export function HologramPortrait({ className = "" }: { className?: string }) {
           frameloop={visible ? "always" : "never"}
           camera={{ position: [0, 0.05, 6.9], fov: 40 }}
           dpr={[1, 1.75]}
+          resize={{ offsetSize: true }} // size from layout, not from the on-screen (scaled) box while it docks
           gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
         >
           <Bust cloud={cloud} reduced={!!reduced} />
           <Projector />
-          {!reduced && <Orbits />}
         </Canvas>
       )}
     </div>

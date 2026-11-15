@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { type ReactNode } from "react";
+import { timecodeFor } from "@/lib/sections";
 
 type PageHeroProps = {
   eyebrow?: string;
@@ -8,88 +9,30 @@ type PageHeroProps = {
   children?: ReactNode;
 };
 
-const letterVariants = {
-  hidden: { opacity: 0, y: 40, rotateX: 90 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    transition: {
-      duration: 0.6,
-      delay: i * 0.03,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
 
 export function PageHero({ eyebrow, title, subtitle, children }: PageHeroProps) {
-  const words = title.split(" ");
-
   return (
-    <section className="relative overflow-hidden bg-hero-gradient rounded-xl">
-      {/* animated yellow blob */}
+    <section className="relative">
       <motion.div
-        aria-hidden
-        className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-[#ff8ad8]/12 blur-3xl"
-        animate={{ scale: [1, 1.3, 1], rotate: [0, 40, 0], x: [0, 20, 0] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        aria-hidden
-        className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-[#7fd8ff]/12 blur-3xl"
-        animate={{ scale: [1.1, 0.9, 1.1], rotate: [0, -40, 0], y: [0, -20, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Subtle horizontal scan line effect */}
-      <motion.div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(180,140,255,0.02) 3px, rgba(180,140,255,0.02) 4px)",
-        }}
-      />
-      <div className="relative mx-auto max-w-5xl px-4 lg:px-8 py-14 md:py-20">
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mx-auto max-w-5xl px-4 lg:px-8 pt-12 pb-4 md:pt-16"
+      >
         {eyebrow && (
-          <motion.p
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-[10px] uppercase tracking-[0.35em] text-brand-yellow font-semibold mb-3"
-          >
+          <p className="mb-4 font-mono text-[13px] text-white/50">
+            {timecodeFor(eyebrow) && <span className="text-brand-yellow">{timecodeFor(eyebrow)}:00</span>}
+            {timecodeFor(eyebrow) && <>&nbsp;&nbsp;</>}
             {eyebrow}
-          </motion.p>
+          </p>
         )}
-        {/* 3D word-by-word title reveal */}
-        <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-extrabold text-foreground" style={{ perspective: 600 }}>
-          {words.map((word, i) => (
-            <motion.span
-              key={i}
-              custom={i}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={letterVariants}
-              className="inline-block mr-[0.3em] origin-bottom"
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {word}
-            </motion.span>
-          ))}
-        </h1>
-        {subtitle && (
-          <motion.p
-            initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl"
-          >
-            {subtitle}
-          </motion.p>
-        )}
+        <h2 className="font-display text-3xl md:text-5xl font-medium tracking-[-0.025em] leading-[1.08] text-foreground [text-wrap:balance] max-w-3xl">
+          {title}
+        </h2>
+        {subtitle && <p className="mt-4 text-base md:text-lg text-white/60 max-w-xl">{subtitle}</p>}
         {children && <div className="mt-6">{children}</div>}
-      </div>
+      </motion.div>
     </section>
   );
 }

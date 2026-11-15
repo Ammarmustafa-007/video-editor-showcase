@@ -29,7 +29,7 @@ const cardVariants = {
 export function TestimonialsPage() {
   return (
     <>
-      <PageHero eyebrow="Testimonials" title="Words from collaborators." />
+      <PageHero eyebrow="Testimonials" title="Words from collaborators" />
       <motion.section
         variants={containerVariants}
         initial="hidden"
@@ -42,7 +42,7 @@ export function TestimonialsPage() {
           <motion.div key={t.name} variants={cardVariants} style={{ transformStyle: "preserve-3d" }}>
             <TiltCard intensity={6} className="h-full p-8 rounded-xl bg-card border border-border shadow-card group hover:border-brand-yellow/30 transition-colors">
               <div className="flex flex-col items-center text-center justify-center h-full">
-                <motion.div whileHover={{ rotate: -10, scale: 1.15 }} transition={{ type: "spring" }}>
+                <motion.div transition={{ type: "spring" }}>
                   <Quote className="text-brand-yellow" size={22}/>
                 </motion.div>
                 <p className="mt-3 text-sm text-foreground/90 leading-relaxed">"{t.text}"</p>

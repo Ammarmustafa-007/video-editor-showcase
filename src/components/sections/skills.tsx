@@ -34,7 +34,7 @@ const cardVariants = {
 export function SkillsPage() {
   return (
     <>
-      <PageHero eyebrow="Skills" title="The toolkit." subtitle="A focused stack tuned for cinematic output and fast turnaround." />
+      <PageHero eyebrow="Skills" title="The toolkit" subtitle="A focused stack tuned for cinematic output and fast turnaround" />
       <motion.section
         variants={containerVariants}
         initial="hidden"
@@ -47,7 +47,7 @@ export function SkillsPage() {
           <motion.div key={s.title} variants={cardVariants} style={{ transformStyle: "preserve-3d" }}>
             <TiltCard intensity={10} className="h-full p-8 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors group">
               <div className="flex flex-col justify-center items-center text-center w-full h-full">
-                <motion.div whileHover={{ rotate: 15, scale: 1.2 }} transition={{ type: "spring", stiffness: 300 }}>
+                <motion.div transition={{ type: "spring", stiffness: 300 }}>
                   <s.icon className="text-brand-yellow" size={26}/>
                 </motion.div>
                 <h3 className="mt-3 font-display text-lg font-bold text-foreground">{s.title}</h3>

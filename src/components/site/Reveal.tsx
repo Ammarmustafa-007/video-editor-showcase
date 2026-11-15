@@ -19,7 +19,7 @@ type RevealProps = {
 export function Reveal({
   children,
   delay = 0,
-  y = 30,
+  y = 12,
   x = 0,
   rotate = 0,
   scale = 1,
@@ -42,7 +42,7 @@ export function Reveal({
       rotate: 0,
       scale: 1,
       transition: {
-        duration: 0.8,
+        duration: 0.5,
         delay,
         ease: [0.22, 1, 0.36, 1],
       },
