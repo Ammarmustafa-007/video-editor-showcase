@@ -46,7 +46,7 @@ export function ExperiencePage() {
         {jobs.map((j, i) => (
           <Reveal key={j.company} delay={i * 0.12} x={i % 2 === 0 ? -30 : 30} rotate={i % 2 === 0 ? -1 : 1}>
             <motion.article
-              whileHover={{ scale: 1.015, y: -4, boxShadow: "0 20px 60px -15px rgba(255,215,0,0.15)" }}
+              whileHover={{ scale: 1.015, y: -4, boxShadow: "0 20px 60px -15px rgba(180,140,255,0.15)" }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               className="p-6 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors"
             >

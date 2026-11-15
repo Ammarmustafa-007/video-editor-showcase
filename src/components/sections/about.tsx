@@ -31,7 +31,7 @@ export function AboutPage() {
               href="https://wa.me/+923003322338?text=Hello"
               target="_blank"
               rel="noreferrer"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255,215,0,0.4)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(180,140,255,0.4)" }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-2 bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/50 text-brand-yellow font-semibold px-5 py-2.5 rounded-full shadow-glow text-sm"
             >
@@ -41,7 +41,7 @@ export function AboutPage() {
               href="https://drive.google.com/uc?export=download&id=1YN8cMRe_BasHMTezEF3rmvzcGKcnhnvJ"
               target="_blank"
               rel="noreferrer"
-              whileHover={{ scale: 1.05, borderColor: "rgba(255,215,0,0.5)" }}
+              whileHover={{ scale: 1.05, borderColor: "rgba(180,140,255,0.5)" }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 text-foreground font-semibold px-5 py-2.5 rounded-full transition-all text-sm hover:bg-white/10"
             >

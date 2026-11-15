@@ -26,7 +26,7 @@ export function WhyMePage() {
           {items.map((it, i) => (
             <Reveal key={it.title} delay={i * 0.1} x={i % 2 === 0 ? -20 : 20} rotate={i % 2 === 0 ? -2 : 2}>
               <motion.div
-                whileHover={{ scale: 1.03, y: -4, boxShadow: "0 15px 40px -10px rgba(255,215,0,0.12)" }}
+                whileHover={{ scale: 1.03, y: -4, boxShadow: "0 15px 40px -10px rgba(180,140,255,0.12)" }}
                 transition={{ type: "spring", stiffness: 200 }}
                 className="p-5 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors h-full"
               >

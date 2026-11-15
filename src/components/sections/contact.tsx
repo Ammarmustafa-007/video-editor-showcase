@@ -73,7 +73,7 @@ export function ContactPage() {
             const inner = (
               <motion.div
                 variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -3, boxShadow: "0 15px 40px -10px rgba(255,215,0,0.15)" }}
+                whileHover={{ scale: 1.05, y: -3, boxShadow: "0 15px 40px -10px rgba(180,140,255,0.15)" }}
                 transition={{ type: "spring", stiffness: 200 }}
                 className="p-5 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-colors h-full"
                 style={{ transformStyle: "preserve-3d" }}
