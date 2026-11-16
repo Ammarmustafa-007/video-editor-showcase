@@ -39,12 +39,10 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.9, rotateX: 20 },
+  hidden: { opacity: 0, y: 24 },
   show: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    rotateX: 0,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
@@ -63,7 +61,6 @@ export function ContactPage() {
           whileInView="show"
           viewport={{ once: true, margin: "-40px" }}
           className="grid gap-3 sm:grid-cols-2"
-          style={{ perspective: 800 }}
         >
           <motion.a
             variants={itemVariants}
@@ -85,7 +82,6 @@ export function ContactPage() {
                 variants={itemVariants}
                 transition={{ type: "spring", stiffness: 200 }}
                 className="p-5 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/60 transition-colors h-full"
-                style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div transition={{ type: "spring" }}>
                   <c.icon className="text-brand-yellow" size={20} />

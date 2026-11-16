@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import type { MotionValue } from "framer-motion";
+import { isLite, markSlow, onLite } from "@/lib/perf";
+import posterUrl from "@/assets/holo/hologram-poster.webp";
 import portraitUrl from "@/assets/holo/bust.webp";
 import depthUrl from "@/assets/holo/bust-depth.png";
 
@@ -206,7 +209,7 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
     uProgress: { value: reduced ? 2 : 0 },
     uTime: { value: 0 },
     uSize: { value: cloud.count > 30000 ? 15 : 22 },
-    uPixelRatio: { value: Math.min(gl.getPixelRatio(), 1.75) },
+    uPixelRatio: { value: Math.min(gl.getPixelRatio(), 1.25) },
     uYaw: { value: 0 },
     uPitch: { value: 0 },
     uHalfW: { value: cloud.halfW },
@@ -220,8 +223,8 @@ function Bust({ cloud, reduced }: { cloud: Cloud; reduced: boolean }) {
     if (!reduced) u.uProgress.value = Math.min(2, (performance.now() - start.current) / 1000 / 2.6);
     // the face looks at the mouse (or sways slowly on touch screens / before the mouse moves); the body stays still
     const p = pointer.current;
-    const tx = p.active ? p.x * 0.42 : Math.sin(state.clock.elapsedTime * 0.35) * 0.16;
-    const ty = p.active ? p.y * 0.2 : Math.sin(state.clock.elapsedTime * 0.27) * 0.04;
+    const tx = p.active ? p.x * 0.28 : Math.sin(state.clock.elapsedTime * 0.35) * 0.12;
+    const ty = p.active ? p.y * 0.12 : Math.sin(state.clock.elapsedTime * 0.27) * 0.03;
     const k = 1 - Math.pow(0.02, dt); // slower, softer follow
     u.uYaw.value += (tx - u.uYaw.value) * k;
     u.uPitch.value += (ty - u.uPitch.value) * k;
@@ -343,16 +346,68 @@ function Projector() {
   );
 }
 
-export function HologramPortrait({ className = "" }: { className?: string }) {
+/**
+ * Drives the canvas at a capped frame rate instead of every display frame: 40 fps while the bust assembles, 30 fps in
+ * the hero, 20 fps once it is docked small in the corner. Paused when off screen or in a background tab. While it runs
+ * it watches how steady the page is; if frames keep arriving late (a weak laptop), the whole site switches to lite
+ * mode and the live hologram is swapped for its still image.
+ */
+function Driver({ running, docked }: { running: boolean; docked?: MotionValue<number> }) {
+  const advance = useThree((s) => s.advance);
+  useEffect(() => {
+    if (!running) return;
+    let raf = 0;
+    let last = 0;
+    const t0 = performance.now();
+    const gaps: number[] = [];
+    let prev = 0;
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      // health check: between 1.5 s and 5 s after start, collect the time between display frames
+      const age = now - t0;
+      if (prev && age > 1500 && age < 5000) gaps.push(now - prev);
+      prev = now;
+      if (age >= 5000 && gaps.length) {
+        const sorted = [...gaps].sort((a, b) => a - b);
+        const median = sorted[Math.floor(sorted.length / 2)];
+        gaps.length = 0;
+        if (median > 45) markSlow(); // under ~22 fps for the whole page: step down
+      }
+      const fps = age < 3200 ? 40 : (docked?.get() ?? 0) > 0.6 ? 20 : 30;
+      if (now - last < 1000 / fps - 2) return;
+      last = now;
+      advance(now / 1000);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [running, advance, docked]);
+  return null;
+}
+
+/** The still version (lite mode): the same hologram as an image, with a slow CSS float and a soft flicker. */
+function HologramStill() {
+  return (
+    <div className="holo-still absolute inset-0 flex items-end justify-center">
+      <img src={posterUrl} alt="" className="h-full w-full object-contain" decoding="async" draggable={false} />
+    </div>
+  );
+}
+
+export function HologramPortrait({ className = "", docked }: { className?: string; docked?: MotionValue<number> }) {
   const [cloud, setCloud] = useState<Cloud | null>(null);
   const [visible, setVisible] = useState(true);
+  const [lite, setLite] = useState(() => isLite());
   const wrap = useRef<HTMLDivElement>(null);
   const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
+  useEffect(() => onLite(() => setLite(true)), []);
+
   useEffect(() => {
-    const small = window.innerWidth < 768 || (navigator.hardwareConcurrency || 8) <= 4;
-    buildCloud(small ? 3 : 2).then(setCloud).catch(() => setCloud(null));
-  }, []);
+    if (lite) return;
+    // one point for every 3 pixels of the photo (a 4-pixel grid on phones): the face still reads, at less than half the work
+    const small = window.innerWidth < 768;
+    buildCloud(small ? 4 : 3).then(setCloud).catch(() => setCloud(null));
+  }, [lite]);
 
   useEffect(() => {
     const el = wrap.current;
@@ -376,17 +431,22 @@ export function HologramPortrait({ className = "" }: { className?: string }) {
         WebkitMaskComposite: "source-in",
       }}
     >
-      {cloud && (
-        <Canvas
-          frameloop={visible ? "always" : "never"}
-          camera={{ position: [0, 0.05, 6.9], fov: 40 }}
-          dpr={[1, 1.75]}
-          resize={{ offsetSize: true }} // size from layout, not from the on-screen (scaled) box while it docks
-          gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
-        >
-          <Bust cloud={cloud} reduced={!!reduced} />
-          <Projector />
-        </Canvas>
+      {lite ? (
+        <HologramStill />
+      ) : (
+        cloud && (
+          <Canvas
+            frameloop="never"
+            camera={{ position: [0, 0.05, 6.9], fov: 40 }}
+            dpr={[1, 1.25]}
+            resize={{ offsetSize: true }} // size from layout, not from the on-screen (scaled) box while it docks
+            gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+          >
+            <Driver running={visible} docked={docked} />
+            <Bust cloud={cloud} reduced={!!reduced} />
+            <Projector />
+          </Canvas>
+        )
       )}
     </div>
   );

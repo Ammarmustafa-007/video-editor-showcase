@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import site from "@/content/site.json";
 import { timecodeFor } from "@/lib/sections";
@@ -18,13 +17,15 @@ export function Showreel() {
   const [paused, setPaused] = useState(false);
   const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-  const { scrollYProgress } = useScroll({ target: section, offset: ["start end", "center center"] });
-  const lean = useTransform(scrollYProgress, (v) => (reduced ? 0 : 28 * (1 - Math.min(1, v))));
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), { stiffness: 120, damping: 18 });
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), { stiffness: 120, damping: 18 });
-  const rotateX = useTransform([lean, rx] as never, ([a, b]: number[]) => a + b);
+  // the phone rises in once when it comes into view (CSS, see .section-rise); no tilt while a video is playing in it
+  const phone = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = phone.current;
+    if (!el || reduced) { el?.classList.add("is-in"); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add("is-in"); io.disconnect(); } }, { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduced]);
 
   // play only while on screen
   useEffect(() => {
@@ -64,15 +65,8 @@ export function Showreel() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:px-8 lg:px-12">
         <div
           className="relative mx-auto w-[min(78vw,340px)]"
-          style={{ perspective: 1100 }}
-          onMouseMove={(e) => {
-            const r = e.currentTarget.getBoundingClientRect();
-            mx.set((e.clientX - r.left) / r.width - 0.5);
-            my.set((e.clientY - r.top) / r.height - 0.5);
-          }}
-          onMouseLeave={() => { mx.set(0); my.set(0); }}
         >
-          <motion.div style={{ rotateX, rotateY: ry, transformStyle: "preserve-3d", transformOrigin: "50% 100%" }} className="relative">
+          <div ref={phone} className="section-rise relative">
             {/* the phone */}
             <div className="relative overflow-hidden rounded-[36px] border border-white/15 bg-black p-2 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.8)]">
               <div className="relative overflow-hidden rounded-[28px]">
@@ -103,7 +97,7 @@ export function Showreel() {
             </div>
             {/* the phone's reflection on the floor */}
             <div aria-hidden className="absolute -bottom-10 left-1/2 h-8 w-4/5 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(120,80,230,0.4),transparent)]" />
-          </motion.div>
+          </div>
         </div>
 
         <div className="text-center md:text-left">

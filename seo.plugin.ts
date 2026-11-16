@@ -7,7 +7,7 @@ import type { Plugin } from "vite";
  * - <title>, description, canonical, Open Graph / Twitter cards, Google verification
  * - JSON-LD: the person, the service, the showreel as a video
  * - plain text of who/what/links inside <noscript> so crawlers that don't run JavaScript still read the page
- * - sitemap.xml, robots.txt and the IndexNow key file
+ * - sitemap.xml, robots.txt, llms.txt (a plain summary for AI answer engines) and the IndexNow key file
  */
 type Site = Record<string, any>;
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -75,6 +75,8 @@ function caseHead(site: Site, c: Site) {
   const ld = { "@context": "https://schema.org", "@type": "Article", headline: c.title, description: c.summary, url: page, image: img || undefined,
     author: { "@type": "Person", name, url }, about: { "@type": "Organization", name: c.client, address: c.location || undefined },
     keywords: (c.services || []).join(", ") };
+  const crumbs = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name, item: url + "/" }, { "@type": "ListItem", position: 2, name: `${c.client} case study`, item: page }] };
   return [
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(c.summary)}" />`,
@@ -89,7 +91,7 @@ function caseHead(site: Site, c: Site) {
     img ? `<meta property="og:image" content="${esc(img)}" />` : "",
     `<meta name="twitter:card" content="summary_large_image" />`,
     s.google_verification ? `<meta name="google-site-verification" content="${esc(s.google_verification)}" />` : "",
-    `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`,
+    `<script type="application/ld+json">${JSON.stringify([ld, crumbs]).replace(/</g, "\\u003c")}</script>`,
   ].filter(Boolean).join("\n    ");
 }
 
@@ -106,6 +108,7 @@ function head(site: Site, videos: Site) {
   const name = `${site.hero.first} ${site.hero.last}`;
   const sameAs = Object.entries(site.links || {}).filter(([k]) => k !== "call").map(([, v]) => v);
   const ld: Site[] = [
+    { "@context": "https://schema.org", "@type": "WebSite", name: "Art by Qureshi", alternateName: name, url: url + "/", inLanguage: "en" },
     { "@context": "https://schema.org", "@type": "Person", name, jobTitle: site.hero.role, url, image: img || undefined,
       email: site.chat?.email ? `mailto:${site.chat.email}` : undefined, address: s.location ? { "@type": "PostalAddress", addressLocality: s.location } : undefined,
       knowsAbout: s.keywords, sameAs },
@@ -152,6 +155,42 @@ function noscript(site: Site, videos: Site, services: Site[] = [], cases: Site[]
       <p>Email: <a href="mailto:${esc(site.chat?.email)}">${esc(site.chat?.email)}</a> · ${links}</p></main></noscript>`;
 }
 
+/** llms.txt: who he is, what he edits and where each page is, in plain Markdown, for ChatGPT, Claude, Perplexity and the like. */
+function llms(site: Site, videos: Site, services: Site[], cases: Site[], url: string) {
+  const s = site.seo || {};
+  const name = `${site.hero.first} ${site.hero.last}`;
+  const first = (t: unknown) => String(t ?? "").split(/(?<=\.)\s/)[0];
+  const out = [
+    `# ${name} (Art by Qureshi)`,
+    "",
+    `> ${s.description || site.hero.tagline}`,
+    "",
+    (() => {
+      const [r1, r2] = String(site.hero.role || "Video editor").split(" · ");
+      const role = r1.toLowerCase() + (r2 ? `, ${r2[0].toLowerCase()}${r2.slice(1)}` : "");
+      return `${name} is a ${role}${s.location ? `, based in ${s.location}` : ""}, working remotely with clients worldwide. ${site.hero.tagline || ""}`.trim();
+    })(),
+    "",
+    "## Services",
+    ...services.map((sv) => `- [${sv.title}](${url}/services/${sv.slug}): ${first(sv.intro)}`),
+    "",
+    "## Work on the site",
+    ...(videos.sections || []).map((x: Site) => `- ${x.eyebrow}: ${x.title}${x.subtitle ? `. ${x.subtitle}` : ""}`),
+  ];
+  if (cases.length) out.push("", "## Case studies", ...cases.map((c) => `- [${c.client}: ${c.title}](${url}/work/${c.slug}): ${c.summary}`));
+  out.push(
+    "",
+    "## Contact",
+    site.chat?.email ? `- Email: ${site.chat.email}` : "",
+    site.links?.call ? `- Book a call: ${site.links.call}` : "",
+    ...Object.entries(site.links || {}).filter(([k]) => k !== "call").map(([k, v]) => `- ${({ linkedin: "LinkedIn", instagram: "Instagram", youtube: "YouTube", tiktok: "TikTok" } as Record<string, string>)[k] || k[0].toUpperCase() + k.slice(1)}: ${v}`),
+    `- Website: ${url}/`,
+    "",
+    "Prices are quoted per project (length, deadline and level of finish); the site's chat or a call is the way to get one.",
+  );
+  return out.filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n") + "\n";
+}
+
 export function seo(): Plugin {
   let root = process.cwd();
   let outDir = "dist";
@@ -192,7 +231,8 @@ export function seo(): Plugin {
         ...cases.map((c) => `  <url><loc>${url}/work/${c.slug}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)];
       fs.writeFileSync(path.join(out, "sitemap.xml"),
         `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`);
-      fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`);
+      fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${url}/sitemap.xml\n`);
+      fs.writeFileSync(path.join(out, "llms.txt"), llms(site, read(root).videos, services, cases, url));
       if (/^[a-f0-9]{16,64}$/i.test(s.indexnow_key || "")) fs.writeFileSync(path.join(out, `${s.indexnow_key}.txt`), s.indexnow_key);
     },
   };

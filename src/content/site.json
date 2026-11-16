@@ -27,7 +27,7 @@
     "line": "Every frame has a reason."
   },
   "chat": {
-    "endpoint": "https://novaclipshq.studio/api/abq/chat",
+    "endpoint": "/api/abq",
     "email": "connect.qureshiiii@gmail.com",
     "whatsapp": "https://wa.me/923003322338?text=Hello%20Abdullah"
   },

@@ -200,3 +200,47 @@
 @keyframes build-line { from { opacity: 0; transform: translateY(4px); } }
 .build-progress { width: 0; animation: build-progress 2.2s cubic-bezier(0.4,0,0.2,1) 0.2s forwards; }
 @keyframes build-progress { to { width: 100%; } }
+
+/* ---- light, CSS-only motion (no 3D, no per-scroll work) ---- */
+.section-rise {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.section-rise[data-entry="tilt-left"] { transform: translate3d(-24px, 20px, 0); }
+.section-rise[data-entry="tilt-right"] { transform: translate3d(24px, 20px, 0); }
+.section-rise[data-entry="depth"] { transform: translate3d(0, 24px, 0) scale(0.97); }
+.section-rise.is-in { opacity: 1; transform: none; }
+.lift-card { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, box-shadow 0.35s; }
+@media (hover: hover) {
+  .lift-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -24px rgba(120, 80, 230, 0.55); }
+}
+/* lite mode: no blur behind fixed bars (it is re-computed on every scroll frame) */
+.lite .backdrop-blur,
+.lite .backdrop-blur-sm,
+.lite .backdrop-blur-md,
+.lite .backdrop-blur-lg,
+.lite .backdrop-blur-xl,
+.lite [class*="backdrop-blur-"] { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .section-rise { opacity: 1; transform: none; transition: none; }
+  .lift-card { transition: none; }
+}
+@keyframes holo-float {
+  0%, 100% { transform: rotateX(6deg) rotateY(-8deg) translate3d(0, 0, 0); }
+  50% { transform: rotateX(4deg) rotateY(-3deg) translate3d(0, -6px, 0); }
+}
+.holo-float { animation: holo-float 7s ease-in-out infinite; }
+.lite .holo-float, .lite .holo-orbit { animation: none; }
+@media (prefers-reduced-motion: reduce) { .holo-float { animation: none; } }
+/* brand strip (brands.tsx): one row that loops; the copy of the list makes the seam invisible */
+.brand-strip { -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); }
+.brand-track { animation: brand-loop 38s linear infinite; }
+.brand-strip:hover .brand-track { animation-play-state: paused; }
+@keyframes brand-loop { to { transform: translate3d(-50%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .brand-track { animation: none; } }
+/* the still hologram (lite mode) */
+.holo-still img { animation: holo-still-float 6s ease-in-out infinite, holo-still-flicker 5s steps(1) infinite; transform-origin: 50% 100%; }
+@keyframes holo-still-float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -8px, 0); } }
+@keyframes holo-still-flicker { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 48% { opacity: 0.82; } 49% { opacity: 1; } 83% { opacity: 0.9; } 84% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .holo-still img { animation: none; } }

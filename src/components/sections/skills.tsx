@@ -21,12 +21,10 @@ const containerVariants = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40, rotateX: 15, scale: 0.9 },
+  hidden: { opacity: 0, y: 24 },
   show: {
     opacity: 1,
     y: 0,
-    rotateX: 0,
-    scale: 1,
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
@@ -41,10 +39,9 @@ export function SkillsPage() {
         whileInView="show"
         viewport={{ once: true, margin: "-40px" }}
         className="mx-auto max-w-5xl px-4 lg:px-8 py-10 md:py-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        style={{ perspective: 800 }}
       >
         {skills.map((s) => (
-          <motion.div key={s.title} variants={cardVariants} style={{ transformStyle: "preserve-3d" }}>
+          <motion.div key={s.title} variants={cardVariants}>
             <TiltCard intensity={10} className="h-full p-8 rounded-xl bg-card border border-border shadow-card hover:border-brand-yellow/50 transition-colors group">
               <div className="flex flex-col justify-center items-center text-center w-full h-full">
                 <motion.div transition={{ type: "spring", stiffness: 300 }}>

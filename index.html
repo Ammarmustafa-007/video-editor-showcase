@@ -8,7 +8,6 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#0b0816" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -47,20 +46,7 @@
         <div class="row"><span class="tc" id="boot-tc">00:00:00:00</span><span id="boot-st">Rendering portfolio</span><span id="boot-pc">0%</span></div>
         <div class="bar"><i id="boot-bar"></i></div>
       </div>
-      <script>
-        (function(){var s=performance.now(),p=0,b=document.getElementById("boot");
-        function pad(n){return(n<10?"0":"")+n}
-        function tick(){if(!b||b.classList.contains("done"))return;var t=(performance.now()-s)/1000;
-          p=p+(Math.max(0,93-p))*0.035;var f=Math.floor(t*30)%30,sec=Math.floor(t);
-          document.getElementById("boot-tc").textContent="00:00:"+pad(sec)+":"+pad(f);
-          document.getElementById("boot-pc").textContent=Math.round(p)+"%";
-          document.getElementById("boot-bar").style.width=p+"%";
-          if(t>4)document.getElementById("boot-st").textContent="Slow connection, still rendering";
-          requestAnimationFrame(tick)}
-        requestAnimationFrame(tick);
-        window.__bootDone=function(){if(!b)return;document.getElementById("boot-pc").textContent="100%";document.getElementById("boot-bar").style.width="100%";
-          setTimeout(function(){b.classList.add("done");setTimeout(function(){b.remove()},700)},180)};})();
-      </script>
+      <script src="/boot.js"></script>
     </div>
     <!--noscript-->
     <script type="module" src="/src/main.tsx"></script>

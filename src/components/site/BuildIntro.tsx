@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { WORK } from "@/lib/videoConfig";
+import { isLite } from "@/lib/perf";
 
 /**
  * The opening of the home page: the site assembles itself like a project being built.
@@ -27,7 +28,7 @@ type Box = { label: string; x: number; y: number; w: number; h: number; delay: n
 export function BuildIntro({ slot }: { slot: RefObject<HTMLDivElement | null> }) {
   const [on, setOn] = useState(() => {
     if (typeof window === "undefined") return false;
-    return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    return !isLite(); // no intro on weaker machines or for reduced motion
   });
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [line, setLine] = useState(0);
@@ -60,7 +61,7 @@ export function BuildIntro({ slot }: { slot: RefObject<HTMLDivElement | null> })
     c.width = W * dpr; c.height = H * dpr;
     const ctx = c.getContext("2d")!;
     ctx.scale(dpr, dpr);
-    const N = W < 768 ? 420 : 1100;
+    const N = W < 768 ? 220 : 520;
     const cx = s.left + s.width / 2, cy = s.top + s.height * 0.42;
     const colors = ["#c9a6ff", "#a983ff", "#7fd8ff", "#f3eaff", "#ff8ad8"];
     const P = Array.from({ length: N }, () => {

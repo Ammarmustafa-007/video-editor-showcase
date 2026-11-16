@@ -16,8 +16,12 @@ type ChatRow = { token: string; title: string; updated: string; mode: Mode };
 
 const STARTERS = ["What kind of videos do you edit?", "How much does a project cost?", "Can you edit my wedding film?"];
 const FIRST = site.hero.first;
-const API = site.chat.endpoint.replace(/\/chat$/, "");
+// every call goes to this site's own relay (/api/abq, see api/abq.js), never straight to the chat server
 const HEAD = { "Content-Type": "application/json", "X-Requested-With": "novaclips" };
+const relay = (path: string) => {
+  const [op, query] = path.replace(/^\//, "").split("?");
+  return `/api/abq?op=${encodeURIComponent(op)}${query ? `&${query}` : ""}`;
+};
 const GREETING: Msg = { id: 0, who: "ai", text: `Hi, I'm ${FIRST}'s assistant. Tell me what you're working on, or ask anything about his editing.` };
 
 const store = {
@@ -26,14 +30,20 @@ const store = {
 };
 function visitorId() {
   let v = store.get("abq-chat-id");
-  if (!v || v.length < 8) { v = Math.random().toString(36).slice(2) + Date.now().toString(36); store.set("abq-chat-id", v); }
+  if (!v || v.length < 8) {
+    // 128 random bits from the browser's secure generator: nobody can guess another visitor's id
+    const b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    v = Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+    store.set("abq-chat-id", v);
+  }
   return v;
 }
 async function call(path: string, body?: object) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), 30000);
   try {
-    const r = await fetch(API + path, body ? { method: "POST", headers: HEAD, body: JSON.stringify(body), signal: ctl.signal } : { signal: ctl.signal });
+    const r = await fetch(relay(path), body ? { method: "POST", headers: HEAD, body: JSON.stringify(body), signal: ctl.signal } : { signal: ctl.signal });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.detail || String(r.status));
     return j;

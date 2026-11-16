@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { scrollToY } from "@/lib/smoothScroll";
 import { DockingHologram } from "@/components/site/DockingHologram";
 import { BuildIntro } from "@/components/site/BuildIntro";
@@ -40,37 +40,28 @@ export const Route = createFileRoute("/")({
 type Entry = "rise" | "tilt-left" | "tilt-right" | "depth";
 type SectionConfig = { id: string; children: React.ReactNode; entry?: Entry };
 
-const k01 = (p: number, a: number, b: number) => Math.min(1, Math.max(0, (p - a) / (b - a)));
-const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-
 /**
- * Sections sit in 3D space. Each one comes up out of the page at a slight angle (tilted back, turned a little to one
- * side, or set further away) and settles flat while you read. Small angles, no spins: the depth is the point.
+ * Each section rises gently into place the first time it scrolls into view. Plain CSS (a class added once by an
+ * IntersectionObserver), no 3D and no work on every scroll frame, so it stays smooth on ordinary laptops too.
  */
 function SectionWrapper({ id, children, entry = "rise" }: SectionConfig) {
   const ref = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const m = reduced ? 0 : isMobile ? 0.5 : 1;
-
-  const inT = (v: number) => 1 - ease(k01(v, 0.0, 0.32));
-  const outT = (v: number) => k01(v, 0.82, 1);
-
-  const opacity = useTransform(p, (v) => (reduced ? 1 : Math.min(0.25 + 0.75 * k01(v, 0, 0.18), 1 - 0.6 * outT(v))));
-  const rotateX = useTransform(p, (v) => m * (entry === "rise" ? 16 : entry === "depth" ? 8 : 6) * inT(v) - m * 8 * outT(v));
-  const rotateY = useTransform(p, (v) => m * (entry === "tilt-left" ? 12 : entry === "tilt-right" ? -12 : 0) * inT(v));
-  const z = useTransform(p, (v) => m * (entry === "depth" ? -260 : -120) * inT(v) - m * 120 * outT(v));
-  const y = useTransform(p, (v) => m * 40 * inT(v));
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") { el.classList.add("is-in"); return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.classList.add("is-in"); io.disconnect(); }
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.02 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
-    <section id={id} ref={ref} className="relative z-10 flex flex-col justify-center py-6 md:py-10" style={{ perspective: isMobile ? 1000 : 1600 }}>
-      <motion.div
-        style={{ opacity, rotateX, rotateY, z, y, transformStyle: "preserve-3d", transformOrigin: "50% 100%" }}
-        className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem] will-change-transform"
-      >
+    <section id={id} className="relative z-10 flex flex-col justify-center py-6 md:py-10">
+      <div ref={ref} data-entry={entry} className="section-rise w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[75rem]">
         <div className="relative overflow-hidden rounded-[20px] border border-white/[0.06] bg-[#120d22]/70 p-3 md:p-6">{children}</div>
-      </motion.div>
+      </div>
     </section>
   );
 }

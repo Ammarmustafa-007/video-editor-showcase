@@ -1,42 +1,16 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { type ReactNode, type MouseEvent } from "react";
+import { type ReactNode } from "react";
 
 type TiltCardProps = {
   children: ReactNode;
   className?: string;
+  /** kept so existing callers don't change; the card no longer tilts */
   intensity?: number;
 };
 
 /**
- * 3D tilt card — tracks mouse position to rotate on X/Y axes.
- * Pure framer-motion (no three.js needed for this effect).
+ * A card that lifts a little on hover. Pure CSS (see .lift-card in styles.css): no mouse tracking and no 3D, so it
+ * costs nothing while the page scrolls.
  */
-export function TiltCard({ children, className = "", intensity = 14 }: TiltCardProps) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 200, damping: 20 });
-  const sy = useSpring(y, { stiffness: 200, damping: 20 });
-  const rotateX = useTransform(sy, [-0.5, 0.5], [intensity, -intensity]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], [-intensity, intensity]);
-
-  function handleMove(e: MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  }
-  function handleLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
-  return (
-    <motion.div
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
-      className={className}
-    >
-      <div className="w-full h-full" style={{ transform: "translateZ(10px)" }}>{children}</div>
-    </motion.div>
-  );
+export function TiltCard({ children, className = "" }: TiltCardProps) {
+  return <div className={`lift-card ${className}`}>{children}</div>;
 }

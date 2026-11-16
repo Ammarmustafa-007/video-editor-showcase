@@ -23,8 +23,8 @@ export const Route = createFileRoute("/work/$slug")({
 function Block({ n, title, items }: { n: string; title: string; items: string[] }) {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 12, rotateX: 8 }}
-      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       style={{ transformPerspective: 1200 }}

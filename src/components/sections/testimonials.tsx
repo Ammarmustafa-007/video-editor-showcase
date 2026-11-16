@@ -16,12 +16,10 @@ const containerVariants = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 50, rotateY: -15, scale: 0.9 },
+  hidden: { opacity: 0, y: 24 },
   show: {
     opacity: 1,
     y: 0,
-    rotateY: 0,
-    scale: 1,
     transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
@@ -36,10 +34,9 @@ export function TestimonialsPage() {
         whileInView="show"
         viewport={{ once: true, margin: "-40px" }}
         className="mx-auto max-w-5xl px-4 lg:px-8 py-10 md:py-16 grid gap-4 md:grid-cols-2"
-        style={{ perspective: 1000 }}
       >
         {list.map((t) => (
-          <motion.div key={t.name} variants={cardVariants} style={{ transformStyle: "preserve-3d" }}>
+          <motion.div key={t.name} variants={cardVariants}>
             <TiltCard intensity={6} className="h-full p-8 rounded-xl bg-card border border-border shadow-card group hover:border-brand-yellow/30 transition-colors">
               <div className="flex flex-col items-center text-center justify-center h-full">
                 <motion.div transition={{ type: "spring" }}>
