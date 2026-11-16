@@ -21,7 +21,7 @@ export function SiteHeader() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-brand-navy-deep/80 border-b border-border"
+      className="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md bg-brand-navy-deep/80 border-b border-border"
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-4 lg:px-8 h-16">
         <button
@@ -46,7 +46,7 @@ export function SiteHeader() {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden bg-brand-navy-deep border-t border-border absolute w-full shadow-2xl"
           >
-            <div className="flex flex-col px-4 py-3 max-h-[80vh] overflow-y-auto">
+            <div data-lenis-prevent className="flex flex-col px-4 py-3 max-h-[80vh] overflow-y-auto overscroll-contain">
               {links.map((l) => (
                 <button
                   key={l.to}

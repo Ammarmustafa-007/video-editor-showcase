@@ -440,6 +440,7 @@ export function HologramPortrait({ className = "", docked }: { className?: strin
             camera={{ position: [0, 0.05, 6.9], fov: 40 }}
             dpr={[1, 1.25]}
             resize={{ offsetSize: true }} // size from layout, not from the on-screen (scaled) box while it docks
+            style={{ pointerEvents: "none" }} // never catch clicks or the scroll wheel (the face follows the mouse via window events)
             gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
           >
             <Driver running={visible} docked={docked} />

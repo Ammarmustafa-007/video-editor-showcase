@@ -202,7 +202,7 @@ export function ChatWidget() {
             </div>
 
             {view === "list" ? (
-              <div className="flex-1 overflow-y-auto p-3">
+              <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain p-3">
                 <button onClick={() => loadChat("")} className="mb-2 flex w-full items-center gap-2 rounded-[12px] border border-dashed border-white/15 px-3 py-3 text-sm text-white/80 transition-colors hover:border-[#c9a6ff]/60"><Plus size={16} strokeWidth={1.5} /> New chat</button>
                 {chats.length === 0 && <p className="px-2 py-6 text-center text-sm text-white/50">Your earlier chats show up here.</p>}
                 {chats.map((c) => (
@@ -214,7 +214,7 @@ export function ChatWidget() {
               </div>
             ) : (
               <>
-                <div ref={box} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+                <div ref={box} data-lenis-prevent className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4">
                   {shown.map((m) =>
                     m.who === "system" ? (
                       <p key={m.id} className="mx-auto max-w-[90%] text-center text-xs leading-relaxed text-white/50">{m.text}</p>
