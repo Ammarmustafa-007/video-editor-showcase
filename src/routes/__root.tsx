@@ -4,6 +4,8 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -13,6 +15,19 @@ import { jumpToY, scrollToY, startSmoothScroll } from "@/lib/smoothScroll";
 import { takePendingSection } from "@/lib/goToSection";
 
 function NotFoundComponent() {
+  // a page that doesn't exist must not end up in Google as a copy of the home page
+  useEffect(() => {
+    const m = document.createElement("meta");
+    m.name = "robots";
+    m.content = "noindex";
+    document.head.appendChild(m);
+    const t = document.title;
+    document.title = "Page not found | Abdullah Qureshi";
+    return () => {
+      m.remove();
+      document.title = t;
+    };
+  }, []);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -34,7 +49,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
 
@@ -121,10 +136,26 @@ function useScrollMemory() {
   }, [router]);
 }
 
+/**
+ * Keeps the tab title and description in step with the page when moving around inside the site
+ * (each route's head() says what they are; the first page load already has them from the prerendered HTML).
+ */
+function usePageTitle() {
+  const matches = useRouterState({ select: (s) => s.matches });
+  useEffect(() => {
+    const meta = [...matches].reverse().flatMap((m) => (m.meta || []) as Array<Record<string, string> | undefined>);
+    const title = meta.find((x) => x?.title)?.title;
+    const desc = meta.find((x) => x?.name === "description")?.content;
+    if (title) document.title = title;
+    if (desc) document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
+  }, [matches]);
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => startSmoothScroll(), []);
   useScrollMemory();
+  usePageTitle();
 
   return (
     <QueryClientProvider client={queryClient}>

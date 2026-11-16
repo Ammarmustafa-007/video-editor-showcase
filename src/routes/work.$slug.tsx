@@ -15,7 +15,7 @@ export const Route = createFileRoute("/work/$slug")({
     return c;
   },
   head: ({ loaderData }) => ({
-    meta: loaderData ? [{ title: `${loaderData.client} case study | ${site.hero.first} ${site.hero.last}` }, { name: "description", content: loaderData.summary }] : [],
+    meta: loaderData ? [{ title: `${loaderData.client} case study: ${loaderData.title} | ${site.hero.first} ${site.hero.last}`.slice(0, 90) }, { name: "description", content: loaderData.summary }] : [],
   }),
   component: CasePage,
 });
