@@ -119,7 +119,21 @@ export function ChatWidget() {
       setToken(r.token); store.set("abq-chat-token", r.token); setMode(r.mode); setOnline(r.online);
       setOffline(!!r.ai_down && r.mode === "ai");
     } catch {
-      setOffline(true);
+      // the answer may still be on its way (a slow moment on the AI's side): look for it a few times before giving up
+      let got = false;
+      if (token) {
+        for (let i = 0; i < 4 && !got; i++) {
+          await new Promise((res) => setTimeout(res, 4000));
+          try {
+            const r = await call(`/poll?visitor=${vid.current}&token=${encodeURIComponent(token)}&after=${lastId.current}`);
+            if ((r.messages || []).some((x: Msg) => x.who !== "visitor")) {
+              setMsgs((m) => m.filter((x) => x.id !== temp.id));
+              merge(r.messages); setMode(r.mode); setOnline(r.online); got = true;
+            }
+          } catch { /* keep looking */ }
+        }
+      }
+      if (!got) setOffline(true);
     } finally {
       setBusy(false);
     }
